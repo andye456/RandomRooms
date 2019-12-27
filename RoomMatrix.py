@@ -1,37 +1,40 @@
 # This class holds the rooms in a dictionary once they are created, this array can be saved
+import pickle
+import RoomUtils
 class RoomMatrix:
 
     x_ref = 0
     y_ref = 0
     room_ref={}
-    def __init__(self, room):
-        self.addRoom(0,room)
+
+    def __init__(self):
         pass
+
+    # Creates the first room at 0,0
+    def __init__(self, room):
+        self.addRoom((0,0),room)
 
     # This is used to get the room, using it's coordinates, if it exists when you user travels.
     def getRoom(self, x, y):
         return self.room_ref[(x,y)]
 
     # add a room at the correct position in the matrix
-    def addRoom(self, entered_from, room):
-        if entered_from == "N": self.y_ref+=1
-        if entered_from == "S": self.y_ref-=1
-        if entered_from == "E": self.x_ref+=1
-        if entered_from == "W": self.x_ref-=1
-        self.room_ref[(self.x_ref,self.y_ref)]=room
-        # print(self.room_ref)
+    def addRoom(self, ref, room):
+        self.room_ref[ref]=room
 
+    #
+    # Figures out what rooms are created and prints an ascii representation of them
+    #
     def get_room_grid(self):
         x=[]
         y=[]
         for i,j in self.room_ref:
             x.append(i)
             y.append(j)
-            # print(i,j)
-            # print("x=",)
-            # print(x)
-            # print("y=",)
-            # print(y)
+        # dumps the matrix of room to a binary file
+        with open("data.bin","wb") as f:
+            pickle.dump(self.room_ref, f)
+
         x_lim=max(x)
         x_lower=min(x)
         x_tx=0-x_lower
@@ -43,22 +46,17 @@ class RoomMatrix:
         grid=[[0] * x_range for i in range(y_range)]
         for row in range(len(grid)):
             for elem in range(len(grid[row])):
-                # print(grid[row][elem], end=' ')
                 try:
                     if(self.room_ref[elem-x_tx,row-y_tx] is not None):
-                        grid[row][elem]="1"
-                        print("X", end="")
+                        if(self.room_ref[elem-x_tx,row-y_tx].name == "Start"):
+                            # print("S", end="")
+                            print(f"{RoomUtils.bcolors.FAIL}S{RoomUtils.bcolors.ENDC}", end="")
+                        else:
+                            # print("X", end="")
+                            print(f"{RoomUtils.bcolors.OKBLUE}X{RoomUtils.bcolors.ENDC}", end="")
                 except KeyError:
-                    grid[row][elem]="0"
                     print(" ",end="")
             print()
-        for i in reversed(grid):
-            for j in range(len(grid[i])):
-                if grid[i][j] == "1":
-                    print("X", end="")
-                else:
-                    print(" ", end="")
-            print()
-            #print(grid[row])
+        return grid
 
 

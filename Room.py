@@ -1,11 +1,12 @@
 
 """
 This is a room, it is created by seeding it with a number, this tells it which exits to create.
-There will always be an exit from whene the player has just come from, this is the opposite direction
+There will always be an exit from where the player has just come from, this is the opposite direction
 e.g. if in a room you exit north, then the room you enter will have an exit south.
 If the number passed to the room does not create that exit, then it is created in addition.
 If 0 is passed then this will create a dead-end.
 """
+import RoomUtils
 class Room:
 
     # NESW
@@ -23,6 +24,8 @@ class Room:
 
     from_door=0
 
+    visits=0
+
     # Takes name and description for the room
     def __init__(self, name, description):
         print("You are in a place called ["+name+ "] You can see lots of ["+description+"]")
@@ -37,6 +40,7 @@ class Room:
     # S = 0010, N = S >> 2
     # W = 0001, E = W >> 2
     # seed is an int in range 0 to 15, 0 = no doors and 15 = all 4 doors
+    # from_door is the door that you've just come from
     # from_door needs to be bit rotated right by 2 and ORed with seed.
     def create_room(self, seed, from_door):
         self.from_door=from_door
@@ -58,39 +62,36 @@ class Room:
     def get_room_code_bin(self):
         return "N E S W\n%s" % self.room_code_bin
 
+    def get_exits(self):
+        exits = ""
+        if self.N == 1:
+            exits+="N"
+        if self.E == 1:
+            exits+="E"
+        if self.S == 1:
+            exits+="S"
+        if self.W == 1:
+            exits+="W"
+        return exits
+
     def show_exits(self):
         exits = ""
         print("Exits are: ", end='')
         if self.N == 1:
             print("North ", end='')
-            e_n="╔═  ═╗"
             exits+="N"
-        else:
-            e_n = "╔════╗"
         if self.E == 1:
             print("East ", end='')
-            e_e = " "
             exits+="E"
-        else:
-            e_e = "║"
         if self.S == 1:
             print("South ", end='')
-            e_s="╚═  ═╝"
             exits+="S"
-        else:
-            e_s="╚════╝"
-
         if self.W == 1:
             print("West ", end='')
-            e_w = " "
             exits+="W"
-        else:
-            e_w = "║"
-        print("")
-        print(e_n)
-        print(e_w+"    "+e_e)
-        print(e_s)
 
+        # Print an ascii representation of the room
+        RoomUtils.room_gen(self.room_code_int)
         return exits
 
 # Unit test for this class
