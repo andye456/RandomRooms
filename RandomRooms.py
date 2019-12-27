@@ -4,7 +4,6 @@ import requests
 from Room import Room
 from RoomMatrix import RoomMatrix
 import RoomUtils
-import pickle
 
 word_site = "http://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain"
 response = requests.get(word_site)
@@ -105,6 +104,7 @@ while (True):
     i+=1
     print(i)
     if i == 1000:
+        # This bit also dumps the RoomMatrix to an external binary file.
         grid = matrix.get_room_grid()
         print("New Rooms = "+str(unique))
         print("Revisited = "+str(found_again))

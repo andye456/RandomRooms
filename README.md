@@ -15,20 +15,22 @@ When you leave a room through an exit a new room is generated as follows:
 
 ### Objects
 
-####Room
+#### Room
 This is a class that creates a room with a certain number of exits.
 The exits are a combination of N,E,S,W and are created according to the above rules.
 The room is given a name and an "item" for the user to see.
 
-####RoomMatrix
+#### RoomMatrix
 This class stores the rooms with their location in the grid. The start - the first room - is always created at 0,0, this is x=0,y=0.
 Going North y=y-1, south y=y+1
 West x=x-1, East x=x+1
+This class also contains a utility method to print out an ascii representation of the current room matrix.
+This method also dumps the RoomMatrix to a binary data file using the python library pickle.
 
-####RoomUtils
+#### RoomUtils
 Utility functions for room generation or navigation
 
-####RandomRooms
+#### RandomRooms
 This is the main class and creates rooms and adds them to the Room Matrix. This is also where you assign the rules engine to generate the rooms.
 ##### Rules Engines for room creation.
 * Get human input for the directions to travel
@@ -38,13 +40,13 @@ This is the main class and creates rooms and adds them to the Room Matrix. This 
 * Pick random direcrtion, but never uses the entrance it's just come in from
 * Always try and progress to a new room given the directions.
 
-####RoomFinder
+#### RoomFinder
 This prints out a crude map of the current rooms
 
-####RoomFinderHtml
-This renders an html page of the room grid showing the exits
+#### RoomFinderHtml
+This renders an html page of the room grid showing the exits, the number of times a room has been visited is counted and a colour value is assigned. This creates a "heat-map" that can be used to optimise rules.
 
-###Other files
+### Other files
 
-####data.bin
-This is a python
+#### data.bin
+This is a data file of the dumped RoomMatrix, this uses the python library pickle.
