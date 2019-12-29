@@ -14,7 +14,7 @@ x_pos=0
 y_pos=0
 # Create a room
 room = Room("Start", "salt")
-room.create_room(15,1)
+room.create_room(15,(1,15))
 # Creates the room matrix with the first room
 matrix = RoomMatrix(room)
 all_directions=['N','E','S','W']
@@ -47,24 +47,29 @@ while (True):
 
     # 4 #
     # Only picks from the exit directions available, has to know what exits are available
-    # ex = list(room.get_exits())
-    # direction = ex[randrange(len(ex))]
+    ex = list(room.get_exits())
+    try:
+        direction = ex[randrange(len(ex))]
+    except:
+        grid = matrix.get_room_grid()
+
 
     # 5 #
     # Never uses the entrance it's just come in from
-    ex = list(room.get_exits())
-    try:
-        if len(ex) > 1:
-            ex.remove(RoomUtils.get_opposite_door(direction))
-    except:
-        pass
-    direction = ex[randrange(len(ex))]
+    # ex = list(room.get_exits())
+    # try:
+    #     if len(ex) > 2:
+    #         ex.remove(RoomUtils.get_opposite_door(direction))
+    # except:
+    #     pass
+    # direction = ex[randrange(len(ex))]
 
     print("-------------------------------------")
     print("direction = "+direction)
     if(direction.upper() in exits):
+        # Increment/decrement the x or y direction depending on the direction travelled.
         if (direction.upper() == "N"):
-            from_door=8
+            from_door=8 # from_door is not used anymore.
             y_pos-=1
         if (direction.upper() == "S"):
             from_door=2
@@ -89,11 +94,12 @@ while (True):
         except KeyError:
             # Create a new room
             unique+=1
+            # Give the room a name and content
             room = Room(random.choice(WORDS).decode('utf-8'), random.choice(WORDS).decode('utf-8'))
             # Find adjacent rooms and any doors that should be created to them
             int_door_ref=RoomUtils.find_neighbours(matrix,x_pos,y_pos)
 
-            # TODO: CHange from_door to from_doors for multiple doors that are needed.
+            # TODO: Change from_door to from_doors for multiple doors that are needed.
             # TODO: Also don't create a room if the neighbour room doesn't have that exit!!!
             room.create_room(randrange(16), int_door_ref)
             matrix.addRoom((x_pos,y_pos),room)
@@ -103,7 +109,7 @@ while (True):
 
     i+=1
     print(i)
-    if i == 1000:
+    if i == 100000:
         # This bit also dumps the RoomMatrix to an external binary file.
         grid = matrix.get_room_grid()
         print("New Rooms = "+str(unique))

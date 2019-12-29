@@ -40,20 +40,30 @@ class Room:
     # S = 0010, N = S >> 2
     # W = 0001, E = W >> 2
     # seed is an int in range 0 to 15, 0 = no doors and 15 = all 4 doors
-    # from_door is the door that you've just come from
-    # from_door needs to be bit rotated right by 2 and ORed with seed.
-    def create_room(self, seed, from_door):
-        self.from_door=from_door
+    # from_door is the door that you've just come from - so if you exited north the from_door is North and a door in the new room needs to be created South.
+    # from_door needs to be bit rotated right by 2 and ORed with seed
+    # no_door - this is a direction that does not need creating as it is an adjacent room with no exit.
+    def create_room(self, seed, doors):
+        save_seed=seed
+        print("Seed = "+str(save_seed))
+        self.from_door=doors[0]
         # Rotates the from_door right by 2 and updated seed to include new door if not already created
-        inv = (from_door >> 2) | (from_door << 2) & 15
-        seed = seed | inv
-        # This gets a 1/0 from the updated seed for each direction
+        from_door=doors[0]
+        available=doors[1]
+        # Addreses the door that has just been entered from
+        #inv = (from_door >> 2) | (from_door << 2) & 15
+        # Addresses the possible doors that are available.
+        #inv2 = (possible >> 2) | (possible << 2) & 15
+        seed = seed | from_door
+        seed = seed & available
+        # This gets a 1 or 0 from the updated seed for each direction
         self.N = (seed & 8)  >> 3
         self.E = (seed & 4)  >> 2
         self.S = (seed & 2)  >> 1
         self.W = (seed & 1)  >> 0
 
         self.room_code_bin="%d %d %d %d" % (self.N,self.E,self.S,self.W)
+        print("room_code_bin = "+str(self.room_code_bin))
         self.room_code_int=seed
 
     def get_room_code_int(self):
