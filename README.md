@@ -12,7 +12,7 @@ When you leave a room through an exit a new room is generated as follows:
 * Any adjacent rooms must have their non-exits respected. So in the above scenario the room to the west does not have a door, but the random door generator created an East door, then this door must be removed so a false door is not created.
 
 ## Design
-Random Rooms is written in Python for portability adn fast prototyping.
+Random Rooms is written in Python for portability and fast prototyping.
 
 ### Objects
 
@@ -47,20 +47,20 @@ This is a data file of the dumped RoomMatrix, this uses the python library pickl
 
 ## Rules
 The programming exercise for RR is to generate the rooms as efficiently as possible, so minimizing the revisits to rooms.
-### Human input
+#### Human input
 Get human input for the directions to travel, this is the most efficient in terms minimumising revisits, but obviously the slowest
-## Round Robin
+#### Round Robin
 For every move choose the next direction from NESW in a round-robin fashion
-### Random
+#### Random
 Random direction chosen from NESW
-### Limited random
+#### Limited random
 Picks randomly from the exit directions available, has to know what exits are available
-### No return
+#### No return
 Pick random direcrtion from the exit directions available, but never uses the entrance it's just come in from
-### Weighted door usage
-#### On exit
+#### Weighted door usage
+##### On exit
 Every time a door is used to leave a room, the weighting on that door is incremented
-#### On entry
+##### On entry
 Every time a door is used to enter a room, the weighting on that door is incremented, this includes initial creation
-#### On exit and entry
+##### On exit and entry
 Every time a door is used to enter or leave a room the weighting on both doors in incremented
