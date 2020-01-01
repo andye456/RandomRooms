@@ -64,3 +64,20 @@ Every time a door is used to leave a room, the weighting on that door is increme
 Every time a door is used to enter a room, the weighting on that door is incremented, this includes initial creation
 ##### On exit and entry
 Every time a door is used to enter or leave a room the weighting on both doors in incremented
+#### Use every exit in a room
+This will explore every exit a room has
+
+## Navigating the rooms
+
+This was an afterthought really, it's actually fairly simple to write a JavaScript function or two to navigate round the maze once it has been created and rendered in HTML.
+
+To make the navigation possible each table cell that represents a room will be given an id of xpos,ypos, e.g. id='x-10y17', this enables the rooms to be easily identified using css selectors in JQuery. 
+
+### Doors
+The doors are indicated on the HTML table by making the side of the table cell 1px wide and dashed, non exits are solid 2px wide table cell edges.
+
+If a door does not lead to another room, like at the edge then this exit is treated like a wall.
+
+### Rules
+There will be similar navigation rules to the creation rules, the most efficient will be the one that uses an incrementing of the weighting on the doors that have been used.
+For simplicity the door used will be chosen at random from the available doors.

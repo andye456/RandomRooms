@@ -14,7 +14,7 @@ import RoomUtils
 WORDS=[]
 f = open ("words.txt", "r")
 for line in f:
-    WORDS.append(line.replace('\n',''))
+    WORDS.append(line.replace('\n','').replace('\'',''))
 f.close()
 
 # Create the 1st room at (0,0), these values are used to
