@@ -11,7 +11,7 @@ html="<html><head>"
 html+="<style>"
 
 html+="td {height:15px; width:10px;}"
-html+="</style></head><body><table style='border:1px black solid'>"
+html+="</style></head><body><table style='border:1px black solid; border-collapse:separate; width: max-content'>"
 color=""
 # Open the serialised data file in read/binary mode
 f = open("data.bin", "rb")
@@ -52,32 +52,33 @@ for row in range(len(grid)):
             if (room_ref[elem - x_tx, row - y_tx] is not None):
                 val = room_ref[elem - x_tx, row - y_tx].room_code_int
                 if (val & 8) >> 3 == 1:
-                    style_n='border-top:dashed 2px black'
+                    style_n='border-top:dashed 1px black'
                 else:
                     style_n='border-top:2px black solid'
-
+                text=""
                 if (val & 4) >> 2 == 1:
-                    style_e='border-right:dashed 2px black'
+                    style_e='border-right:dashed 1px black'
                 else:
                     style_e='border-right:2px black solid'
                 if (val & 2) >> 1:
-                    style_s = 'border-bottom:dashed 2px black'
+                    style_s = 'border-bottom:dashed 1px black'
                 else:
                     style_s = 'border-bottom:2px black solid'
                 if (val & 1) >> 0 == 1:
-                    style_w = 'border-left:dashed 2px black'
+                    style_w = 'border-left:dashed 1px black'
                 else:
                     style_w = 'border-left:2px black solid'
                 if room_ref[elem - x_tx, row - y_tx].name == "Start":
                     color="border-color:red"
+                    text="S"
                 else:
                     color = "border-color:black"
                     # NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
                     v=(newrange/oldrange)*room_ref[elem - x_tx, row - y_tx].visits
                 n=format(255-int(v),'02x')
-                html+="<td title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";"+color+"; background-color:#FF"+ n+"FF; font-size:8px'>"
+                html+="<td title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";"+color+"; background-color:#FF"+ n+"FF; font-size:12px; text-align: center'>"
                 # html+=str(room_ref[elem - x_tx, row - y_tx].visits)
-
+                html+=text
         except KeyError:
             html+="<td background-color:#000000>"
         html+="</td>"

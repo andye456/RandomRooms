@@ -24,6 +24,7 @@ class RoomMatrix:
 
     #
     # Figures out what rooms are created and prints an ascii representation of them
+    # Also dumps the room matrix to a binary file that can be read by the HTML room finder
     #
     def get_room_grid(self):
         x=[]

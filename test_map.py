@@ -1,8 +1,8 @@
-a=[[1,2,3,4,5],[2,3,4,5,6],[3,4,5,6,7],[4,5,6,7,8],[5,6,7,8,9]]
+import operator
+a={"N":10, "E":2, "S":2, "W":1000}
 
-for i in a:
-    for j in i:
-        print('{:4}'.format(j), end='')
-        # print(str(i)+" "+str(j)+"|", end='')
 
-    print()
+b = sorted(a.items(), key=operator.itemgetter(1))
+print(b)
+s = [item for item in b[0][0]]
+print(s[0])

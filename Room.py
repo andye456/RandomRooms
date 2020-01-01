@@ -44,6 +44,8 @@ class Room:
     # from_door needs to be bit rotated right by 2 and ORed with seed
     # no_door - this is a direction that does not need creating as it is an adjacent room with no exit.
     def create_room(self, seed, doors):
+        self.door_weights = {}
+
         save_seed=seed
         print("Seed = "+str(save_seed))
         self.from_door=doors[0]
@@ -65,6 +67,44 @@ class Room:
         self.room_code_bin="%d %d %d %d" % (self.N,self.E,self.S,self.W)
         print("room_code_bin = "+str(self.room_code_bin))
         self.room_code_int=seed
+
+        # Initial weighting on the doors, when a door is used this number will be incremented, the bot will always
+        # try and go through the door with the lease weight.
+        if self.N == 1:
+            self.N_weight=0
+            self.door_weights["N"] = self.N_weight
+
+        if self.E == 1:
+            self.E_weight=0
+            self.door_weights["E"] = self.E_weight
+
+        if self.S == 1:
+            self.S_weight=0
+            self.door_weights["S"] = self.S_weight
+
+        if self.W == 1:
+            self.W_weight=0
+            self.door_weights["W"] = self.W_weight
+
+    # set the door weight when entering an existing room
+    def set_door_weight(self, exit_door):
+        if exit_door == 'N':
+            self.N_weight+=1
+            self.door_weights["N"]=self.N_weight
+        if exit_door == 'E':
+            self.E_weight+=1
+            self.door_weights["E"]=self.E_weight
+        if exit_door == 'S':
+            self.S_weight+=1
+            self.door_weights["S"] = self.S_weight
+        if exit_door == 'W':
+            self.W_weight+=1
+            self.door_weights["W"] = self.W_weight
+
+    # Return the door weights for the current room
+    def get_door_weight(self):
+        return self.door_weights
+        # return {"N":self.N_weight, "E":self.E_weight, "S":self.S_weight, "W":self.W_weight}
 
     def get_room_code_int(self):
         return self.room_code_int
@@ -99,10 +139,14 @@ class Room:
         if self.W == 1:
             print("West ", end='')
             exits+="W"
-
         # Print an ascii representation of the room
         RoomUtils.room_gen(self.room_code_int)
         return exits
+
+
+    def show_weights(self):
+        print(str(self.door_weights))
+
 
 # Unit test for this class
 if __name__ == "__main__":
