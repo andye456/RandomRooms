@@ -33,7 +33,7 @@ html+="""
 <tr><td></td><td>&#8681</td><td></td></tr>
 </table>
 """
-html+="<table style='border:1px black solid; border-collapse:separate; width: max-content'>"
+html+="<table id='grid' style='border:1px black solid; border-collapse:separate; width: max-content'>"
 
 color=""
 # Open the serialised data file in read/binary mode

@@ -6,7 +6,7 @@ maze_solver = function() {
     var y=0;
     var moves = 0;
     for(;true;) {
-        if(moves > 10000) break;
+        if(moves > 1000) break;
         console.log("("+x+","+y+")");
         //    Get the available exits from the room
         var exits = get_exits(x,y);
@@ -15,6 +15,8 @@ maze_solver = function() {
         console.log("new coords: "+coords);
         x=coords[0];
         y=coords[1];
+
+        $('#x'+x+'y'+y).css("background-color","#DDD")
 
         moves++;
     }
@@ -34,6 +36,8 @@ var move = function(exit,x,y){
     }
     if(exit == "W") {
         x--;
+    }
+    if(exit == "X") {
     }
 
     console.log("x = "+x+", y = "+y);
@@ -61,7 +65,6 @@ var get_exits = function(x, y) {
         exits+="W";
     }
 
-    $('#x'+x+'y'+y).css("background-color","#DDD")
     console.log("exits = "+exits);
     return exits
 }
