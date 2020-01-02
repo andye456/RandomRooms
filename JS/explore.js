@@ -63,7 +63,7 @@ random_no_ret = function() {
 
 }
 
-find_visited = function() {
+var find_visited = function() {
     var visited = $('td').filter(function(){
         return $(this).css('background-color') == 'rgb(221, 221, 221)';
     }).length;
@@ -123,23 +123,25 @@ var move = function(exit,x,y){
 
 /*
 Gets the exits for the given room based on the border widths
+UPDATE: Also considers the exits that lead nowhere.
 */
 var get_exits = function(x, y) {
 
     var exits="";
-
-    if($('#x'+x+'y'+y).css("borderTopWidth") == "1px") {
+    if($('#x'+x+'y'+y).css("borderTopWidth") == "1px" && $('#x'+x+'y'+(y-1)).attr('class') == "room") {
         exits+="N";
     }
-    if($('#x'+x+'y'+y).css("borderRightWidth") == "1px") {
+    if($('#x'+x+'y'+y).css("borderRightWidth") == "1px" && $('#x'+(x+1)+'y'+y).attr('class') == "room" ) {
         exits+="E";
     }
-    if($('#x'+x+'y'+y).css("borderBottomWidth") == "1px") {
+    if($('#x'+x+'y'+y).css("borderBottomWidth") == "1px" && $('#x'+x+'y'+(y+1)).attr('class') == "room") {
         exits+="S";
     }
-    if($('#x'+x+'y'+y).css("borderLeftWidth") == "1px") {
+    if($('#x'+x+'y'+y).css("borderLeftWidth") == "1px" && $('#x'+(x-1)+'y'+y).attr('class') == "room") {
         exits+="W";
     }
+
+    console.log("exits: "+exits);
 
     return exits
 }
