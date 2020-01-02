@@ -1,28 +1,31 @@
+/*
+Called from the HTML page when the start room is clicked
+*/
 maze_solver = function() {
     var rowcount = $('table tr').length
     var colcount = $('table tr:nth-child(1) td').length
 
     var x=0;
     var y=0;
-    var moves = 0;
-    for(;true;) {
-        if(moves > 1000) break;
-        console.log("("+x+","+y+")");
+    var iterations = parseInt($('#count').val());
+    // Gets the number of iterations from the text box on HTML page
+    for(var i = 0; i < iterations; i++) {
         //    Get the available exits from the room
         var exits = get_exits(x,y);
         var exit = select_exit(exits);
         var coords = move(exit,x,y);
-        console.log("new coords: "+coords);
         x=coords[0];
         y=coords[1];
-
+        // When a room has been visited, change its background color to grey
         $('#x'+x+'y'+y).css("background-color","#DDD")
 
-        moves++;
     }
 
 }
 
+/*
+Takes the value for the move, N, S, E, W and changes the co-ordinates of the current location
+*/
 var move = function(exit,x,y){
 
     if(exit == "N") {
@@ -40,7 +43,6 @@ var move = function(exit,x,y){
     if(exit == "X") {
     }
 
-    console.log("x = "+x+", y = "+y);
     return [x,y]
 
 }
@@ -65,7 +67,6 @@ var get_exits = function(x, y) {
         exits+="W";
     }
 
-    console.log("exits = "+exits);
     return exits
 }
 
@@ -75,6 +76,5 @@ Randomly selects an exit from the available exits.
 var select_exit = function(exits) {
     var arr = Array.from(exits);
     var direction = arr[Math.floor(Math.random() * arr.length)];
-    console.log("direction = "+direction);
     return direction;
 }

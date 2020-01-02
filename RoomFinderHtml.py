@@ -7,31 +7,37 @@ from RoomMatrix import RoomMatrix
 import pickle
 import RoomUtils
 
-html="<html><head>"
-html+="<style>"
-
-html+="td {height:15px; width:10px;}"
-html+="</style>"
-html+="""
+html="""
+<html><head>
+<style>
+td {height:15px; width:10px;}
+</style>
 <script type="text/javascript" src="JS/jquery/jquery-341.js"></script>
 <script type="text/javascript" src="JS/explore.js"></script>
-"""
-html+="<script>"
-html+=""" 
+<script>
 $(document).ready(function () {
+    // Make pointer into a hand
+    $('#x0y0').hover(function() {
+        $(this).css('cursor','pointer');
+    });
+    // Call the solver when the start room is clicked
     $('#x0y0').click(function(){
         maze_solver();
     });
 });
-"""
-html+="</script>"
-html+="</head><body>"
-html+="""
+
+</script>
+</head><body>
+<!-- Arrows for manual navigation - not implemented yet -->
 <table>
 <tr><td></td><td>&#8679</td><td></td></tr>
 <tr><td>&#8678</td><td></td><td>&#8680</td></tr>
 <tr><td></td><td>&#8681</td><td></td></tr>
 </table>
+
+<!-- Iterations that the maze solver is going to use. -->
+Iterations: <input type='text' id="count"></input><br />
+Then click on the S in the grid below
 """
 html+="<table id='grid' style='border:1px black solid; border-collapse:separate; width: max-content'>"
 
