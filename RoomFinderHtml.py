@@ -2,10 +2,7 @@
 RoomFinder will load a previously created matrix of rooms and using various algorithms traverse the maze in the least moves
 
 """
-from Room import Room
-from RoomMatrix import RoomMatrix
 import pickle
-import RoomUtils
 
 html="""
 <html><head>
@@ -22,7 +19,13 @@ $(document).ready(function () {
     });
     // Call the solver when the start room is clicked
     $('#x0y0').click(function(){
-        maze_solver();
+        var radioValue = $("input[name='rule']:checked").val();
+            if(radioValue == "random"){
+                random();
+            }
+            if(radioValue == "random_no_ret"){
+                random_no_ret();
+            }    
     });
 });
 
@@ -30,11 +33,36 @@ $(document).ready(function () {
 </head><body>
 <!-- Arrows for manual navigation - not implemented yet -->
 <table>
-<tr><td></td><td>&#8679</td><td></td></tr>
-<tr><td>&#8678</td><td></td><td>&#8680</td></tr>
-<tr><td></td><td>&#8681</td><td></td></tr>
+<tr>
+    <td>
+        <table>
+        <tr><td></td><td>&#8679</td><td></td></tr>
+        <tr><td>&#8678</td><td></td><td>&#8680</td></tr>
+        <tr><td></td><td>&#8681</td><td></td></tr>
+        </table>
+    </td>
+    <td style='width:350px'>
+        <table  style='width:350px'>
+            <tr>
+                <td>
+                    <label><input type="radio" name="rule" value="random">Random selection of available</label>
+                    <br/>
+                    <label><input type="radio" name="rule" value="random_no_ret">Random, but don't use door entered from</label>
+                    <br/>
+                    <label><input type="radio" name="rule" value="random_weighted">When a door is used increment it weighting</label>
+                </td>
+            </tr>
+        </table>
+    </td>
+    <td>
+        <table>
+        <tr><td>Rooms:</td><td id='room_count'></td></tr>
+        <tr><td>Visited:</td><td id='visited'></td></tr>
+        <tr><td>Coverage:</td><td id='coverage'>%</td></tr>
+        </table>
+    </td>
+<tr>
 </table>
-
 <!-- Iterations that the maze solver is going to use. -->
 Iterations: <input type='text' id="count"></input><br />
 Then click on the S in the grid below
@@ -110,12 +138,12 @@ for row in range(len(grid)):
                 xref=elem - x_tx
                 yref=row - y_tx
                 heat_color=format(255-int(v),'02x')
-                html+="<td id='x"+str(xref)+"y"+str(yref)+"' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";"\
+                html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";"\
                       +color+"; background-color:#FF"+ heat_color+"FF; font-size:12px; text-align: center'>"
                 # html+=str(room_ref[elem - x_tx, row - y_tx].visits)
                 html+=text
         except KeyError:
-            html+="<td background-color:#000000>"
+            html+="<td class='blank' background-color:#ffffff>"
         html+="</td>"
     print(".", end='')
     html+="</tr>"

@@ -81,3 +81,11 @@ If a door does not lead to another room, like at the edge then this exit is trea
 ### Rules
 There will be similar navigation rules to the creation rules, the most efficient will be the one that uses an incrementing of the weighting on the doors that have been used.
 For simplicity the door used will be chosen at random from the available doors.
+#### Selecting a rule
+Use the radio buttons to select a rule to use for navigation
+
+#### Iterations
+The number of iterations to use when navigating the rooms is set in the text box above the matrix.
+
+#### Starting the room navigation
+Click on the start room, indicated with an "S"

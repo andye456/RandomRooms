@@ -134,7 +134,7 @@ while (True):
 
     i+=1
     print(i)
-    if i == 1000:
+    if i == 100:
         # This bit also dumps the RoomMatrix to an external binary file.
         grid = matrix.get_room_grid()
         print("New Rooms = "+str(unique))
