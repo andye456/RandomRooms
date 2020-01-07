@@ -1,8 +1,39 @@
 /*
-TODO: Get some readout of p3ercentage coverage that has been explored
-TODO: Implement weighted doors
+Main entry point and setting of common functions etc.
 */
+var main = function() {
+    // attach the click event to the new content
+    $('#x0y0').click(function(){
+        var radioValue = $("input[name='rule']:checked").val();
+        if(radioValue == "manual"){
+            random_room_manual();
+        }
+        if(radioValue == "random"){
+            random();
+        }
+        if(radioValue == "random_no_ret"){
+            random_no_ret();
+        }
+        if(radioValue == "random_weighted"){
+            random_room_weighting();
+        }
+        if(radioValue == "random_weighted_from"){
+            random_room_weighting_from_door();
+        }
 
+        });
+        // attach the different pointer.
+        $('#x0y0').hover(function() {
+            $(this).css('cursor','pointer');
+        });
+
+        // initialise the canvas
+        init_room();
+
+
+
+
+}
 /*
 Called from the HTML page when the start room is clicked and random radio is selected.
 */
@@ -10,7 +41,6 @@ random = function() {
     var rowcount = $('table tr').length
     var colcount = $('table tr:nth-child(1) td').length
 
-    console.log("rows: "+rowcount+" cols: "+colcount+" total: "+(rowcount*colcount));
 
     var x=0;
     var y=0;
@@ -30,6 +60,7 @@ random = function() {
     find_visited()
 
 }
+
 /*
 Called from the HTML page when the start room is clicked and random_no_ret radio is selected.
 */
@@ -63,94 +94,178 @@ random_no_ret = function() {
 
 }
 
-var find_visited = function() {
-    var visited = $('td').filter(function(){
-        return $(this).css('background-color') == 'rgb(221, 221, 221)';
-    }).length;
+var random_room_weighting = function() {
+    var rowcount = $('table tr').length
+    var colcount = $('table tr:nth-child(1) td').length
 
-    var total = $('.room').length;
+    var x=0;
+    var y=0;
+    var iterations = parseInt($('#count').val());
+    // Gets the number of iterations from the text box on HTML page
+
+    var loop = function(value) {
+
+            // increment its visited weighting
+        w = parseInt($('#x'+x+'y'+y).attr('data-weight'))+1
+        $('#x'+x+'y'+y).attr('data-weight', w);
+        // Get the available exits from the room
+        var exits = get_exits(x,y);
+        console.log("exits = "+exits);
+        // gets a list of available exits based on the number of times the adjacent room have been visited
+        var weighted = get_least_weighted_room(exits,x,y);
 
 
-    console.log("visited = "+visited+" total = "+total );
 
-    coverage = (visited/total) * 100;
+        // select randomly from the list of exits
+        var exit = select_exit(weighted);
+        console.log("Travelling "+exit);
+        var coords = move(exit,x,y);
+        x=coords[0];
+        y=coords[1];
+        // When a room has been visited, change its background color to grey
+        $('#x'+x+'y'+y).css("background-color","#FFF");
+        if (value < iterations) setTimeout(function () {
+            $('#x'+x+'y'+y).css("background-color","#DDD");
+            loop(value + 1);
+            find_visited();
 
-    console.log(coverage+"%");
+        }, 30);
 
-    $('#room_count').text(total);
-    $('#visited').text(visited);
-    $('#coverage').text(coverage)
+    }
+    loop(1);
+}
+
+var random_room_weighting_from_door = function() {
+    var rowcount = $('table tr').length
+    var colcount = $('table tr:nth-child(1) td').length
+
+    var x=0;
+    var y=0;
+    var iterations = parseInt($('#count').val());
+    // Gets the number of iterations from the text box on HTML page
+    var exit="N";
+    $('#x'+x+'y'+y).css("background-color","#DDD");
+    var loop = function(value) {
+    console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+        console.log("[in room] "+$('#x'+x+'y'+y).attr('title'));
+        // increment its visited weighting
+        var w = parseInt($('#x'+x+'y'+y).attr('data-weight'))+1
+        $('#x'+x+'y'+y).attr('data-weight', w);
+        // Get the available exits from the room
+        var exits = get_exits(x,y);
+        console.log("[exits] "+exits);
+        // gets a list of available exits based on the number of times the adjacent room have been visited
+        var weighted = get_least_weighted_room(exits,x,y);
+        // Get door that yoiu have just com in from
+        var from = get_from_door(exit);
+        console.log("[no return through] "+from);
+        // remove from door from the list of exits - as long as it's not the only exit
+        if(weighted.length > 1) {
+            weighted = jQuery.grep(weighted, function(value) {
+                return value != from;
+            });
+        }
+
+
+        // select randomly from the list of exits
+        exit = select_exit(weighted);
+        console.log("[travelling] "+exit);
+        coords = move(exit,x,y);
+        x=coords[0];
+        y=coords[1];
+
+        addDoors(from, exits);
+
+        $('#stop').click(function(){
+            console.log("************ STOPPING");
+            value=iterations;
+        });
+        $('#reset').click(function(){
+            $( "#tablediv" ).empty();
+            $( "#tablediv" ).load( "maze.html #grid" ,function( response, status, xhr ) {
+                if ( status == "error" ) {
+                    var msg = "Sorry but there was an error: ";
+                    $( "#error" ).html( msg + xhr.status + " " + xhr.statusText );
+                }
+                main();
+            });
+        });
+        // When a room has been visited, change its background color to grey
+        $('#x'+x+'y'+y).css("background-color","#F00");
+        if (value < iterations) setTimeout(function () {
+            $('#x'+x+'y'+y).css("background-color","#DDD");
+            loop(value + 1);
+            find_visited();
+
+        },0);
+
+
+
+    }
+    loop(1);
+}
+
+var random_room_manual = function() {
+    rowcount = $('table tr').length
+    colcount = $('table tr:nth-child(1) td').length
+
+    x=0;
+    y=0;
+
+    // Call with a non-direction to indicate we're at the start
+//    from_south();
+    make_move("X");
+
 
 }
 
-/*
-Gets the door that you have just come in from - this will be the opposite from "exit"
-*/
-var get_from_door = function(exit) {
-    if(exit == "N")
-        return "S"
-    if(exit == "E")
-        return "W"
-    if(exit == "S")
-        return "N"
-    if(exit == "W")
-        return "E"
-}
+make_move = function(dir) {
 
-/*
-Takes the value for the move, N, S, E, W and changes the co-ordinates of the current location
-*/
-var move = function(exit,x,y){
+    exit=dir;
+    exits = get_exits(x,y);
+    $('#man').remove();
+    if(exits.indexOf(exit) != -1) {
 
-    if(exit == "N") {
-        y--;
-    }
-    if(exit == "E") {
-        x++;
-    }
-    if(exit == "S") {
-        y++;
-    }
-    if(exit == "W") {
-        x--;
-    }
-    if(exit == "X") {
+        // Get door that you have just come in from
+        from = get_from_door(exit);
+
+        console.log("[travelling] "+exit);
+        coords = move(exit,x,y);
+        x=coords[0];
+        y=coords[1];
+
+        newexits = get_exits(x,y);
+
+        addDoors(from, newexits);
+
+
+
+    } else if(dir == "X") {
+        // This case is when you are in start
+        exit=exits.charAt(0);
+        from=get_from_door(exit);
+        addDoors(from, exits);
+
     }
 
-    return [x,y]
+    console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+    console.log("[in room] "+$('#x'+x+'y'+y).attr('title'));
 
-}
-
-/*
-Gets the exits for the given room based on the border widths
-UPDATE: Also considers the exits that lead nowhere.
-*/
-var get_exits = function(x, y) {
-
-    var exits="";
-    if($('#x'+x+'y'+y).css("borderTopWidth") == "1px" && $('#x'+x+'y'+(y-1)).attr('class') == "room") {
-        exits+="N";
-    }
-    if($('#x'+x+'y'+y).css("borderRightWidth") == "1px" && $('#x'+(x+1)+'y'+y).attr('class') == "room" ) {
-        exits+="E";
-    }
-    if($('#x'+x+'y'+y).css("borderBottomWidth") == "1px" && $('#x'+x+'y'+(y+1)).attr('class') == "room") {
-        exits+="S";
-    }
-    if($('#x'+x+'y'+y).css("borderLeftWidth") == "1px" && $('#x'+(x-1)+'y'+y).attr('class') == "room") {
-        exits+="W";
-    }
-
-    console.log("exits: "+exits);
-
-    return exits
-}
-
-/*
-Randomly selects an exit from the available exits.
-*/
-var select_exit = function(exits) {
-    var arr = Array.from(exits);
-    var direction = arr[Math.floor(Math.random() * arr.length)];
-    return direction;
+    // Get the available exits from the room
+//    exits = get_exits(x,y);
+    console.log("[exits] "+exits);
+    find_visited();
+    // When a room has been visited, change its background color to grey
+    $('#x'+x+'y'+y).css("background-color","#DDD");
+    if(from == "S")
+        man="^";
+    if(from == "N")
+        man="v";
+    if(from == "W")
+        man=">";
+    if(from == "E")
+        man="<";
+    $('#x'+x+'y'+y).append($("<div id='man'>"+man+"</div>"));
+    r_name = $('#x'+x+'y'+y).attr("data-name");
+    $('#roomname').text(r_name)
 }

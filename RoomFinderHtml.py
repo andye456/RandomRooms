@@ -8,25 +8,25 @@ html="""
 <html><head>
 <style>
 td {height:15px; width:10px;}
+canvas {
+  position: absolute;
+  top: 165;
+  left: 750;
+}
+.direction {
+    border: 1px black solid;
+    cursor: pointer
+}
 </style>
-<script type="text/javascript" src="JS/jquery/jquery-341.js"></script>
+<script type="text/javascript" src="JS/roomutils.js"></script>
+<script type="text/javascript" src="JS/graphics.js"></script>
 <script type="text/javascript" src="JS/explore.js"></script>
+<script type="text/javascript" src="JS/jquery/jquery-341.js"></script>
 <script>
 $(document).ready(function () {
-    // Make pointer into a hand
-    $('#x0y0').hover(function() {
-        $(this).css('cursor','pointer');
-    });
-    // Call the solver when the start room is clicked
-    $('#x0y0').click(function(){
-        var radioValue = $("input[name='rule']:checked").val();
-            if(radioValue == "random"){
-                random();
-            }
-            if(radioValue == "random_no_ret"){
-                random_no_ret();
-            }    
-    });
+
+    main();
+    
 });
 
 </script>
@@ -35,21 +35,20 @@ $(document).ready(function () {
 <table>
 <tr>
     <td>
-        <table>
-        <tr><td></td><td>&#8679</td><td></td></tr>
-        <tr><td>&#8678</td><td></td><td>&#8680</td></tr>
-        <tr><td></td><td>&#8681</td><td></td></tr>
-        </table>
     </td>
     <td style='width:350px'>
         <table  style='width:350px'>
             <tr>
                 <td>
+                    <label><input type="radio" name="rule" value="manual">Manual selection</label>
+                    <br/>
                     <label><input type="radio" name="rule" value="random">Random selection of available</label>
                     <br/>
                     <label><input type="radio" name="rule" value="random_no_ret">Random, but don't use door entered from</label>
                     <br/>
-                    <label><input type="radio" name="rule" value="random_weighted">When a door is used increment it weighting</label>
+                    <label><input type="radio" name="rule" value="random_weighted">When a room is visited increment it weighting</label>
+                    <br/>
+                    <label><input type="radio" name="rule" value="random_weighted_from">Increment visited weighting and no return</label>
                 </td>
             </tr>
         </table>
@@ -65,9 +64,15 @@ $(document).ready(function () {
 </table>
 <!-- Iterations that the maze solver is going to use. -->
 Iterations: <input type='text' id="count"></input><br />
-Then click on the S in the grid below
+Then click on the S in the grid below<br />
+<button id='stop'>STOP</button>
+<button id='reset'>RESET</button>
+<div id='error'></div>
+<div  id='roomname'></div>
+<table>
+<tr><td>
 """
-html+="<table id='grid' style='border:1px black solid; border-collapse:separate; width: max-content'>"
+html+="<div id='tablediv'><table id='grid' style='border:1px black solid; border-collapse:separate; width: max-content'>"
 
 color=""
 # Open the serialised data file in read/binary mode
@@ -138,7 +143,7 @@ for row in range(len(grid)):
                 xref=elem - x_tx
                 yref=row - y_tx
                 heat_color=format(255-int(v),'02x')
-                html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";"\
+                html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' data-weight='0' data-name='"+str(room_ref[elem - x_tx, row - y_tx].name)+"' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";"\
                       +color+"; background-color:#FF"+ heat_color+"FF; font-size:12px; text-align: center'>"
                 # html+=str(room_ref[elem - x_tx, row - y_tx].visits)
                 html+=text
@@ -147,7 +152,9 @@ for row in range(len(grid)):
         html+="</td>"
     print(".", end='')
     html+="</tr>"
-html+="</table></body></html>"
+html+="""</table></div></td>
+<td id='canvasid'><canvas id='viewer' width='400' height='400'></canvas></td></tr>
+</table></body></html>"""
 f.close()
 with open("maze.html","w") as h:
     h.write(html)

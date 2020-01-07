@@ -89,3 +89,7 @@ The number of iterations to use when navigating the rooms is set in the text box
 
 #### Starting the room navigation
 Click on the start room, indicated with an "S"
+
+### Manual Navigation
+If you select manual navigation then you can only navigate by clicking on the doors in the 3D view.
+Your location and direction is shown on the grid.
