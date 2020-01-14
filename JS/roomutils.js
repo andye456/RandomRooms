@@ -190,8 +190,10 @@ addDoors = function(from, exits) {
 from_west = function() {
 
     $('#up').attr('onclick', "make_move('E')");
+    $('#up').text('E');
     $('#down').attr('onclick', "make_move('W')");
     $('#left').attr('onclick', "make_move('N')");
+    $('#left').text('N');
     $('#right').attr('onclick', "make_move('S')");
 }
 

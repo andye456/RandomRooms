@@ -1,8 +1,11 @@
-import operator
-a={"N":10, "E":2, "S":2, "W":1000}
+class Test():
 
+    def print_max(self):
+        b=2
+        a=[]
+        a = [1,2,3,4,5,6,5,4,3,2,1]
+        print(max(a))
 
-b = sorted(a.items(), key=operator.itemgetter(1))
-print(b)
-s = [item for item in b[0][0]]
-print(s[0])
+if __name__ == "__main__":
+    t = Test()
+    t.print_max()

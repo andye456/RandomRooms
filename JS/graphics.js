@@ -6,7 +6,7 @@ init_room = function() {
 drawRoom = function() {
     ctx.fillStyle = '#FFF';
 
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     // outer view
 
     ctx.strokeStyle = '#000'

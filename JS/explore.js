@@ -245,7 +245,7 @@ make_move = function(dir) {
         exit=exits.charAt(0);
         from=get_from_door(exit);
         addDoors(from, exits);
-
+        $('#x'+x+'y'+y).empty();
     }
 
     console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
