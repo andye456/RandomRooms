@@ -9,6 +9,8 @@ import RoomUtils
 class RandomRooms():
 
     def create_rooms(self, iter):
+
+        print("Creating "+iter+" rooms!")
         # Read random words from a file
         WORDS=[]
         f = open ("words.txt", "r")
@@ -132,8 +134,8 @@ class RandomRooms():
                 wrong_direction+=1
 
             i+=1
-            print(i)
-            if i == iter:
+            print("Iteration: "+str(i))
+            if i == int(iter):
                 # This bit also dumps the RoomMatrix to an external binary file.
                 grid = matrix.get_room_grid()
                 print("New Rooms = "+str(unique))
@@ -142,6 +144,6 @@ class RandomRooms():
                 break
 
 
-if __name__ == "__main__":
-    r = RandomRooms()
-    r.create_rooms(100)
+# if __name__ == "__main__":
+#     r = RandomRooms()
+#     r.create_rooms(100)

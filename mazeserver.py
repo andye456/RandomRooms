@@ -18,7 +18,7 @@ class MyServer(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
-
+    # Serve all pages
     def do_GET(self):
         self._set_response()
         with open(self.path.strip("/"), 'r') as file:
@@ -34,9 +34,9 @@ class MyServer(BaseHTTPRequestHandler):
                 str(self.path), str(self.headers), post_data.decode('utf-8'))
 
         self._set_response()
-        self.wfile.write(post_data)
+        val = post_data.decode('utf-8').split("=")[1]
         r = RandomRooms()
-        r.create_rooms(100)
+        r.create_rooms(val)
         f = RoomFinderHtml()
         f.find_rooms_html()
 

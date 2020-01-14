@@ -9,6 +9,7 @@ class RoomFinderHtml():
     def find_rooms_html(self):
         html="""
         <html><head>
+        <link rel="icon" href="data:,">
         <style>
         td {height:15px; width:10px;}
         canvas {
@@ -20,7 +21,7 @@ class RoomFinderHtml():
             border: 1px black solid;
             cursor: pointer
         }
-        
+
         </style>
         <script type="text/javascript" src="JS/roomutils.js"></script>
         <script type="text/javascript" src="JS/graphics.js"></script>
@@ -39,7 +40,7 @@ class RoomFinderHtml():
         <table>
         <tr>
             <td>
-                <form method="POST">
+                <form method="POST" target="_self">
                 <table>
                 <tr><td>Create iterations:</td><td><input type="text" name="iter" value="1000"></td>
                 <tr><td>Click to generate:</td><td><input type="submit" value="start"></td></tr>
