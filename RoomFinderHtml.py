@@ -11,16 +11,38 @@ class RoomFinderHtml():
         <html><head>
         <link rel="icon" href="data:,">
         <style>
-        td {height:15px; width:10px;}
-        canvas {
-          position: absolute;
-          top: 165;
-          left: 750;
+        td {
+            height:15px; 
+            width:10px;
         }
+
         .direction {
-            border: 1px black solid;
-            cursor: pointer
+            cursor: pointer;
+            color: rgb(195, 8, 8);
+        } 
+
+        #images {
+            table-layout: fixed;
+            width:500px;
+            border-collapse: collapse;
         }
+        #images td {
+            /*border: 1px green solid;*/
+        }
+        
+        #left {
+            width:273px;
+            height:550px;
+        }
+        #right {
+            width:273px;
+            height:550px
+        }
+        #up {
+            width:182px;
+            height: 550px;
+        }
+
 
         </style>
         <script type="text/javascript" src="JS/roomutils.js"></script>
@@ -40,9 +62,9 @@ class RoomFinderHtml():
         <table>
         <tr>
             <td>
-                <form method="POST" target="_self">
+                <form method="POST" target="maze.html">
                 <table>
-                <tr><td>Create iterations:</td><td><input type="text" name="iter" value="1000"></td>
+                <tr><td>Create iterations:</td><td><input type="text" name="iter" value="100"></td>
                 <tr><td>Click to generate:</td><td><input type="submit" value="start"></td></tr>
                 </table>
                 </form>
@@ -74,14 +96,14 @@ class RoomFinderHtml():
         <tr>
         </table>
         <!-- Iterations that the maze solver is going to use. -->
-        Iterations: <input type='text' id="count"></input><br />
+        Iterations: <input type='text' id="count" value='500'></input><br />
         Then click on the S in the grid below<br />
         <button id='stop'>STOP</button>
         <button id='reset'>RESET</button>
         <div id='error'></div>
         <div  id='roomname'>Room Name:</div>
-        <table>
-        <tr><td>
+        <table width=100%>
+        <tr><td style="width:fit-content">
         """
         html+="<div id='tablediv'><table id='grid' style='border:1px black solid; border-collapse:separate; width: max-content'>"
 
@@ -143,12 +165,16 @@ class RoomFinderHtml():
                             style_w = 'border-left:dashed 1px black'
                         else:
                             style_w = 'border-left:2px black solid'
+
+                        color = "border-color:black"
+                        print("Name: "+room_ref[elem - x_tx, row - y_tx].name)
                         if room_ref[elem - x_tx, row - y_tx].name == "Start":
                             color="border-color:red"
                             text="S"
-                        else:
-                            color = "border-color:black"
-                            v=(newrange/oldrange)*room_ref[elem - x_tx, row - y_tx].visits
+                        if room_ref[elem - x_tx, row - y_tx].name == "Exit":
+                            color="border-color:Green"
+                            text="E"
+                        v=(newrange/oldrange)*room_ref[elem - x_tx, row - y_tx].visits
 
                         xref=elem - x_tx
                         yref=row - y_tx
@@ -163,12 +189,20 @@ class RoomFinderHtml():
             print(".", end='')
             html+="</tr>"
         html+="""</table></div></td>
-        <td id='canvasid'><canvas id='viewer' width='400' height='400'></canvas></td></tr>
+        <td>
+        <table id="images">
+            <tr>
+                <td class="direction" id='left'></td>
+                <td class="direction" id='up'></td>
+                <td class="direction" id='right'></td>
+            </tr>
+            <tr><td class="direction" colspan="3" id="down"></td>
+            </table>
         </table></body></html>"""
         f.close()
         with open("maze.html","w") as h:
             h.write(html)
 
 if __name__ == "__main__":
-    f = RoomFinderHtml()
-    f.find_rooms_html()
+    rf = RoomFinderHtml()
+    rf.find_rooms_html()

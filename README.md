@@ -17,22 +17,52 @@ Random Rooms is written in Python for portability and fast prototyping.
 ### Objects
 
 #### Room
-This is a class that creates a room with a certain number of exits.
-The exits are a combination of N,E,S,W and are created according to the above rules.
-The room is given a name and an "item" for the user to see.
+This is a class that defines a room with a certain number of exits.
+
+The exits are defined as a binary number as follows: 
+
+    N = 1000
+    E = 0100
+    S = 0010
+    W = 0001
+
+The exits are created according to the rules described in the section *"Procedural generation of environment"*.
+
+    Attributes:
+    name: chosen at random from a dictionary
+    description: chosen at random from the same dictionary
+    N: 1 or 0 to indicate whether the room has an exit this way
+    S: ditto
+    E: ditto
+    W: ditto
+    N_weight: The number of times this door has been used
+    S_weight: ditto
+    E_weight: ditto
+    W_weight: ditto
+    door_weights: a dictionary of the above values, e.g. {'N':1, 'E':0. 'S':1, 'W': 1}
+    visits: The number of times this room has been visited
+    from_door: decimal 1-15 to indicate which door you've come from
+    room_code_bin: 0000 to 1111 to indicate the doors
+    room_code_int: decimal representation of the above. 
+    
 
 #### RoomMatrix
 This class stores the rooms with their location in the grid. The start - the first room - is always created at 0,0, this is x=0,y=0.
-Going North y=y-1, south y=y+1
-West x=x-1, East x=x+1
-This class also contains a utility method to print out an ascii representation of the current room matrix.
-This method also dumps the RoomMatrix to a binary data file using the python library pickle.
 
+Going North y=y-1, south y=y+1, West x=x-1, East x=x+1
+
+This class also contains a utility method to print out an ascii representation of the current room matrix.
+
+This method also dumps the RoomMatrix to a binary data file using the python library pickle. 
+This means that the whole room matrix can be used and represented by any front end engine. In this example 
+RoomFinderHtml.py is used to render the matrix as a set of rooms that can be explored either manually or by an algorithm.
+ 
 #### RoomUtils
 Utility functions for room generation or navigation
 
 #### RandomRooms
-This is the main class and creates rooms and adds them to the Room Matrix. This is also where you assign the rules engine to generate the rooms.
+This is the main class and creates rooms and adds them to the Room Matrix. 
+This is also where you assign the rules engine to generate the rooms.
 
 #### RoomFinder
 This prints out a crude map of the current rooms
@@ -43,12 +73,16 @@ This renders an html page of the room grid showing the exits, the number of time
 ### Other files
 
 #### data.bin
-This is a data file of the dumped RoomMatrix, this uses the python library pickle.
+This is a data file of the dumped RoomMatrix, this uses the python library pickle. This means that any Python
+program can be used to render what ever they want from this RoomMatrix object.
 
 ## Rules
-The programming exercise for RR is to generate the rooms as efficiently as possible, so minimizing the revisits to rooms.
+The programming exercise for Random Rooms is to generate the rooms as efficiently as possible, 
+so minimizing the revisits to rooms. The following methods are exp[lored to try and find the most efficient 
+way to generate the rooms.
 #### Human input
-Get human input for the directions to travel, this is the most efficient in terms minimumising revisits, but obviously the slowest
+Get human input for the directions to travel, this is the most efficient in terms minimumising revisits, 
+but obviously the slowest
 #### Round Robin
 For every move choose the next direction from NESW in a round-robin fashion
 #### Random
@@ -61,17 +95,25 @@ Pick random direcrtion from the exit directions available, but never uses the en
 ##### On exit
 Every time a door is used to leave a room, the weighting on that door is incremented
 ##### On entry
-Every time a door is used to enter a room, the weighting on that door is incremented, this includes initial creation
+Every time a door is used to enter a room, the weighting on that door is incremented, 
+this includes initial creation
 ##### On exit and entry
 Every time a door is used to enter or leave a room the weighting on both doors in incremented
 #### Use every exit in a room
 This will explore every exit a room has
 
-## Navigating the rooms
+## Navigating the rooms using JQuery
 
-This was an afterthought really, it's actually fairly simple to write a JavaScript function or two to navigate round the maze once it has been created and rendered in HTML.
+RandomeRoomsHtml renders the random matrix as a set of rooms (the initial intention) on a web page. 
+This random matrix of rooms can be used as a "level" or a predefined set of rooms. 
+The javascript has been written to use the html as the "game" and the controls to navigate the "level" are
+written in javascript.
+There are things that aren't known until the full matrix as been created:
+* number of visits to each room by the creation algorithm. 
+* The exit - this is defined as the last room created.
 
-To make the navigation possible each table cell that represents a room will be given an id of xpos,ypos, e.g. id='x-10y17', this enables the rooms to be easily identified using css selectors in JQuery. 
+To make the navigation possible by javascript each table cell that represents a room will be given an 
+id of xpos,ypos, e.g. id='x-10y17', this enables the rooms to be easily identified using css selectors in JQuery. 
 
 ### Doors
 The doors are indicated on the HTML table by making the side of the table cell 1px wide and dashed, non exits are solid 2px wide table cell edges.
@@ -93,3 +135,11 @@ Click on the start room, indicated with an "S"
 ### Manual Navigation
 If you select manual navigation then you can only navigate by clicking on the doors in the 3D view.
 Your location and direction is shown on the grid.
+
+### 3D view
+There is a simple 3D view created using HTML canvas. This will be replaced by some graphics placed in divs that
+are made visible when necessary:
+
+Rooms with the following sets of exits (there will always be the exit you came from)
+* N, NW, NE, NEW
+Room types can be based on the number of times that room was visited during it's creation.

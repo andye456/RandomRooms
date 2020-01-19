@@ -133,18 +133,26 @@ var get_least_weighted_room = function(exits,x,y) {
 
 }
 
+
+
+
 addDoors = function(from, exits) {
     // Show the 3D room
-    drawRoom();
+
+    // Initially sets no exits - a dead-end
+
+    var left_img='./images/left_NO.jpg';
+    var right_img='./images/right_NO.jpg';
+    var ahead_img='./images/ahead_NO.jpg';
 
     if(from == "N"){
         Array.from(exits).forEach(function(item, index) {
             if(item == "E")
-                addLeft();
+                left_img='../images/left_OK.jpg';
             if(item == "S")
-                addAhead();
+                ahead_img='../images/ahead_OK.jpg';
             if(item == "W")
-                addRight();
+                right_img='../images/right_OK.jpg';
         });
         from_north();
     }
@@ -152,11 +160,12 @@ addDoors = function(from, exits) {
     if(from == "E") {
         Array.from(exits).forEach(function(item, index) {
             if(item == "N")
-                addRight();
+                right_img='../images/right_OK.jpg';
             if(item == "S")
-                addLeft();
+                left_img='../images/left_OK.jpg';
             if(item == "W")
-                addAhead();
+                ahead_img='../images/ahead_OK.jpg';
+
         });
         from_east();
     }
@@ -164,11 +173,11 @@ addDoors = function(from, exits) {
     if(from == "S") {
         Array.from(exits).forEach(function(item, index) {
             if(item == "N")
-                addAhead();
+                ahead_img='../images/ahead_OK.jpg';
             if(item == "E")
-                addRight();
+                right_img='../images/right_OK.jpg';
             if(item == "W")
-                addLeft();
+                left_img='../images/left_OK.jpg';
         });
         from_south();
     }
@@ -176,47 +185,76 @@ addDoors = function(from, exits) {
     if(from == "W") {
         Array.from(exits).forEach(function(item, index) {
             if(item == "N")
-                addLeft();
+                left_img='../images/left_OK.jpg';
             if(item == "E")
-                addAhead();
+                ahead_img='../images/ahead_OK.jpg';
             if(item == "S")
-                addRight();
+                right_img='../images/right_OK.jpg';
         });
         from_west();
     }
+
+//    $('#right').append("<img src='"+right_img+"' style='width:100%'/>");
+//    $('#left').append("<img src='"+left_img+"' style='width:100%'/>");
+//    $('#up').append("<img src='"+ahead_img+"' style='width:100%'/>");
+    $('#right').css({'background':'url('+right_img+')','background-size':'contain','background-repeat': 'no-repeat', 'text-align': 'center'});
+    $('#left').css({'background':'url('+left_img+')','background-size':'contain','background-repeat': 'no-repeat', 'text-align': 'center'});
+    $('#up').css({'background':'url('+ahead_img+')','background-size':'contain','background-repeat': 'no-repeat', 'text-align': 'center'});
+
 }
 
-// These functions change what the up/down/left/right buttons do depending on wich direction you came into the room from
+// These functions change the direction you are taken (NESW) when you click on a door depending on which direction you came in to the room from.
 from_west = function() {
 
+//    $('#up').css({"color":"#FFF", "text-align":"center"});
     $('#up').attr('onclick', "make_move('E')");
     $('#up').text('E');
+    $('#down').css({"text-align":"center"});
     $('#down').attr('onclick', "make_move('W')");
+    $('#down').text('W')
     $('#left').attr('onclick', "make_move('N')");
     $('#left').text('N');
     $('#right').attr('onclick', "make_move('S')");
+    $('#right').text('S');
 }
 
 from_east = function() {
 
+//    $('#up').css({"color":"#FFF", "text-align":"center"});
     $('#up').attr('onclick', "make_move('W')");
+    $('#up').text('W');
+    $('#down').css({"text-align":"center"});
     $('#down').attr('onclick', "make_move('E')");
+    $('#down').text('E')
     $('#left').attr('onclick', "make_move('S')");
+    $('#left').text('S');
     $('#right').attr('onclick', "make_move('N')");
+    $('#right').text('N');
 }
 
 from_south = function() {
-
+//    $('#up').css({"color":"#FFF", "text-align":"center"});
     $('#up').attr('onclick', "make_move('N')");
+    $('#up').text('N');
+    $('#down').css({"text-align":"center"});
     $('#down').attr('onclick', "make_move('S')");
+    $('#down').text('S')
     $('#left').attr('onclick', "make_move('W')");
+    $('#left').text('W');
     $('#right').attr('onclick', "make_move('E')");
+    $('#right').text('E');
 }
 
 from_north = function() {
 
+//    $('#up').css({"color":"#FFF", "text-align":"center"});
     $('#up').attr('onclick', "make_move('S')");
+    $('#up').text('S');
+    $('#down').css({"text-align":"center"});
     $('#down').attr('onclick', "make_move('N')");
+    $('#down').text('N')
     $('#left').attr('onclick', "make_move('E')");
+    $('#left').text('E');
     $('#right').attr('onclick', "make_move('W')");
+    $('#right').text('W');
 }

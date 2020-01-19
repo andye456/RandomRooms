@@ -28,7 +28,7 @@ var main = function() {
         });
 
         // initialise the canvas
-        init_room();
+//        init_room();
 
 
 
@@ -244,6 +244,7 @@ make_move = function(dir) {
         // This case is when you are in start
         exit=exits.charAt(0);
         from=get_from_door(exit);
+        exits
         addDoors(from, exits);
         $('#x'+x+'y'+y).empty();
     }

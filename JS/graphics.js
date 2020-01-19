@@ -1,3 +1,5 @@
+
+
 init_room = function() {
     ctx = document.getElementById('viewer').getContext('2d');
 

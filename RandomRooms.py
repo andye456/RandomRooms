@@ -10,7 +10,7 @@ class RandomRooms():
 
     def create_rooms(self, iter):
 
-        print("Creating "+iter+" rooms!")
+        print("Creating "+str(iter)+" rooms!")
         # Read random words from a file
         WORDS=[]
         f = open ("words.txt", "r")
@@ -26,7 +26,6 @@ class RandomRooms():
         room.create_room(15,(1,15))
         # Creates the room matrix with the first room
         matrix = RoomMatrix(room)
-        all_directions=['N','E','S','W']
         # iterator
         i=0
         unique=0
@@ -136,6 +135,9 @@ class RandomRooms():
             i+=1
             print("Iteration: "+str(i))
             if i == int(iter):
+                room = matrix.getRoom(x_pos, y_pos)
+                room.name="Exit"
+                room.description="The way out"
                 # This bit also dumps the RoomMatrix to an external binary file.
                 grid = matrix.get_room_grid()
                 print("New Rooms = "+str(unique))
@@ -144,6 +146,6 @@ class RandomRooms():
                 break
 
 
-# if __name__ == "__main__":
-#     r = RandomRooms()
-#     r.create_rooms(100)
+if __name__ == "__main__":
+    r = RandomRooms()
+    r.create_rooms(1000)
