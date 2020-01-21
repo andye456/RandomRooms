@@ -107,7 +107,7 @@ class RoomFinderHtml():
                         </div>
                 
                     </div>
-                    <div class="row"> <!-- row 2 -->
+                    <div class="row" style="height:700px"> <!-- row 2 -->
                         <div class="col border border-primary rounded overflow-auto" id='tablediv'>
                             <table id='grid' style='border:0px black solid; border-collapse:separate;'>
         """
