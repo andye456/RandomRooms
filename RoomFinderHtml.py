@@ -42,7 +42,10 @@ class RoomFinderHtml():
             width:182px;
             height: 550px;
         }
-
+        img {
+            height:534px;
+            width:100%;
+        }
 
         </style>
         <script type="text/javascript" src="JS/roomutils.js"></script>
@@ -167,7 +170,7 @@ class RoomFinderHtml():
                             style_w = 'border-left:2px black solid'
 
                         color = "border-color:black"
-                        print("Name: "+room_ref[elem - x_tx, row - y_tx].name)
+                        # print("Name: "+room_ref[elem - x_tx, row - y_tx].name)
                         if room_ref[elem - x_tx, row - y_tx].name == "Start":
                             color="border-color:red"
                             text="S"
@@ -197,8 +200,8 @@ class RoomFinderHtml():
                 <td class="direction" id='right'></td>
             </tr>
             <tr><td class="direction" colspan="3" id="down"></td>
-            </table>
-        </table></body></html>"""
+        </table>
+    </table></body></html>"""
         f.close()
         with open("maze.html","w") as h:
             h.write(html)
