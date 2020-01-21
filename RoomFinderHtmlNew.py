@@ -47,11 +47,12 @@ class RoomFinderHtml():
                     }
                 </style>
                 <script type="text/javascript" src="JS/roomutils.js"></script>
-                <script type="text/javascript" src="JS/graphics.js"></script>
+                <script type="text/javascript" src="JS/render_rooms.js"></script>
                 <script type="text/javascript" src="JS/explore.js"></script>
                 <script type="text/javascript" src="JS/jquery/jquery-341.js"></script>
                 <script type="text/javascript" src="JS/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
                 <link rel="stylesheet" href="JS/bootstrap-4.4.1-dist/css/bootstrap.min.css">
+                <link rel="stylesheet" href="css/room.css">
                 <script>
                     $(document).ready(function () {       
                         main();            
@@ -195,15 +196,8 @@ class RoomFinderHtml():
                                 </tr>
                             </table>
                         </div>
-                        <div class="col border border-primary rounded">
-                            <div class="row"  style="width:720px" > <!-- row 1 -->
-                                <div class="col-4 " id='left'></div>
-                                <div class="col-4 " id='up'></div>
-                                <div class="col-4 " id='right'></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12 " id="down"></div>
-                            </div>
+                        <div class="col border border-primary rounded" style="text-align:center;padding-top:50px;">
+                           <div id="room"></div>
                         </div> 
                     </div> <!-- END row 2 -->
                 </div> <!-- END container -->

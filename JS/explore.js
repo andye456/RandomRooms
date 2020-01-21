@@ -28,7 +28,7 @@ var main = function() {
         });
 
         // initialise the canvas
-//        init_room();
+        init_room();
 
 
 

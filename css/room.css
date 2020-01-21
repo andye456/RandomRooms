@@ -1,0 +1,15 @@
+#room {
+    position:relative;
+    width: 600px;
+    height: 400px;
+    border: 1px black solid;
+    display: inline-block;
+
+}
+
+#player {
+    position: absolute;
+    background: url(/images/wizard.jpg) no-repeat;
+    width: 51px;
+    height: 79px;
+}
