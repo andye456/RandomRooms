@@ -251,6 +251,28 @@ make_move = function(dir) {
     console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
     console.log("[in room] "+$('#x'+x+'y'+y).attr('title'));
 
+    // Send the room name to the server using the do_POST
+    data={room_x: x, room_y: y};
+    d = JSON.stringify(data);
+
+    // Looks up the room data from the serverside using the current position as the key
+    // to get the object from the datastore object - the bin file created by the pickle utility
+    $.post("maze.html",d)
+        .done(function(d2) {
+        ht = JSON.parse(d2);
+        h = "<table>";
+        h+= "<tr><td>You are in a place called</td><td>"+ht['room_data']['room_name']+"</td><tr>";
+        if(typeof ht['char_data'] != 'undefined') {
+            h+= "<tr><td style='width:150px'>Also here is</td><td>"+ht['char_data']['name']+"</td><tr>"
+            h+= "<tr><td style='width:150px'>..who is a </td><td>"+ht['char_data']['race']+"&nbsp"+ht['char_data']['class']+"</td><tr>"
+            h+= "<tr><td style='width:150px'>and is </td><td>"+ht['char_data']['race']+"&nbsp"+ht['char_data']['class']+"</td><tr>"
+        }
+
+        $('#dialog').html(h);
+        console.log(d2);
+    });
+
+
     // Get the available exits from the room
 //    exits = get_exits(x,y);
     console.log("[exits] "+exits);

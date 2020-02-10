@@ -14,6 +14,29 @@ When you leave a room through an exit a new room is generated as follows:
 ## Design
 Random Rooms is written in Python for portability and fast prototyping.
 
+## Latest News
+Random Rooms has evolved from a just a procedurally generated maze of rooms, then to to include a 
+3D representation of the maze, then the 3D view has been replaced by a
+top down view with a wizard character that you can control. The machine solving of the maze in Javascript
+was an academic exercise and will not be progrsees, except the techniques may be applied to the movement 
+of computer controlled characters.
+
+The direction that this project will follow now is based on the AD&D rules and characters, the maze 
+representation will be kept, but any other graphics will be replaced by a test display.
+
+Other characters in the maze will be procedurally generated and will follow the AD&D personas, 
+i.e. Race-Class 
+e.g. Dwarf-Ranger etc.
+
+The rules, objects, trading system and powers etc. are all derived from from the book:
+
+***Advanced Dungeons and Dragons Players Handbook***
+
+**by Gary Gyrax 1978 - TSR Games**
+
+**ISBN 0-935696-01-6**
+
+
 ### Objects
 
 #### Room
@@ -72,7 +95,7 @@ This renders an html page of the room grid showing the exits, the number of time
 
 ### Other files
 
-#### data.bin
+#### rooms.bin
 This is a data file of the dumped RoomMatrix, this uses the python library pickle. This means that any Python
 program can be used to render what ever they want from this RoomMatrix object.
 
@@ -132,14 +155,42 @@ The number of iterations to use when navigating the rooms is set in the text box
 #### Starting the room navigation
 Click on the start room, indicated with an "S"
 
-### Manual Navigation
+### Manual Navigation - deprecated
 If you select manual navigation then you can only navigate by clicking on the doors in the 3D view.
 Your location and direction is shown on the grid.
 
-### 3D view
+### 3D view - deprecated
 There is a simple 3D view created using HTML canvas. This will be replaced by some graphics placed in divs that
 are made visible when necessary:
 
 Rooms with the following sets of exits (there will always be the exit you came from)
 * N, NW, NE, NEW
 Room types can be based on the number of times that room was visited during it's creation.
+
+### MVC
+The logic will be removed from the Javascript layer and will be handled by the server-side python.
+This will be based on the location and other input attributes of the player being POSTed to the 
+server every time an action is performed.
+There are currently 2 interactive objects to consider
+* The room matrix
+* The characted matrix
+
+Both have the same size and layout and are referenced by the players X & Y coordinates.
+
+There will always be an exit and eventually a shop or other trasding entities - other characters
+can be traded with.
+
+Other layers to consider for inclusion are an object layer to represent objects in the maze that the
+characters can use or otherwise interact with.
+
+### Navigation
+Navigation will be done by typing in N,S,E,W in the scrolling text interface.
+Maybe if a certain spell/magic is used a character can teleport to a certain room.
+
+### Characters
+Characters are assigned according to how ofter a room was generated during maze creation. (initially anyway)
+The race/class are chosen at random and this will dictate whether they are friend or foe according to the 
+"Racial Preference Table" on page 18 of the TSR Handbook.
+
+The player's character will have a level whgich will dictate how goos at things it is all this is in the
+TSR Handbook. 

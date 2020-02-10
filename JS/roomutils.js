@@ -133,10 +133,48 @@ var get_least_weighted_room = function(exits,x,y) {
 
 }
 
-
-
-
 addDoors = function(from, exits) {
+    $('#north_door').hide();
+    $('#east_door').hide();
+    $('#south_door').hide();
+    $('#west_door').hide();
+
+    if(from == "N") {
+        $('#player').css('top', '300px');
+        $('#player').css('left', '300px');
+    }
+    if(from == "E") {
+        $('#player').css('top', '300px');
+        $('#player').css('left', '300px');
+    }
+    if(from == "S") {
+        $('#player').css('top', '300px');
+        $('#player').css('left', '300px');
+    }
+    if(from == "W") {
+        $('#player').css('top', '300px');
+        $('#player').css('left', '300px');
+    }
+
+    Array.from(exits).forEach(function(item, index) {
+        if(item == "N") {
+            $('#north_door').show();
+        }
+        if(item == "E") {
+            $('#east_door').show();
+        }
+        if(item == "S") {
+            $('#south_door').show();
+        }
+        if(item == "W") {
+            $('#west_door').show();
+        }
+    });
+
+}
+
+
+addDoors_old = function(from, exits) {
     // Show the 3D room
 
     // Initially sets no exits - a dead-end
@@ -258,3 +296,4 @@ from_north = function() {
     $('#right').attr('onclick', "make_move('W')");
     $('#right').text('W');
 }
+

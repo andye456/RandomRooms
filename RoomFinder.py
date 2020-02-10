@@ -4,17 +4,17 @@ RoomFinder will load a previously created matrix of rooms and using various algo
 """
 from Room import Room
 from RoomMatrix import RoomMatrix
-import pickle
+import dill
 import RoomUtils
 
 
 # Open the serialised data file in read/binary mode
-f = open("data.bin", "rb")
+f = open("rooms.bin", "rb")
 
 x = []
 y = []
 # Load the saved data dictionary.
-room_ref=pickle.load(f)
+room_ref=dill.load(f)
 
 # Iterate through the rooms in the dictionary
 for i, j in room_ref:

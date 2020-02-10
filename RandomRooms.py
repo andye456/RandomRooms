@@ -1,14 +1,37 @@
 import operator
-from random import randrange
 import random
-import sys
+from enum import Enum
+from random import randrange
+
+import RoomUtils
+from CharacterMatrix import CharacterMatrix
 from Room import Room
 from RoomMatrix import RoomMatrix
-import RoomUtils
+
+from characters.classes.Ranger import Ranger
+from characters.classes.Druid import Druid
+from characters.classes.Illusionist import Illusionist
+from characters.classes.Monk import Monk
+from characters.classes.Paladin import Paladin
+from characters.classes.Assassin import Assassin
+
+from characters.race.Gnome import Gnome
+from characters.race.Elf import Elf
+from characters.race.Half_Orc import Half_Orc
+from characters.race.Half_Elf import Half_Elf
+from characters.race.Halfling import Halfling
+from characters.race.Human import Human
+from characters.race.Dwarf import Dwarf
+
 
 class RandomRooms():
 
+    CHAR_CLASS = Enum('char_class', 'Druid Paladin Ranger Illusionist Assassin Monk')
+
+    CHAR_RACE = Enum('char_race', 'Elf Gnome Dwarf Half_Elf Halfling Half_Orc Human')
+
     def create_rooms(self, iter):
+
 
         print("Creating "+str(iter)+" rooms!")
         # Read random words from a file
@@ -25,7 +48,11 @@ class RandomRooms():
         room = Room("Start", "salt")
         room.create_room(15,(1,15))
         # Creates the room matrix with the first room
-        matrix = RoomMatrix(room)
+        room_matrix = RoomMatrix()
+        room_matrix.addRoom((0,0),room)
+
+        character_matrix = CharacterMatrix()
+
         # iterator
         i=0
         unique=0
@@ -101,13 +128,13 @@ class RandomRooms():
                     from_door=1
                     x_pos-=1
                 if (direction.upper() == "R"):
-                    matrix.get_room_grid()
+                    room_matrix.get_room_grid()
 
                 entry_door = RoomUtils.get_opposite_door(direction)
 
                 try:
                     # if the room exists use it
-                    room =  matrix.getRoom(x_pos,y_pos)
+                    room =  room_matrix.getRoom(x_pos,y_pos)
                     # increment the number of visits to this room
                     room.visits+=1
                     # find the door that was entered from and increment it's weight
@@ -115,31 +142,52 @@ class RandomRooms():
                     print("************** ROOM FOUND **************")
                     print ("You are back in "+room.name+", You can see "+room.description)
                     found_again+=1
+
+                    # Add a character if the room already exists and the number of visits is over a certain amount (experimental)
+                    if found_again > 3:
+                        # Randomly selects a class and race from the available Enums
+                        char_class = random.choice(list(self.CHAR_CLASS)).name
+                        char_race = random.choice(list(self.CHAR_RACE)).name
+
+                        # Dynamically creates a character in a certain room
+                        character = type('P'+str(i),(eval(char_class),eval(char_race)), {"_name":random.choice(WORDS), "_char_class":char_class,"_char_race":char_race})
+                        # character = type('P' + str(i), (), {"_name":random.choice(WORDS)})
+                        character_matrix.addCharacter((x_pos,y_pos),character)
+
+
                 except KeyError:
                     # Create a new room
                     unique+=1
                     # Give the room a name and content
                     room = Room(random.choice(WORDS), random.choice(WORDS))
                     # Find adjacent rooms and any doors that should be created to them
-                    int_door_ref=RoomUtils.find_neighbours(matrix,x_pos,y_pos)
+                    int_door_ref=RoomUtils.find_neighbours(room_matrix,x_pos,y_pos)
 
                     # TODO: Change from_door to from_doors for multiple doors that are needed.
                     # TODO: Also don't create a room if the neighbour room doesn't have that exit!!!
                     room.create_room(randrange(16), int_door_ref)
                     room.set_door_weight(entry_door)
-                    matrix.addRoom((x_pos,y_pos),room)
+                    room_matrix.addRoom((x_pos,y_pos),room)
+
             else:
                 print("Direction not valid")
                 wrong_direction+=1
 
             i+=1
             print("Iteration: "+str(i))
+            # When all the iterations are done
             if i == int(iter):
-                room = matrix.getRoom(x_pos, y_pos)
+                room = room_matrix.getRoom(x_pos, y_pos)
                 room.name="Exit"
                 room.description="The way out"
-                # This bit also dumps the RoomMatrix to an external binary file.
-                grid = matrix.get_room_grid()
+                # Prints out an ascii representation of the matrix
+                room_matrix.get_room_grid()
+                # dumps the RoomMatrix to an external binary file.
+                room_matrix.dump_rooms_to_binary()
+
+                # dumps the characters to a binary file.
+                character_matrix.dump_chars_to_binary()
+                # Prints some stats
                 print("New Rooms = "+str(unique))
                 print("Revisited = "+str(found_again))
                 print("Wrong direction = "+str(wrong_direction))
@@ -148,4 +196,4 @@ class RandomRooms():
 
 if __name__ == "__main__":
     r = RandomRooms()
-    r.create_rooms(1000)
+    r.create_rooms(100)

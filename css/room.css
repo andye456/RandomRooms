@@ -1,8 +1,6 @@
 #room {
     position:relative;
-    width: 600px;
-    height: 400px;
-    border: 1px black solid;
+    border: 3px black solid;
     display: inline-block;
 
 }
@@ -12,4 +10,66 @@
     background: url(/images/wizard.jpg) no-repeat;
     width: 51px;
     height: 79px;
+}
+
+.line1 {
+    width: 177px;
+    height: 177px;
+    border-bottom: 3px solid black;
+    -webkit-transform:
+        translateY(-90px)
+        translateX(34px)
+        rotate(45deg);
+    position: absolute;
+    /* top: -20px; */
+}
+.line2 {
+    width: 177px;
+    height: 177px;
+    border-bottom: 3px solid black;
+    -webkit-transform:
+        translateY(-60px)
+        translateX(-72px)
+        rotate(-45deg);
+    position: absolute;
+    top: -33px;
+    left: -13px;
+}
+
+#south_door, #north_door {
+    width:125px;
+    height:125px;
+    left:400;
+}
+
+#west_door, #east_door {
+    border: 2px;
+    width:125px;
+    height:125px;
+    top:300;
+    position: absolute
+}
+
+#east_door {
+    left: 3;
+}
+
+#west_door {
+    background: url(/images/west.jpg)  no-repeat;
+}
+
+#north_door {
+    background: url(/images/north.jpg) no-repeat;
+}
+
+#south_door {
+    background: url(/images/south.jpg) no-repeat;
+}
+
+#east_door {
+    background: url(/images/east.jpg) no-repeat;
+}
+
+#dialog {
+    height: 60px;
 }

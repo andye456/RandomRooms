@@ -2,122 +2,124 @@
 RoomFinder will load a previously created matrix of rooms and using various algorithms traverse the maze in the least moves
 
 """
-import pickle
+import dill
 
 class RoomFinderHtml():
 
     def find_rooms_html(self):
         html="""
-        <html><head>
-        <link rel="icon" href="data:,">
-        <style>
-        td {
-            height:15px; 
-            width:10px;
-        }
-
-        .direction {
-            cursor: pointer;
-            color: rgb(195, 8, 8);
-        } 
-
-        #images {
-            table-layout: fixed;
-            width:500px;
-            border-collapse: collapse;
-        }
-        #images td {
-            /*border: 1px green solid;*/
-        }
-        
-        #left {
-            width:273px;
-            height:550px;
-        }
-        #right {
-            width:273px;
-            height:550px
-        }
-        #up {
-            width:182px;
-            height: 550px;
-        }
-        img {
-            height:534px;
-            width:100%;
-        }
-
-        </style>
-        <script type="text/javascript" src="JS/roomutils.js"></script>
-        <script type="text/javascript" src="JS/graphics.js"></script>
-        <script type="text/javascript" src="JS/explore.js"></script>
-        <script type="text/javascript" src="JS/jquery/jquery-341.js"></script>
-        <script>
-        $(document).ready(function () {
-        
-            main();
+        <html>
+            <head>
+                <link rel="icon" href="data:,">
+                <style>
+                    body {padding:20px;}
+                    td {
+                        height:15px; 
+                        width:10px;
+                    }
             
-        });
+                    .direction {
+                        cursor: pointer;
+                        color: rgb(195, 8, 8);
+                    } 
+                    #tablediv {
+                        width:100%;
+                        height:100%;
+                    }
+                    table {
+                        margin: 0 auto; /* or margin: 0 auto 0 auto */
+                    }
+                    #images {
+                        table-layout: fixed;
+                        width:500px;
+                        border-collapse: collapse;
+                    }
+                    #left,#right,#up {
+                        height:532px;
+                        cursor: pointer;
+                        color: rgb(195, 8, 8);
+                        background-size:100% 100%;
+                    }
+                    #down {
+                        cursor: pointer;
+                        color: rgb(195, 8, 8);
+                        background-size:100% 100%;
+                    }
+                </style>
+                <script type="text/javascript" src="JS/roomutils.js"></script>
+                <script type="text/javascript" src="JS/render_rooms.js"></script>
+                <script type="text/javascript" src="JS/explore.js"></script>
+                <script type="text/javascript" src="JS/jquery/jquery-341.js"></script>
+                <script type="text/javascript" src="JS/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
+                <link rel="stylesheet" href="JS/bootstrap-4.4.1-dist/css/bootstrap.min.css">
+                <link rel="stylesheet" href="css/room.css">
+                <script>
+                    $(document).ready(function () {       
+                        main();            
+                    });
         
-        </script>
-        </head><body>
-        <!-- Arrows for manual navigation - not implemented yet -->
-        <table>
-        <tr>
-            <td>
-                <form method="POST" target="maze.html">
-                <table>
-                <tr><td>Create iterations:</td><td><input type="text" name="iter" value="100"></td>
-                <tr><td>Click to generate:</td><td><input type="submit" value="start"></td></tr>
-                </table>
-                </form>
-            </td>
-            <td style='width:350px'>
-                <table  style='width:350px'>
-                    <tr>
-                        <td>
-                            <label><input type="radio" name="rule" value="manual">Manual selection</label>
-                            <br/>
-                            <label><input type="radio" name="rule" value="random">Random selection of available</label>
-                            <br/>
-                            <label><input type="radio" name="rule" value="random_no_ret">Random, but don't use door entered from</label>
-                            <br/>
-                            <label><input type="radio" name="rule" value="random_weighted">When a room is visited increment it weighting</label>
-                            <br/>
-                            <label><input type="radio" name="rule" value="random_weighted_from">Increment visited weighting and no return</label>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <table>
-                <tr><td>Rooms:</td><td id='room_count'></td></tr>
-                <tr><td>Visited:</td><td id='visited'></td></tr>
-                <tr><td>Coverage:</td><td id='coverage'></td><td>%</td></tr>
-                </table>
-            </td>
-        <tr>
-        </table>
-        <!-- Iterations that the maze solver is going to use. -->
-        Iterations: <input type='text' id="count" value='500'></input><br />
-        Then click on the S in the grid below<br />
-        <button id='stop'>STOP</button>
-        <button id='reset'>RESET</button>
-        <div id='error'></div>
-        <div  id='roomname'>Room Name:</div>
-        <table width=100%>
-        <tr><td style="width:fit-content">
+                </script>
+            </head>
+            <body>
+                <div class="container-fluid">
+                    <div class="row"> <!-- row 1 -->
+                        <div class="col-3 col-md-offset-2 border border-primary rounded">
+                            <form method="POST" target="maze.html">
+                                <table>
+                                <tr><td>Create iterations:</td><td><input type="text" name="iter" value="100"></td>
+                                <tr><td>Click to generate:</td><td><input type="submit" value="start"></td></tr>
+                                </table>
+                            </form>
+                        </div>
+                
+                        <div class="col-3 col-md-offset-2 border border-primary rounded">
+                            <table  style='width:350px'>
+                                <tr>
+                                    <td>
+                                        <label><input type="radio" name="rule" value="manual">Manual selection</label>
+                                        <br/>
+                                        <label><input type="radio" name="rule" value="random">Random selection of available</label>
+                                        <br/>
+                                        <label><input type="radio" name="rule" value="random_no_ret">Random, but don't use door entered from</label>
+                                        <br/>
+                                        <label><input type="radio" name="rule" value="random_weighted">When a room is visited increment it weighting</label>
+                                        <br/>
+                                        <label><input type="radio" name="rule" value="random_weighted_from">Increment visited weighting and no return</label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                
+                        <div class="col-3 col-md-offset-2 border border-primary rounded">
+                            Iterations: <input type='text' id="count" value='500'></input><br />
+                            Then click on the S in the grid below<br />
+                            <button id='stop'>STOP</button>
+                            <button id='reset'>RESET</button>
+                            <div id='error'></div>
+                            <div  id='roomname'>Room Name:</div>
+                        </div>
+                
+                        <div class="col-3 col-md-offset-2 border border-primary rounded">
+                            <table>
+                                <tr><td>Rooms:</td><td id='room_count'></td></tr>
+                                <tr><td>Visited:</td><td id='visited'></td></tr>
+                                <tr><td>Coverage:</td><td id='coverage'></td><td>%</td></tr>
+                            </table>
+                        </div>
+                
+                    </div>
+                    <div class="row" style="height:700px"> <!-- row 2 -->
+                        <div class="col border border-primary rounded overflow-auto" id='tablediv'>
+                            <table id='grid' style='border:0px black solid; border-collapse:separate;'>
         """
-        html+="<div id='tablediv'><table id='grid' style='border:1px black solid; border-collapse:separate; width: max-content'>"
-
         color=""
         # Open the serialised data file in read/binary mode
-        f = open("data.bin", "rb")
+        f = open("rooms.bin", "rb")
 
         x = []
         y = []
         # Load the saved data dictionary.
-        room_ref=pickle.load(f)
+        room_ref=dill.load(f)
 
         # Iterate through the rooms in the dictionary
         for i, j in room_ref:
@@ -149,7 +151,7 @@ class RoomFinderHtml():
             for elem in range(len(grid[row])):
                 try:
                     # If a room is found then make the borders of the td match the exits that the room has
-                    if (room_ref[elem - x_tx, row - y_tx] is not None):
+                    if room_ref[elem - x_tx, row - y_tx] is not None:
                         val = room_ref[elem - x_tx, row - y_tx].room_code_int
                         if (val & 8) >> 3 == 1:
                             style_n='border-top:dashed 1px black'
@@ -182,26 +184,70 @@ class RoomFinderHtml():
                         xref=elem - x_tx
                         yref=row - y_tx
                         heat_color=format(255-int(v),'02x')
-                        html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' data-weight='0' data-name='"+str(room_ref[elem - x_tx, row - y_tx].name)+"' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";"\
+                        html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' data-weight='0' data-name='"+str(room_ref[elem - x_tx, row - y_tx].name)+"' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";" \
                               +color+"; background-color:#FF"+ heat_color+"FF; font-size:12px; text-align: center'>"
                         # html+=str(room_ref[elem - x_tx, row - y_tx].visits)
                         html+=text
                 except KeyError:
-                    html+="<td class='blank' style='background-color:#ffffff'>"
-                html+="</td>"
-            print(".", end='')
-            html+="</tr>"
-        html+="""</table></div></td>
-        <td>
-        <table id="images">
-            <tr>
-                <td class="direction" id='left'></td>
-                <td class="direction" id='up'></td>
-                <td class="direction" id='right'></td>
-            </tr>
-            <tr><td class="direction" colspan="3" id="down"></td>
-        </table>
-    </table></body></html>"""
+                    html += "<td class='blank' style='background-color:#ffffff'>"
+                print(".", end='')
+        html += """
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col border border-primary rounded" style="text-align:center;padding-top:0px;">
+                            <!-- Outer div row-->
+                            <div class="row" style="height:700px">
+                                <!-- col Left side-->
+                                <div class="col" style="left:15" >
+                                    <div style="border-left: 3px black solid; width:125px; height:700px; position:relative">
+                                        <div style="border-top: 3px black solid;width:125px; height:125px; top:0; position: absolute">
+                                            <div class="line1"></div>
+                                        </div>
+                                        <div id="west_door"></div>
+                                        <div style="border-bottom: 3px black solid; width:125px; height:125px; top:575; position: absolute">
+                                            <div class="line2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Middle col-->
+                                <div class="col" style="width:650px;height:700px;">
+                                    <!-- top strip -->
+                                    <div class="row" style="height:125px;padding-left:273px; border-top:3px black solid">
+                                        <div id="north_door"></div>
+                                    </div>
+                                    <!-- Center square -->
+                                    <div class="row" style="height:447px">
+                                        <div id="room"></div>
+                                    </div>
+                                    <!-- bottom strip -->
+                                    <div class="row" style="padding-left:273px;border-bottom: 3px black solid ">
+                                        <div id="south_door"></div>
+                                    </div>
+                                </div>
+                                <!-- right side -->
+                                <div class="col" style="width:125px;height:700px;left:-18">
+                                    <div style="border-right: 3px black solid; width:125px; height:700px;position:relative">
+                                        <div style="border-top: 3px black solid;width:125px; height:125px; top:0; position: absolute">
+                                            <div class="line2"></div>
+                                        </div>
+                                        
+                                        <div id="east_door"></div>
+                                        
+                                        <div style="border-bottom: 3px black solid; width:125px; height:125px; top:575; position: absolute">
+                                            <div class="line1"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div> <!-- END row 2 -->
+                    <div id="dialog" class="col border border-primary rounded"> <!-- Row 3 -->  
+                    </div> <!-- END row 3 -->
+                </div> <!-- END container -->
+             </body>
+        </html>"""
         f.close()
         with open("maze.html","w") as h:
             h.write(html)

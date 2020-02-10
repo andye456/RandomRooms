@@ -1,5 +1,5 @@
 # This class holds the rooms in a dictionary once they are created, this array can be saved
-import pickle
+import dill as dill
 import RoomUtils
 class RoomMatrix:
 
@@ -10,10 +10,6 @@ class RoomMatrix:
     def __init__(self):
         pass
 
-    # Creates the first room at 0,0
-    def __init__(self, room):
-        self.addRoom((0,0),room)
-
     # This is used to get the room, using it's coordinates, if it exists when you user travels.
     def getRoom(self, x, y):
         return self.room_ref[(x,y)]
@@ -21,6 +17,22 @@ class RoomMatrix:
     # add a room at the correct position in the matrix
     def addRoom(self, ref, room):
         self.room_ref[ref]=room
+
+    # returns the room object matrix
+    def get_room_matrix(self):
+        # Open the serialised data file in read/binary mode
+        f = open("rooms.bin", "rb")
+
+        # Load the saved data dictionary.
+        room_ref = dill.load(f)
+
+        return room_ref
+
+    def dump_rooms_to_binary(self):
+        # dumps the matrix of room to a binary file
+        with open("rooms.bin","wb") as f:
+            dill.dump(self.room_ref, f)
+
 
     #
     # Figures out what rooms are created and prints an ascii representation of them
@@ -32,9 +44,6 @@ class RoomMatrix:
         for i,j in self.room_ref:
             x.append(i)
             y.append(j)
-        # dumps the matrix of room to a binary file
-        with open("data.bin","wb") as f:
-            pickle.dump(self.room_ref, f)
 
         x_lim=max(x)
         x_lower=min(x)

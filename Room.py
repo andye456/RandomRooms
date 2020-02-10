@@ -26,6 +26,14 @@ class Room:
 
     visits=0
 
+    # Room attributes
+    # An array of any items that are in the room but can't be interacted with
+    decorations = []
+    # The overall style of the room, e.g. callar, attic, dungeon
+    style = ""
+    # Monsters that are in the room
+    monsters = []
+
     # Takes name and description for the room
     def __init__(self, name, description):
         print("You are in a place called ["+name+ "] You can see lots of ["+description+"]")
