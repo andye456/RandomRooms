@@ -35,9 +35,9 @@ class Room:
     monsters = []
 
     # Takes name and description for the room
-    def __init__(self, name, description):
-        print("You are in a place called ["+name+ "] You can see lots of ["+description+"]")
-        self.name = name
+    def __init__(self, room_name, description):
+        print("You are in a place called ["+room_name+ "] You can see lots of ["+description+"]")
+        self.room_name = room_name
         self.description = description
 
 

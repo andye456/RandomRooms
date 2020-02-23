@@ -241,59 +241,56 @@ addDoors_old = function(from, exits) {
 
 }
 
-// These functions change the direction you are taken (NESW) when you click on a door depending on which direction you came in to the room from.
-from_west = function() {
-
-//    $('#up').css({"color":"#FFF", "text-align":"center"});
-    $('#up').attr('onclick', "make_move('E')");
-    $('#up').text('E');
-    $('#down').css({"text-align":"center"});
-    $('#down').attr('onclick', "make_move('W')");
-    $('#down').text('W')
-    $('#left').attr('onclick', "make_move('N')");
-    $('#left').text('N');
-    $('#right').attr('onclick', "make_move('S')");
-    $('#right').text('S');
+// Sends an inventory command to the server, parses and displays the result
+getInventory = function() {
+    des = "";
+    $.post("maze.html",'{"command":"I"}')
+    .done(function(returnData) {
+        console.log(returnData);
+        dat = JSON.parse(returnData);
+        if(typeof dat['char_data'] != 'undefined') {
+            $('#dialog').append("<table style='pasdding:5px'>");
+            $('#dialog').append("<tr><th>Item</th><th>Value</th><td>");
+            dat['char_data']['inventory'].forEach(function(d){
+                des += d['name']+" ";
+                $('#dialog').append("<tr><td>"+d['name']+"</td><td>"+d['sell']+"</td></tr>");
+            });
+            $('#dialog').append("</table>");
+        }
+    });
 }
 
-from_east = function() {
+fight = function(x,y) {
+    d2 = '{"command": "F", "room_x": '+x+',"room_y": '+y+'}';
 
-//    $('#up').css({"color":"#FFF", "text-align":"center"});
-    $('#up').attr('onclick', "make_move('W')");
-    $('#up').text('W');
-    $('#down').css({"text-align":"center"});
-    $('#down').attr('onclick', "make_move('E')");
-    $('#down').text('E')
-    $('#left').attr('onclick', "make_move('S')");
-    $('#left').text('S');
-    $('#right').attr('onclick', "make_move('N')");
-    $('#right').text('N');
+    $.post("maze.html",d2)
+    .done(function(returnData) {
+        console.log(returnData);
+        dat2 = JSON.parse(returnData);
+        if(typeof dat2['char_data'] != 'undefined') {
+            $('#dialog').append("<b>"+dat2.char_data.name+"</b>");
+            $('#dialog').append("<table style='pasdding:5px'>");
+            $('#dialog').append("<tr><th>Characteristic</th><th>Power</th><td>");
+            dat2.char_data.abilities.forEach(function(abi){
+                $('#dialog').append("<tr><td>"+abi['id']+"</td><td>"+abi['value']+"</td></tr>");
+            });
+            $('#dialog').append("</table>");
+        }
+    });
 }
 
-from_south = function() {
-//    $('#up').css({"color":"#FFF", "text-align":"center"});
-    $('#up').attr('onclick', "make_move('N')");
-    $('#up').text('N');
-    $('#down').css({"text-align":"center"});
-    $('#down').attr('onclick', "make_move('S')");
-    $('#down').text('S')
-    $('#left').attr('onclick', "make_move('W')");
-    $('#left').text('W');
-    $('#right').attr('onclick', "make_move('E')");
-    $('#right').text('E');
+trade = function() {
+    $.post("maze.html",'{"command":"T"}')
+    .done(function(returnData) {
+        console.log(returnData);
+        dat3 = JSON.parse(returnData);
+        if(typeof dat3['char_data'] != 'undefined') {
+            $('#dialog').append("<table style='pasdding:5px'>");
+            $('#dialog').append("<tr><th>Item </th><th>Value</th><td>");
+            dat3['char_data']['inventory'].forEach(function(d){
+                $('#dialog').append("<tr><td>"+d['name']+"</td><td>"+d['sell']+"</td></tr>");
+            });
+            $('#dialog').append("</table>");
+        }
+    });
 }
-
-from_north = function() {
-
-//    $('#up').css({"color":"#FFF", "text-align":"center"});
-    $('#up').attr('onclick', "make_move('S')");
-    $('#up').text('S');
-    $('#down').css({"text-align":"center"});
-    $('#down').attr('onclick', "make_move('N')");
-    $('#down').text('N')
-    $('#left').attr('onclick', "make_move('E')");
-    $('#left').text('E');
-    $('#right').attr('onclick', "make_move('W')");
-    $('#right').text('W');
-}
-

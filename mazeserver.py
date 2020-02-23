@@ -1,11 +1,36 @@
 import json
+import random
+
 import dill
 from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler
 import socketserver
-from RandomRooms import RandomRooms
-from RoomFinderHtml import RoomFinderHtml
-from RoomMatrix import RoomMatrix
 
+import jsonpickle as jsonpickle
+
+from CharacterMatrix import CharacterMatrix
+from RandomRooms import RandomRooms
+from RoomGenHtml import RoomGenHtml
+from RoomMatrix import RoomMatrix
+from characters import Items
+from characters import Weapons
+from characters.Character import Character
+from characters.CharacterAbilities import CharacterAbilities
+from characters.classes.Ranger import Ranger
+from characters.classes.Druid import Druid
+from characters.classes.Illusionist import Illusionist
+from characters.classes.Monk import Monk
+from characters.classes.Paladin import Paladin
+from characters.classes.Assassin import Assassin
+
+from characters.race.Gnome import Gnome
+from characters.race.Elf import Elf
+from characters.race.Half_Orc import Half_Orc
+from characters.race.Half_Elf import Half_Elf
+from characters.race.Halfling import Halfling
+from characters.race.Human import Human
+from characters.race.Dwarf import Dwarf
+
+from characters import FriendStatus
 hostName = "localhost"
 hostPort = 8080
 
@@ -20,6 +45,15 @@ class MyServer(BaseHTTPRequestHandler):
     character_ref = dill.load(f)
     f.close()
 
+    # This bit adds you as a Human, with random class and gives you a few basic items to start
+    classes=['Assassin','Druid','Illusionist','Monk','Paladin','Ranger']
+    char_race="Human"
+    char_class=random.choice(classes)
+    items=[Items.Sack,Items.Candle]
+    weapon=Weapons.Cane
+    abilities=CharacterAbilities(char_race, char_class)
+    my_char = Character("Pweter", 25, 200, char_race, char_class, items, 0, 0,weapon, abilities.getAbilities())
+    character_ref[(0, 0)] = my_char
 
     def __init__(self, request, client_address, server):
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
@@ -55,8 +89,7 @@ class MyServer(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length']) # <--- Gets the size of data
         post_data = self.rfile.read(content_length) # <--- Gets the data itself
-        # print("POST request,\nPath: %s\nHeaders:\n%s\n\nBody:\n%s\n" %
-        #       (str(self.path), str(self.headers), post_data.decode('utf-8')))
+
         print ("Body: %s"%post_data.decode('utf-8'))
         self._set_response()
         val = "-1"
@@ -64,39 +97,58 @@ class MyServer(BaseHTTPRequestHandler):
             val = post_data.decode('utf-8').split("=")[1]
         except:
             pass
+        # Generates new room from a request from the web page # not implemented
         if val != "-1":
             rr = RandomRooms()
             rr.create_rooms(val)
-            rf = RoomFinderHtml()
+            rf = RoomGenHtml()
             rf.find_rooms_html()
             # Calls  the GET to rerender the page
             self.do_GET()
         else:
             resp = json.loads(post_data.decode('utf-8'))
-            # {"room_x": 0, "room_y": 0, "room_name": "Start"}
-
-            print("You are in "+self.room_ref[(resp['room_x'],resp['room_y'])].name)
-            # COnvert the response into a JSON object
-            _room_ref=self.room_ref[(resp['room_x'],resp['room_y'])]
-            room_name = _room_ref.name
-            exit_N = str(_room_ref.N)
-            exit_E = str(_room_ref.E)
-            exit_S = str(_room_ref.S)
-            exit_W = str(_room_ref.W)
-            name = _room_ref.name
-
-            room_data = '{"room_data":{"room_name":"' + room_name + '","exit_N":' + exit_N + ', "exit_E":' + exit_E + ', "exit_S":' + exit_S + ', "exit_W":' + exit_W + '}'
+            cmd = ""
             try:
-                _char_ref=self.character_ref[(resp['room_x'],resp['room_y'])]
-                room_data += ',"char_data":{"race":"' + str(_char_ref._char_race) + '","class":"' + str(_char_ref._char_class) + '","name":"'+str(_char_ref._name)+'"}'
+                cmd=resp["command"]
             except KeyError:
-                _char_ref={}
-            room_data+='}'
+                pass
+            if cmd == "I":
+                char_json = json.dumps(self.character_ref[(0, 0)].__dict__)
+                char_data = '{"char_data":'+char_json+'}'
+                self.wfile.write(char_data.encode("UTF-8"))
+            elif cmd == "F":
+                char_json = json.dumps(self.character_ref[(resp['room_x'],resp['room_y'])].__dict__)
+                char_data = '{"char_data":' + char_json + '}'
+                self.wfile.write(char_data.encode("UTF-8"))
+            elif cmd == "T":
+                pass
+            else:
+                # {"room_x": 0, "room_y": 0, "room_name": "Start"}
 
-            # TODO: Establish your class, using the FriendStatus lookup decide whether the character in the room is an enemy
+                print("You are in "+self.room_ref[(resp['room_x'],resp['room_y'])].room_name)
+                # Convert the response into a JSON object
+                room_json = json.dumps(self.room_ref[(resp['room_x'],resp['room_y'])].__dict__)
 
-            # Returns the JSON to the html page.
-            self.wfile.write(room_data.encode("UTF-8"))
+                room_data = '{"room_data":'+room_json
+
+                try:
+                    # _char_ref=self.character_ref[(resp['room_x'],resp['room_y'])]
+                    char_json = json.dumps(self.character_ref[(resp['room_x'], resp['room_y'])].__dict__)
+                    # Get the friend status of the character
+                    fs = FriendStatus.getFriendStatus(self.character_ref[(0, 0)].race,self.character_ref[(resp['room_x'], resp['room_y'])].race)
+                    char_json += ',"friend_status": "'+fs+'"'
+                    room_data += ',"char_data":'+char_json
+                except KeyError:
+                    _char_ref={}
+                except AttributeError:
+                    pass
+
+                room_data+='}'
+
+                # TODO: Establish your class, using the FriendStatus lookup decide whether the character in the room is an enemy
+
+                # Returns the JSON to the html page.
+                self.wfile.write(room_data.encode("UTF-8"))
 
 
 

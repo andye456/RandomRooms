@@ -7,6 +7,10 @@ import RoomUtils
 from CharacterMatrix import CharacterMatrix
 from Room import Room
 from RoomMatrix import RoomMatrix
+from characters import Weapons
+from characters.Character import Character
+import characters.Items as Items
+from characters.CharacterAbilities import CharacterAbilities
 
 from characters.classes.Ranger import Ranger
 from characters.classes.Druid import Druid
@@ -30,6 +34,10 @@ class RandomRooms():
 
     CHAR_RACE = Enum('char_race', 'Elf Gnome Dwarf Half_Elf Halfling Half_Orc Human')
 
+    character = {}
+
+    character_matrix={}
+
     def create_rooms(self, iter):
 
 
@@ -51,7 +59,7 @@ class RandomRooms():
         room_matrix = RoomMatrix()
         room_matrix.addRoom((0,0),room)
 
-        character_matrix = CharacterMatrix()
+        self.character_matrix = CharacterMatrix()
 
         # iterator
         i=0
@@ -64,43 +72,9 @@ class RandomRooms():
             # Get the list of exits, e.g. NSW (R is appended to show the current map)
             exits = room.show_exits()+"R"
 
-            ##########################################
-            # Rules engine
-            # Different rules for traversing the rooms
-            ##########################################
-
-            # 1 #
-            # Get human input
-            # direction = input("Enter Direction...")
-
-            # 2 #
-            # Get AI input - cycle through directions in turn
-            # direction = all_directions[i % len(all_directions)]
-
-            # 3 #
-            # Random direction chosen from NESW
-            # direction=all_directions[randrange(len(all_directions))]
-
-            # 4 #
-            # Only picks from the exit directions available, has to know what exits are available
-            # ex = list(room.get_exits())
-            # try:
-            #     direction = ex[randrange(len(ex))]
-            # except:
-            #     grid = matrix.get_room_grid()
-
-
-            # 5 #
-            # Never uses the entrance it's just come in from
-            # ex = list(room.get_exits())
-            # if len(ex) > 1:
-            #     ex.remove(RoomUtils.get_opposite_door(direction))
-            # direction = ex[randrange(len(ex))]
-
-            # 6 #
             # Weighting of a door that has been used... make the route go through doors it hasn't been through before.
             ex = list(room.get_exits())
-            print(room.name)
+            print(room.room_name)
             door_weight=room.get_door_weight()
             # s = sorted(door_weight, key=operator.itemgetter(0))
             s = sorted(door_weight.items(), key=operator.itemgetter(1))
@@ -140,19 +114,33 @@ class RandomRooms():
                     # find the door that was entered from and increment it's weight
                     room.set_door_weight(entry_door)
                     print("************** ROOM FOUND **************")
-                    print ("You are back in "+room.name+", You can see "+room.description)
+                    print ("You are back in "+room.room_name+", You can see "+room.description)
                     found_again+=1
 
                     # Add a character if the room already exists and the number of visits is over a certain amount (experimental)
-                    if found_again > 3:
+                    #
+                    # NOTE: To add new Class items to a character race or class: add a class variable to the race or class file
+                    # To make this accessible from the HTML then add it to room_data in mazeserver.py,
+                    # this will then pass JSON objects back to the javascript on the web page and can be accessed.
+                    #
+                    # Not sure how to change/access the individual "instace" variables of the P objects that are created in the CharacterMatrix
+                    #
+                    if found_again > 1:
+                        print("+_+_+_+__+_+_ Adding character")
                         # Randomly selects a class and race from the available Enums
+
                         char_class = random.choice(list(self.CHAR_CLASS)).name
                         char_race = random.choice(list(self.CHAR_RACE)).name
 
-                        # Dynamically creates a character in a certain room
-                        character = type('P'+str(i),(eval(char_class),eval(char_race)), {"_name":random.choice(WORDS), "_char_class":char_class,"_char_race":char_race})
-                        # character = type('P' + str(i), (), {"_name":random.choice(WORDS)})
-                        character_matrix.addCharacter((x_pos,y_pos),character)
+                        # Dynamically creates a character type in a certain room
+                        # Get some random items
+                        items=Items.getRandomItems()
+                        # define the characters abilities based on its race/class
+                        ab = CharacterAbilities(char_race,char_class)
+                        # Create the character
+                        self.character[i] = Character(random.choice(WORDS).capitalize(), random.randint(40,300), random.randint(100,300), char_race, char_class, items, x_pos, y_pos,  Weapons.Club, ab.getAbilities())
+                        # Add the character to the character matrix
+                        self.character_matrix.addCharacter((x_pos,y_pos),self.character[i])
 
 
                 except KeyError:
@@ -178,7 +166,7 @@ class RandomRooms():
             # When all the iterations are done
             if i == int(iter):
                 room = room_matrix.getRoom(x_pos, y_pos)
-                room.name="Exit"
+                room.room_name="Exit"
                 room.description="The way out"
                 # Prints out an ascii representation of the matrix
                 room_matrix.get_room_grid()
@@ -186,7 +174,7 @@ class RandomRooms():
                 room_matrix.dump_rooms_to_binary()
 
                 # dumps the characters to a binary file.
-                character_matrix.dump_chars_to_binary()
+                self.character_matrix.dump_chars_to_binary()
                 # Prints some stats
                 print("New Rooms = "+str(unique))
                 print("Revisited = "+str(found_again))

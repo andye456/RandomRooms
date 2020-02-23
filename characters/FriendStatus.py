@@ -1,5 +1,5 @@
 """
-P P indicates that the race is generally preferred, and dealings with the members of the race will be reflected accordingly.
+P indicates that the race is generally preferred, and dealings with the members of the race will be reflected accordingly.
 G means that considerable goodwill exists towards the race.
 T indicates that the race is viewed with tolerance and generally acceptable, if not loved.
 N shows that the race is thought of neutrally, although some suspicion will be evidenced.
@@ -62,3 +62,7 @@ races[('Human','Half_Elf')]= 'T'
 races[('Human','Halfling')]= 'N'
 races[('Human','Half_Orc')]= 'N'
 races[('Human','Human')]   = 'P'
+
+
+def getFriendStatus(race1, race2):
+    return races[(race1,race2)]

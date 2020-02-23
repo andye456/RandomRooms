@@ -3,207 +3,11 @@ Main entry point and setting of common functions etc.
 */
 var main = function() {
     // attach the click event to the new content
-    $('#x0y0').click(function(){
-        var radioValue = $("input[name='rule']:checked").val();
-        if(radioValue == "manual"){
-            random_room_manual();
-        }
-        if(radioValue == "random"){
-            random();
-        }
-        if(radioValue == "random_no_ret"){
-            random_no_ret();
-        }
-        if(radioValue == "random_weighted"){
-            random_room_weighting();
-        }
-        if(radioValue == "random_weighted_from"){
-            random_room_weighting_from_door();
-        }
-
-        });
-        // attach the different pointer.
-        $('#x0y0').hover(function() {
-            $(this).css('cursor','pointer');
-        });
-
-        // initialise the canvas
-        init_room();
-
-
-
-
-}
-/*
-Called from the HTML page when the start room is clicked and random radio is selected.
-*/
-random = function() {
-    var rowcount = $('table tr').length
-    var colcount = $('table tr:nth-child(1) td').length
-
-
-    var x=0;
-    var y=0;
-    var iterations = parseInt($('#count').val());
-    // Gets the number of iterations from the text box on HTML page
-    for(var i = 0; i < iterations; i++) {
-        //    Get the available exits from the room
-        var exits = get_exits(x,y);
-        var exit = select_exit(exits);
-        var coords = move(exit,x,y);
-        x=coords[0];
-        y=coords[1];
-        // When a room has been visited, change its background color to grey
-        $('#x'+x+'y'+y).css("background-color","#DDD")
-
-    }
-    find_visited()
+    random_room_manual();
 
 }
 
-/*
-Called from the HTML page when the start room is clicked and random_no_ret radio is selected.
-*/
-random_no_ret = function() {
-    var rowcount = $('table tr').length
-    var colcount = $('table tr:nth-child(1) td').length
 
-    var x=0;
-    var y=0;
-    var iterations = parseInt($('#count').val());
-    // Gets the number of iterations from the text box on HTML page
-    for(var i = 0; i < iterations; i++) {
-        //    Get the available exits from the room
-        var exits = get_exits(x,y);
-        var from = get_from_door(exit);
-        // remove from door from the list of exits - as long as it's not the only exit
-        if(exits.length > 1) {
-            exits = jQuery.grep(exits, function(value) {
-                return value != from;
-            });
-        }
-        var exit = select_exit(exits);
-        var coords = move(exit,x,y);
-        x=coords[0];
-        y=coords[1];
-        // When a room has been visited, change its background color to grey
-        $('#x'+x+'y'+y).css("background-color","#DDD")
-
-    }
-    find_visited()
-
-}
-
-var random_room_weighting = function() {
-    var rowcount = $('table tr').length
-    var colcount = $('table tr:nth-child(1) td').length
-
-    var x=0;
-    var y=0;
-    var iterations = parseInt($('#count').val());
-    // Gets the number of iterations from the text box on HTML page
-
-    var loop = function(value) {
-
-            // increment its visited weighting
-        w = parseInt($('#x'+x+'y'+y).attr('data-weight'))+1
-        $('#x'+x+'y'+y).attr('data-weight', w);
-        // Get the available exits from the room
-        var exits = get_exits(x,y);
-        console.log("exits = "+exits);
-        // gets a list of available exits based on the number of times the adjacent room have been visited
-        var weighted = get_least_weighted_room(exits,x,y);
-
-
-
-        // select randomly from the list of exits
-        var exit = select_exit(weighted);
-        console.log("Travelling "+exit);
-        var coords = move(exit,x,y);
-        x=coords[0];
-        y=coords[1];
-        // When a room has been visited, change its background color to grey
-        $('#x'+x+'y'+y).css("background-color","#FFF");
-        if (value < iterations) setTimeout(function () {
-            $('#x'+x+'y'+y).css("background-color","#DDD");
-            loop(value + 1);
-            find_visited();
-
-        }, 30);
-
-    }
-    loop(1);
-}
-
-var random_room_weighting_from_door = function() {
-    var rowcount = $('table tr').length
-    var colcount = $('table tr:nth-child(1) td').length
-
-    var x=0;
-    var y=0;
-    var iterations = parseInt($('#count').val());
-    // Gets the number of iterations from the text box on HTML page
-    var exit="N";
-    $('#x'+x+'y'+y).css("background-color","#DDD");
-    var loop = function(value) {
-    console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
-        console.log("[in room] "+$('#x'+x+'y'+y).attr('title'));
-        // increment its visited weighting
-        var w = parseInt($('#x'+x+'y'+y).attr('data-weight'))+1
-        $('#x'+x+'y'+y).attr('data-weight', w);
-        // Get the available exits from the room
-        var exits = get_exits(x,y);
-        console.log("[exits] "+exits);
-        // gets a list of available exits based on the number of times the adjacent room have been visited
-        var weighted = get_least_weighted_room(exits,x,y);
-        // Get door that yoiu have just com in from
-        var from = get_from_door(exit);
-        console.log("[no return through] "+from);
-        // remove from door from the list of exits - as long as it's not the only exit
-        if(weighted.length > 1) {
-            weighted = jQuery.grep(weighted, function(value) {
-                return value != from;
-            });
-        }
-
-
-        // select randomly from the list of exits
-        exit = select_exit(weighted);
-        console.log("[travelling] "+exit);
-        coords = move(exit,x,y);
-        x=coords[0];
-        y=coords[1];
-
-        addDoors(from, exits);
-
-        $('#stop').click(function(){
-            console.log("************ STOPPING");
-            value=iterations;
-        });
-        $('#reset').click(function(){
-            $( "#tablediv" ).empty();
-            $( "#tablediv" ).load( "maze.html #grid" ,function( response, status, xhr ) {
-                if ( status == "error" ) {
-                    var msg = "Sorry but there was an error: ";
-                    $( "#error" ).html( msg + xhr.status + " " + xhr.statusText );
-                }
-                main();
-            });
-        });
-        // When a room has been visited, change its background color to grey
-        $('#x'+x+'y'+y).css("background-color","#F00");
-        if (value < iterations) setTimeout(function () {
-            $('#x'+x+'y'+y).css("background-color","#DDD");
-            loop(value + 1);
-            find_visited();
-
-        },0);
-
-
-
-    }
-    loop(1);
-}
 
 var random_room_manual = function() {
     rowcount = $('table tr').length
@@ -213,81 +17,135 @@ var random_room_manual = function() {
     y=0;
 
     // Call with a non-direction to indicate we're at the start
-//    from_south();
-    make_move("X");
+    handle_input("X");
+
+    // Get the user command line input
+    $('#inputline').keypress(function(event){
+
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if(keycode == '13'){
+            handle_input($('#inputline').val());
+            $('#inputline').val("");
+            $('#scrolldiv').animate({scrollTop:$('#scrolldiv')[0].scrollHeight}, 1000);
+        }
+
+    });
 
 
 }
 
-make_move = function(dir) {
+handle_input = function(dir) {
 
-    exit=dir;
-    exits = get_exits(x,y);
-    $('#man').remove();
-    if(exits.indexOf(exit) != -1) {
-
-        // Get door that you have just come in from
-        from = get_from_door(exit);
-
-        console.log("[travelling] "+exit);
-        coords = move(exit,x,y);
-        x=coords[0];
-        y=coords[1];
-
-        newexits = get_exits(x,y);
-
-        addDoors(from, newexits);
+    if(['N','S','E','W','X'].includes(dir.toUpperCase())) {
+        exit=dir.toUpperCase();
+        exits = get_exits(x,y);
+        $('#man').remove();
 
 
 
-    } else if(dir == "X") {
-        // This case is when you are in start
-        exit=exits.charAt(0);
+        console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+        console.log("[in room] "+$('#x'+x+'y'+y).attr('title'));
+
+
+        if(exits.indexOf(exit) != -1) {
+
+            // Get door that you have just come in from
+            from = get_from_door(exit);
+
+            $('#dialog').append("[travelling] "+exit+"</br>");
+            coords = move(exit,x,y);
+            x=coords[0];
+            y=coords[1];
+
+            newexits = get_exits(x,y);
+
+    //        addDoors(from, newexits);
+            $('#dialog').append("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+"+"</br>");
+            h='Exits are: '+newexits+"</br>";
+            // Get the available exits from the room
+            //    exits = get_exits(x,y);
+            console.log("[exits] "+newexits);
+            $('#dialog').append(h);
+
+
+        } else if(dir == "X") {
+            console.log("At start!");
+            // This case is when you are in start
+            exit=exits.charAt(0);
+            from=get_from_door(exit);
+    //        addDoors(from, exits);
+            h='Exits are: '+exits+"</br>";
+            // Get the available exits from the room
+            exits = get_exits(x,y);
+            console.log("[exits] "+exits);
+            $('#dialog').append(h);
+
+
+        }
+        // Send the room co-ords to the server using the do_POST
+        data={room_x: x, room_y: y};
+        d = JSON.stringify(data);
+
+        // Looks up the room data from the serverside using the current position as the key
+        // to get the object from the datastore object - the bin file created by the dill utility
+        $.post("maze.html",d)
+            .done(function(d2) {
+            console.log(d2);
+            ht = JSON.parse(d2);
+            desc= "You are in a place called "+ht['room_data']['room_name']+"</br>";
+            if(typeof ht['char_data'] != 'undefined') {
+                // Get the inventory list
+                items=[]
+                ht['char_data']['inventory'].forEach(function(d){
+                   items+=d.name+" ";
+                });
+                if(x == 0 && y == 0) {
+                    desc+= "&nbsp;Your name is "+ht['char_data']['name']+"</br>";
+                    desc+= "&nbsp;a "+ht['char_data']['race']+"&nbsp"+ht['char_data']['char_class']+"</br>";
+                    desc+= "&nbsp;You are carrying: "+items+"</br>";
+                    desc+= "&nbsp;Your current weapon is: "+ht['char_data']['weapon']['name']+"</br>";
+                } else {
+                    friend_status={"P":"They view you as a friend",
+                    "G":"They view you as a friend",
+                    "T":"They view you as a friend",
+                    "N":"They view you with suspicion",
+                    "A":"They view you with mistrust",
+                    "H":"They view you with hatred"}
+                    desc+= "&nbsp;Also here is "+ht['char_data']['name']+"</br>";
+                    desc+= "&nbsp;..who is a "+ht['char_data']['race']+"&nbsp"+ht['char_data']['char_class']+"</br>";
+                    desc+= "&nbsp;They are carrying: "+items+"</br>";
+                    desc+= "&nbsp;Their current weapon is: "+ht['char_data']['weapon']['name']+"</br>";
+                    desc+= friend_status[ht.friend_status]+"<br>";
+                }
+            }
+            $('#dialog').append(desc);
+
+        });
         from=get_from_door(exit);
-        addDoors(from, exits);
 
+        find_visited();
+        // When a room has been visited, change its background color to grey
+        $('#x'+x+'y'+y).css("background-color","#DDD");
+        if(from == "S")
+            man="^";
+        if(from == "N")
+            man="v";
+        if(from == "W")
+            man=">";
+        if(from == "E")
+            man="<";
+        $('#x'+x+'y'+y).append($("<div id='man'>"+man+"</div>"));
+        r_name = $('#x'+x+'y'+y).attr("data-name");
+        $('#roomname').text(r_name)
+    } else {
+        command=dir.toUpperCase();
+        if(command == "I")
+            getInventory();
+        if(command == "F")
+            fight(x,y);
+        if(command == "T")
+            trade();
     }
 
-    console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
-    console.log("[in room] "+$('#x'+x+'y'+y).attr('title'));
 
-    // Send the room name to the server using the do_POST
-    data={room_x: x, room_y: y};
-    d = JSON.stringify(data);
-
-    // Looks up the room data from the serverside using the current position as the key
-    // to get the object from the datastore object - the bin file created by the pickle utility
-    $.post("maze.html",d)
-        .done(function(d2) {
-        ht = JSON.parse(d2);
-        h = "<table>";
-        h+= "<tr><td>You are in a place called</td><td>"+ht['room_data']['room_name']+"</td><tr>";
-        if(typeof ht['char_data'] != 'undefined') {
-            h+= "<tr><td style='width:150px'>Also here is</td><td>"+ht['char_data']['name']+"</td><tr>"
-            h+= "<tr><td style='width:150px'>..who is a </td><td>"+ht['char_data']['race']+"&nbsp"+ht['char_data']['class']+"</td><tr>"
-            h+= "<tr><td style='width:150px'>and is </td><td>"+ht['char_data']['race']+"&nbsp"+ht['char_data']['class']+"</td><tr>"
-        }
-
-        $('#dialog').html(h);
-        console.log(d2);
-    });
-
-
-    // Get the available exits from the room
-//    exits = get_exits(x,y);
-    console.log("[exits] "+exits);
-    find_visited();
-    // When a room has been visited, change its background color to grey
-    $('#x'+x+'y'+y).css("background-color","#DDD");
-    if(from == "S")
-        man="^";
-    if(from == "N")
-        man="v";
-    if(from == "W")
-        man=">";
-    if(from == "E")
-        man="<";
-    $('#x'+x+'y'+y).append($("<div id='man'>"+man+"</div>"));
-    r_name = $('#x'+x+'y'+y).attr("data-name");
-    $('#roomname').text(r_name)
 }

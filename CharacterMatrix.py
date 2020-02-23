@@ -23,10 +23,6 @@ class CharacterMatrix:
         return character_ref
 
     def dump_chars_to_binary(self):
-        # prints out the characters created
-        # for i in self.character_ref:
-        #     print(i)
-        #     print(self.character_ref.get(i))
         # dumps the matrix of room to a binary file
         with open("characters.bin","wb") as f:
             dill.dump(self.character_ref, f)

@@ -4,7 +4,7 @@ RoomFinder will load a previously created matrix of rooms and using various algo
 """
 import dill
 
-class RoomFinderHtml():
+class RoomGenHtml():
 
     def find_rooms_html(self):
         html="""
@@ -63,7 +63,7 @@ class RoomFinderHtml():
             <body>
                 <div class="container-fluid">
                     <div class="row"> <!-- row 1 -->
-                        <div class="col-3 col-md-offset-2 border border-primary rounded">
+                        <div class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 1 -->
                             <form method="POST" target="maze.html">
                                 <table>
                                 <tr><td>Create iterations:</td><td><input type="text" name="iter" value="100"></td>
@@ -72,44 +72,23 @@ class RoomFinderHtml():
                             </form>
                         </div>
                 
-                        <div class="col-3 col-md-offset-2 border border-primary rounded">
-                            <table  style='width:350px'>
-                                <tr>
-                                    <td>
-                                        <label><input type="radio" name="rule" value="manual">Manual selection</label>
-                                        <br/>
-                                        <label><input type="radio" name="rule" value="random">Random selection of available</label>
-                                        <br/>
-                                        <label><input type="radio" name="rule" value="random_no_ret">Random, but don't use door entered from</label>
-                                        <br/>
-                                        <label><input type="radio" name="rule" value="random_weighted">When a room is visited increment it weighting</label>
-                                        <br/>
-                                        <label><input type="radio" name="rule" value="random_weighted_from">Increment visited weighting and no return</label>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 2 -->
+                            
                         </div>
                 
-                        <div class="col-3 col-md-offset-2 border border-primary rounded">
-                            Iterations: <input type='text' id="count" value='500'></input><br />
-                            Then click on the S in the grid below<br />
-                            <button id='stop'>STOP</button>
-                            <button id='reset'>RESET</button>
-                            <div id='error'></div>
-                            <div  id='roomname'>Room Name:</div>
+                        <div  id="userinput" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 3 -->
+                            $>User Input
+                            <input type="text" id="inputline" autofocus></text>
                         </div>
                 
-                        <div class="col-3 col-md-offset-2 border border-primary rounded">
-                            <table>
-                                <tr><td>Rooms:</td><td id='room_count'></td></tr>
-                                <tr><td>Visited:</td><td id='visited'></td></tr>
-                                <tr><td>Coverage:</td><td id='coverage'></td><td>%</td></tr>
-                            </table>
+                        <div class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 4 -->
+
                         </div>
                 
                     </div>
+                    
                     <div class="row" style="height:700px"> <!-- row 2 -->
-                        <div class="col border border-primary rounded overflow-auto" id='tablediv'>
+                        <div class="col border border-primary rounded overflow-auto" id='tablediv'> <!-- Row 2 Col 1 -->
                             <table id='grid' style='border:0px black solid; border-collapse:separate;'>
         """
         color=""
@@ -172,11 +151,10 @@ class RoomFinderHtml():
                             style_w = 'border-left:2px black solid'
 
                         color = "border-color:black"
-                        # print("Name: "+room_ref[elem - x_tx, row - y_tx].name)
-                        if room_ref[elem - x_tx, row - y_tx].name == "Start":
+                        if room_ref[elem - x_tx, row - y_tx].room_name == "Start":
                             color="border-color:red"
                             text="S"
-                        if room_ref[elem - x_tx, row - y_tx].name == "Exit":
+                        if room_ref[elem - x_tx, row - y_tx].room_name == "Exit":
                             color="border-color:Green"
                             text="E"
                         v=(newrange/oldrange)*room_ref[elem - x_tx, row - y_tx].visits
@@ -184,7 +162,7 @@ class RoomFinderHtml():
                         xref=elem - x_tx
                         yref=row - y_tx
                         heat_color=format(255-int(v),'02x')
-                        html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' data-weight='0' data-name='"+str(room_ref[elem - x_tx, row - y_tx].name)+"' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";" \
+                        html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' data-weight='0' data-name='"+str(room_ref[elem - x_tx, row - y_tx].room_name)+"' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].room_name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";" \
                               +color+"; background-color:#FF"+ heat_color+"FF; font-size:12px; text-align: center'>"
                         # html+=str(room_ref[elem - x_tx, row - y_tx].visits)
                         html+=text
@@ -196,55 +174,11 @@ class RoomFinderHtml():
                                 </tr>
                             </table>
                         </div>
-                        <div class="col border border-primary rounded" style="text-align:center;padding-top:0px;">
-                            <!-- Outer div row-->
-                            <div class="row" style="height:700px">
-                                <!-- col Left side-->
-                                <div class="col" style="left:15" >
-                                    <div style="border-left: 3px black solid; width:125px; height:700px; position:relative">
-                                        <div style="border-top: 3px black solid;width:125px; height:125px; top:0; position: absolute">
-                                            <div class="line1"></div>
-                                        </div>
-                                        <div id="west_door"></div>
-                                        <div style="border-bottom: 3px black solid; width:125px; height:125px; top:575; position: absolute">
-                                            <div class="line2"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Middle col-->
-                                <div class="col" style="width:650px;height:700px;">
-                                    <!-- top strip -->
-                                    <div class="row" style="height:125px;padding-left:273px; border-top:3px black solid">
-                                        <div id="north_door"></div>
-                                    </div>
-                                    <!-- Center square -->
-                                    <div class="row" style="height:447px">
-                                        <div id="room"></div>
-                                    </div>
-                                    <!-- bottom strip -->
-                                    <div class="row" style="padding-left:273px;border-bottom: 3px black solid ">
-                                        <div id="south_door"></div>
-                                    </div>
-                                </div>
-                                <!-- right side -->
-                                <div class="col" style="width:125px;height:700px;left:-18">
-                                    <div style="border-right: 3px black solid; width:125px; height:700px;position:relative">
-                                        <div style="border-top: 3px black solid;width:125px; height:125px; top:0; position: absolute">
-                                            <div class="line2"></div>
-                                        </div>
-                                        
-                                        <div id="east_door"></div>
-                                        
-                                        <div style="border-bottom: 3px black solid; width:125px; height:125px; top:575; position: absolute">
-                                            <div class="line1"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> 
+                        
+                        <div id="scrolldiv" class="col border border-primary rounded overflow-auto"> <!-- Row 2 Col 2 -->
+                            <div id="dialog" style="height:700px"></div>
+                        </div>
                     </div> <!-- END row 2 -->
-                    <div id="dialog" class="col border border-primary rounded"> <!-- Row 3 -->  
-                    </div> <!-- END row 3 -->
                 </div> <!-- END container -->
              </body>
         </html>"""
@@ -253,5 +187,5 @@ class RoomFinderHtml():
             h.write(html)
 
 if __name__ == "__main__":
-    rf = RoomFinderHtml()
+    rf = RoomGenHtml()
     rf.find_rooms_html()
