@@ -294,3 +294,16 @@ trade = function() {
         }
     });
 }
+
+attack = function(x,y) {
+    d3 = '{"command": "A", "room_x": '+x+',"room_y": '+y+'}';
+    $.post("maze.html",d3)
+    .done(function(returnData) {
+        console.log(returnData);
+        dat3 = JSON.parse(returnData);
+        if(typeof dat3['char_data'] != 'undefined') {
+            $('#dialog').append("<p><b> You attack and "+dat3.char_data+"</b>");
+        }
+    });
+
+}

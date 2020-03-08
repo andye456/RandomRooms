@@ -1,14 +1,15 @@
 class CharacterAbilities:
-    charisma = {"id":"charisma", "value":10}
-    constitution = {"id":"constitution", "value":10}
-    dexterity = {"id":"dexterity", "value":10}
-    intelligence = {"id":"intelligence", "value":10}
-    strength = {"id":"strength", "value":10}
-    wisdom = {"id":"wisdom", "value":10}
 
-    abilities=[charisma,constitution,dexterity,intelligence,strength,wisdom]
+
+    # abilities=[charisma,constitution,dexterity,intelligence,strength,wisdom]
 
     def __init__(self,race,char_class):
+        self.charisma = {"id": "charisma", "value": 10}
+        self.constitution = {"id": "constitution", "value": 10}
+        self.dexterity = {"id": "dexterity", "value": 10}
+        self.intelligence = {"id": "intelligence", "value": 10}
+        self.strength = {"id": "strength", "value": 10}
+        self.wisdom = {"id": "wisdom", "value": 10}
         # Sigh this is laboureous
         if race == 'Dwarf':
             if char_class == "Assassin":
@@ -117,7 +118,8 @@ class CharacterAbilities:
         self.wisdom['value']=wisdom
 
     def getAbilities(self):
-        return self.abilities
+        abilities=[self.charisma,self.constitution,self.dexterity,self.intelligence,self.strength,self.wisdom]
+        return abilities
 
 
 

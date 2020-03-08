@@ -2,8 +2,8 @@ import dill as dill
 
 
 class CharacterMatrix:
-    x_ref = 0
-    y_ref = 0
+    # x_ref = 0
+    # y_ref = 0
     character_ref={}
 
     def addCharacter(self, ref, character):
@@ -11,6 +11,10 @@ class CharacterMatrix:
 
     def getCharacter(self, x, y):
         return self.character_ref[(x,y)]
+
+
+    def attack(self, char_ref):
+        return self.character_ref[char_ref]
 
     # returns the character object matrix
     def get_character_matrix(self):

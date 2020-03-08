@@ -143,6 +143,8 @@ handle_input = function(dir) {
             getInventory();
         if(command == "F")
             fight(x,y);
+        if(command == "A")
+            attack(x,y)
         if(command == "T")
             trade();
     }

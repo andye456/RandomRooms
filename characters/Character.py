@@ -11,6 +11,7 @@ class Character:
     y_pos=0
     weapon=""
     abilities=[]
+    hit_points=5
 
     def __init__(self, name, age, skill, race, char_class, items, x_pos, y_pos, weapon, abilities):
         self.name=name

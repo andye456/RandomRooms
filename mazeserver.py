@@ -30,6 +30,7 @@ from characters.race.Halfling import Halfling
 from characters.race.Human import Human
 from characters.race.Dwarf import Dwarf
 
+
 from characters import FriendStatus
 hostName = "localhost"
 hostPort = 8080
@@ -112,14 +113,27 @@ class MyServer(BaseHTTPRequestHandler):
                 cmd=resp["command"]
             except KeyError:
                 pass
-            if cmd == "I":
+            if cmd == "I": # Show inventory
                 char_json = json.dumps(self.character_ref[(0, 0)].__dict__)
                 char_data = '{"char_data":'+char_json+'}'
                 self.wfile.write(char_data.encode("UTF-8"))
-            elif cmd == "F":
-                char_json = json.dumps(self.character_ref[(resp['room_x'],resp['room_y'])].__dict__)
-                char_data = '{"char_data":' + char_json + '}'
-                self.wfile.write(char_data.encode("UTF-8"))
+            elif cmd == "F": # Friend status
+                char_json = json.dumps(self.character_ref[(resp['room_x'],resp['room_y'])].__dict__) # Gets the stats for the character that is in the room
+                char_data = '{"char_data":' + char_json + '}' # make it intom a JSON object
+                self.wfile.write(char_data.encode("UTF-8")) # return it to the front end.
+            elif cmd == "A": # attack
+                them = self.character_ref[(resp['room_x'], resp['room_y'])]
+                their_dmg = random.randint(them.weapon['min_damage_large_opponent'],them.weapon['max_damage_large_opponent'])
+                your_dmg = random.randint(self.character_ref[(0, 0)].weapon['min_damage_small_opponent'],self.character_ref[(0, 0)].weapon['max_damage_small_opponent'])
+
+                if your_dmg > their_dmg:
+                    char_data = '{"char_data":"win"}'
+                    # ToDo:  Remove the character from the game - change this to have the character die eventually when their life gets down to 0 then you can loot them
+                    self.character_ref.pop((resp['room_x'], resp['room_y']))
+                else:
+                    char_data = '{"char_data":"lose"}'
+                self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
+
             elif cmd == "T":
                 pass
             else:

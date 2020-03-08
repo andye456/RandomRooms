@@ -34,9 +34,7 @@ class RandomRooms():
 
     CHAR_RACE = Enum('char_race', 'Elf Gnome Dwarf Half_Elf Halfling Half_Orc Human')
 
-    character = {}
-
-    character_matrix={}
+    character_matrix=CharacterMatrix()
 
     def create_rooms(self, iter):
 
@@ -59,7 +57,7 @@ class RandomRooms():
         room_matrix = RoomMatrix()
         room_matrix.addRoom((0,0),room)
 
-        self.character_matrix = CharacterMatrix()
+        # self.character_matrix = CharacterMatrix()
 
         # iterator
         i=0
@@ -138,9 +136,10 @@ class RandomRooms():
                         # define the characters abilities based on its race/class
                         ab = CharacterAbilities(char_race,char_class)
                         # Create the character
-                        self.character[i] = Character(random.choice(WORDS).capitalize(), random.randint(40,300), random.randint(100,300), char_race, char_class, items, x_pos, y_pos,  Weapons.Club, ab.getAbilities())
+                        abilities=ab.getAbilities()
+                        character = Character(random.choice(WORDS).capitalize(), random.randint(40,300), random.randint(100,300), char_race, char_class, items, x_pos, y_pos,  Weapons.Club, abilities)
                         # Add the character to the character matrix
-                        self.character_matrix.addCharacter((x_pos,y_pos),self.character[i])
+                        self.character_matrix.addCharacter((x_pos,y_pos),character)
 
 
                 except KeyError:
