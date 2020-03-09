@@ -4,14 +4,13 @@ import dill as dill
 class CharacterMatrix:
     # x_ref = 0
     # y_ref = 0
-    character_ref={}
+    character_ref = {}
 
     def addCharacter(self, ref, character):
-        self.character_ref[ref]=character
+        self.character_ref[ref] = character
 
     def getCharacter(self, x, y):
-        return self.character_ref[(x,y)]
-
+        return self.character_ref[(x, y)]
 
     def attack(self, char_ref):
         return self.character_ref[char_ref]
@@ -27,6 +26,7 @@ class CharacterMatrix:
         return character_ref
 
     def dump_chars_to_binary(self):
-        # dumps the matrix of room to a binary file
-        with open("characters.bin","wb") as f:
+        print("Dumping characters to binary file")
+        # dumps the matrix of characters to a binary file
+        with open("characters.bin", "wb") as f:
             dill.dump(self.character_ref, f)

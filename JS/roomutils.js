@@ -249,7 +249,8 @@ getInventory = function() {
         console.log(returnData);
         dat = JSON.parse(returnData);
         if(typeof dat['char_data'] != 'undefined') {
-            $('#dialog').append("<table style='pasdding:5px'>");
+            $('#dialog').append("<table style='padding:5px'>");
+            $('#dialog').append("<tr><td colspan='2'>Your hit points: "+dat.char_data.hit_points+"</td></tr>");
             $('#dialog').append("<tr><th>Item</th><th>Value</th><td>");
             dat['char_data']['inventory'].forEach(function(d){
                 des += d['name']+" ";
@@ -260,7 +261,8 @@ getInventory = function() {
     });
 }
 
-fight = function(x,y) {
+
+strengths = function(x,y) {
     d2 = '{"command": "F", "room_x": '+x+',"room_y": '+y+'}';
 
     $.post("maze.html",d2)
@@ -268,12 +270,15 @@ fight = function(x,y) {
         console.log(returnData);
         dat2 = JSON.parse(returnData);
         if(typeof dat2['char_data'] != 'undefined') {
-            $('#dialog').append("<b>"+dat2.char_data.name+"</b>");
+            $('#dialog').append("<b>Name: "+dat2.char_data.name+"</b>");
             $('#dialog').append("<table style='pasdding:5px'>");
-            $('#dialog').append("<tr><th>Characteristic</th><th>Power</th><td>");
-            dat2.char_data.abilities.forEach(function(abi){
-                $('#dialog').append("<tr><td>"+abi['id']+"</td><td>"+abi['value']+"</td></tr>");
-            });
+            $('#dialog').append("<tr><td colspan='2'>Hit Points: "+dat2.char_data.hit_points+"</td></tr>");
+            $('#dialog').append("<tr><th style='padding:5px'>Characteristic</th><th>Power</th><td>");
+            for( var key in dat2.char_data.abilities) {
+                if(dat2.char_data.abilities.hasOwnProperty(key)) {
+                    $('#dialog').append("<tr><td>"+key+"</td><td>"+dat2.char_data.abilities[key]+"</td></tr>");
+                }
+            }
             $('#dialog').append("</table>");
         }
     });
@@ -303,7 +308,18 @@ attack = function(x,y) {
         dat3 = JSON.parse(returnData);
         if(typeof dat3['char_data'] != 'undefined') {
             $('#dialog').append("<p><b> You attack and "+dat3.char_data+"</b>");
+            if(dat3.char_data == "lose") {
+                $('#dialog').append("<p><b> Game Over, return to start to restart.</b>");
+                restart();
+            }
         }
     });
 
+}
+
+restart = function() {
+    x = 0;
+    y = 0;
+    console.log("restarting game");
+    $.post("maze.html", '{"command": "restart", "room_x": '+x+',"room_y": '+y+'}');
 }

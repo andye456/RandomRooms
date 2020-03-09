@@ -72,7 +72,7 @@ class RoomGenHtml():
                             </form>
                         </div>
                 
-                        <div class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 2 -->
+                        <div id="playerstatus" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 2 -->
                             
                         </div>
                 
@@ -81,7 +81,7 @@ class RoomGenHtml():
                             <input type="text" id="inputline" autofocus></text>
                         </div>
                 
-                        <div class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 4 -->
+                        <div id="characterstatus" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 4 -->
 
                         </div>
                 
