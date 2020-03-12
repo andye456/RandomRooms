@@ -141,7 +141,7 @@ handle_input = function(dir) {
         command=dir.toUpperCase();
         if(command == "I")
             getInventory();
-        if(command == "F")
+        if(command == "O")
             strengths(x,y);
         if(command == "A")
             attack(x,y)

@@ -1,6 +1,6 @@
 import characters.CharacterAbilities
 
-
+# Each character has a set of attributes, the player starts with no experience and
 class Character:
     name = ""
     age = 0
@@ -12,6 +12,8 @@ class Character:
     y_pos = 0
     weapon = ""
     abilities = []
+    armor = {}
+    experience = 0
 
     def __init__(self, name, age, hit_points, race, char_class, items, x_pos, y_pos, weapon, abilities):
         print("hit_points = "+str(hit_points))

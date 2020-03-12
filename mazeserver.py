@@ -133,19 +133,20 @@ class MyServer(BaseHTTPRequestHandler):
                 char_json = json.dumps(self.character_ref[(0, 0)].__dict__)
                 char_data = '{"char_data":' + char_json + '}'
                 self.wfile.write(char_data.encode("UTF-8"))
-            elif cmd == "F":  # Get the characters strengths
+            elif cmd == "O":  # Get the characters strengths
                 char_json = json.dumps(self.character_ref[(
                     resp['room_x'], resp['room_y'])].__dict__)  # Gets the stats for the character that is in the room
                 char_data = '{"char_data":' + char_json + '}'  # make it into a JSON object
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
             elif cmd == "A":  # attack
-                # Get a reference to the character object
+                # Get a reference to the monster character object
                 them = self.character_ref[(resp['room_x'], resp['room_y'])]
                 # get a reference to your character object
                 you = self.character_ref[(0, 0)]
                 # Get the damage figures from their current weapons
                 their_dmg = random.randint(them.weapon['min_damage_large_opponent'],
                                            them.weapon['max_damage_large_opponent'])
+
                 your_dmg = random.randint(you.weapon['min_damage_small_opponent'],
                                           you.weapon['max_damage_small_opponent'])
 

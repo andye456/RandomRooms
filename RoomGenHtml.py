@@ -73,7 +73,15 @@ class RoomGenHtml():
                         </div>
                 
                         <div id="playerstatus" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 2 -->
-                            
+                            <table style='width:100%'>
+                            <tr><td>I</td><td>Your inventory</td></tr>
+                            <tr><td>O</td><td>Opponent's hit points and characteristics</td></tr>
+                            <tr><td>P</td><td>Player's hit points and characteristics</td></tr>
+                            <tr><td>A</td><td>Attack opponent</td></tr>
+                            <tr><td>D</td><td>Drink potion</td></tr>
+                            <tr><td>G</td><td>gather &lt;item&gt;/td></tr>
+                            <tr><td>X</td><td>Show room info;/td></tr>
+                            </table>
                         </div>
                 
                         <div  id="userinput" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 3 -->

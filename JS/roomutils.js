@@ -263,7 +263,7 @@ getInventory = function() {
 
 
 strengths = function(x,y) {
-    d2 = '{"command": "F", "room_x": '+x+',"room_y": '+y+'}';
+    d2 = '{"command": "O", "room_x": '+x+',"room_y": '+y+'}';
 
     $.post("maze.html",d2)
     .done(function(returnData) {
