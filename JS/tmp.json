@@ -1,0 +1,90 @@
+{
+  "room_data": {
+    "room_name": "Leland",
+    "description": "sawfly",
+    "door_weights": {
+      "N": 4,
+      "E": 4,
+      "S": 4
+    },
+    "from_door": 2,
+    "N": 1,
+    "E": 1,
+    "S": 1,
+    "W": 0,
+    "room_code_bin": "1 1 1 0",
+    "room_code_int": 14,
+    "N_weight": 4,
+    "E_weight": 4,
+    "S_weight": 4,
+    "visits": 5
+  },
+  "char_data": {
+    "name": "Predecessor",
+    "age": 247,
+    "hit_points": 9,
+    "race": "Human",
+    "char_class": "Druid",
+    "inventory": [
+      {
+        "name": "Belt",
+        "buy": "3sp",
+        "sell": "1sp"
+      },
+      {
+        "name": "Sack",
+        "buy": "1sp",
+        "sell": "1sp"
+      },
+      {
+        "name": "Candle",
+        "buy": "1sp",
+        "sell": "1sp"
+      },
+      {
+        "name": "Backpack",
+        "buy": "2gp",
+        "sell": "1gp"
+      }
+    ],
+    "x_pos": 0,
+    "y_pos": -1,
+    "weapon": {
+      "name": "Club",
+      "weight": 30,
+      "min_damage_small_opponent": 1,
+      "max_damage_small_opponent": 6,
+      "min_damage_large_opponent": 1,
+      "max_damage_large_opponent": 3,
+      "buy": "1gp",
+      "sell": "5sp"
+    },
+    "abilities": {
+      "charisma": 10,
+      "constitution": 10,
+      "dexterity": 3,
+      "intelligence": 10,
+      "strength": 8,
+      "wisdom": 10
+    }
+  },
+  "friend_status": "P",
+  "item_data": [
+    {
+      "item_object": {
+        "name": "Snake",
+        "buy": "5gp",
+        "sell": "4gp"
+      },
+      "owner": "Predecessor"
+    },
+    {
+      "item_object": {
+        "name": "Backpack",
+        "buy": "2gp",
+        "sell": "1gp"
+      },
+      "owner": "Predecessor"
+    }
+  ]
+}

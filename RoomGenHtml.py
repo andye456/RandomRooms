@@ -4,7 +4,7 @@ RoomFinder will load a previously created matrix of rooms and using various algo
 """
 import dill
 
-class RoomGenHtml():
+class RoomGenHtml:
 
     def find_rooms_html(self):
         html="""

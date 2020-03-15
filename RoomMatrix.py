@@ -57,15 +57,13 @@ class RoomMatrix:
         for row in range(len(grid)):
             for elem in range(len(grid[row])):
                 try:
-                    if (self.room_ref[elem - x_tx, row - y_tx] is not None):
-                        if (self.room_ref[elem - x_tx, row - y_tx].room_name == "Start"):
-                            # print("S", end="")
-                            print(f"{RoomUtils.bcolors.FAIL}S{RoomUtils.bcolors.ENDC}", end="")
-                        elif (self.room_ref[elem - x_tx, row - y_tx].room_name == "Exit"):
-                            print(f"{RoomUtils.bcolors.FAIL}E{RoomUtils.bcolors.ENDC}", end="")
+                    if self.room_ref[elem - x_tx, row - y_tx] is not None:
+                        if self.room_ref[elem - x_tx, row - y_tx].room_name == "Start":
+                            print("S", end="")
+                        elif self.room_ref[elem - x_tx, row - y_tx].room_name == "Exit":
+                            print("E", end="")
                         else:
-                            # print("X", end="")
-                            print(f"{RoomUtils.bcolors.OKBLUE}X{RoomUtils.bcolors.ENDC}", end="")
+                            print("X", end="")
                 except KeyError:
                     print(" ", end="")
             print()

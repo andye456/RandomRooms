@@ -52,14 +52,20 @@ def adjust_dmg(strength):
         return 1
 
 
-class MyServer(BaseHTTPRequestHandler):
+def setup():
     print("opening rooms.bin to read matrix")
     f = open("rooms.bin", "rb")
     room_ref = dill.load(f)
     f.close()
 
+    print("opening characters.bin to read characters")
     f = open("characters.bin", "rb")
     character_ref = dill.load(f)
+    f.close()
+
+    print("opening items.bin to read items")
+    f = open("items.bin", "rb")
+    item_ref = dill.load(f)
     f.close()
 
     # This bit adds you as a Human, with random class and gives you a few basic items to start
@@ -69,9 +75,15 @@ class MyServer(BaseHTTPRequestHandler):
     items = [Items.Sack, Items.Candle]
     weapon = Weapons.Cane
     abilities = CharacterAbilities(char_race, char_class)
-    my_char = Character("Pweter", 25, random.randint(8, 15), char_race, char_class, items, 0, 0, weapon,
+    my_char = Character("Pweter", 25, random.randint(10, 15), char_race, char_class, items, 0, 0, weapon,
                         abilities.getAbilities())
     character_ref[(0, 0)] = my_char
+    return room_ref, character_ref, item_ref
+
+
+class MyServer(BaseHTTPRequestHandler):
+    # initialise the mazes
+    room_ref, character_ref, item_ref = setup()
 
     def __init__(self, request, client_address, server):
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
@@ -107,16 +119,19 @@ class MyServer(BaseHTTPRequestHandler):
         self._set_response()
         val = "-1"
         try:
+            # if val is a number then generate this number of rooms
+            # if it is a letter then handle this as a command
             val = post_data.decode('utf-8').split("=")[1]
         except:
             pass
-        # Generates new room from a request from the web page # not implemented
+        # Generates new room from a request from the web page
         if val != "-1":
             rr = RandomRooms()
             rr.create_rooms(val)
             rf = RoomGenHtml()
             rf.find_rooms_html()
             # Calls  the GET to rerender the page
+            self.room_ref, self.character_ref, self.item_ref = setup()
             self.do_GET()
         else:
             resp = json.loads(post_data.decode('utf-8'))
@@ -198,8 +213,23 @@ class MyServer(BaseHTTPRequestHandler):
                 except AttributeError:
                     pass
 
+                try:
+                    item_json="["
+                    idx=0
+                    item_lst = self.item_ref[(resp['room_x'], resp['room_y'])]
+                    for i in item_lst:
+                        item_json+=json.dumps(i.__dict__ )
+                        if idx<len(item_lst)-1:
+                            item_json+=','
+                        idx+=1
+                    item_json+=']'
+                    room_data += ',"item_data":'+item_json
+                except KeyError:
+                    _char_ref = {}
+                except AttributeError:
+                    pass
                 room_data += '}'
-
+                print(room_data)
                 # TODO: Establish your class, using the FriendStatus lookup decide whether the character in the room
                 #  is an enemy
 

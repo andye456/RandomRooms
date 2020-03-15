@@ -2,10 +2,11 @@ import random
 Belt        = {"name":"Belt", "buy":"3sp", "sell":"1sp"}
 Backpack    = {"name":"Backpack", "buy":"2gp", "sell":"1gp"}
 Candle      = {"name":"Candle", "buy":"1sp", "sell":"1sp"}
+Snake       = {"name":"Snake", "buy": "5gp", "sell":"4gp"}
 Sack        = {"name":"Sack", "buy":"1sp", "sell":"1sp"}
 
 # For each item add it to this list so it can be selected at random
-group_of_items=[Belt,Backpack,Candle,Sack]
+group_of_items=[Belt,Backpack,Candle,Sack,Snake]
 
 
 def getRandomItems():

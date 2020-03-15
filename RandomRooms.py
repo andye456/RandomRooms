@@ -5,12 +5,14 @@ from random import randrange
 
 import RoomUtils
 from CharacterMatrix import CharacterMatrix
+from ItemMatrix import ItemMatrix
 from Room import Room
 from RoomMatrix import RoomMatrix
 from characters import Weapons
 from characters.Character import Character
 import characters.Items as Items
 from characters.CharacterAbilities import CharacterAbilities
+from characters.Item import Item
 
 from characters.classes.Ranger import Ranger
 from characters.classes.Druid import Druid
@@ -34,10 +36,11 @@ class RandomRooms():
     CHAR_RACE = Enum('char_race', 'Elf Gnome Dwarf Half_Elf Halfling Half_Orc Human')
 
     character_matrix = CharacterMatrix()
+    item_matrix = ItemMatrix()
 
-    def create_rooms(self, iter):
+    def create_rooms(self, iterroom):
 
-        print("Creating " + str(iter) + " rooms!")
+        print("Creating " + str(iterroom) + " rooms!")
         # Read random words from a file
         WORDS = []
         f = open("words.txt", "r")
@@ -103,6 +106,7 @@ class RandomRooms():
                 entry_door = RoomUtils.get_opposite_door(direction)
 
                 try:
+                    character = None
                     # if the room exists use it
                     room = room_matrix.getRoom(x_pos, y_pos)
                     # increment the number of visits to this room
@@ -147,6 +151,17 @@ class RandomRooms():
                                               abilities)
                         # Add the character to the character matrix
                         self.character_matrix.addCharacter((x_pos, y_pos), character)
+                    if found_again > 0:
+                        I=[]
+                        # If the character exists in this room then associate this item with the character
+                        if character is not None:
+                            c = character.name
+                        else:
+                            c = ""
+                        for itm in Items.getRandomItems():
+                            I.append(Item(itm,c))
+                            self.item_matrix.addItem((x_pos, y_pos),I)
+
 
                 except KeyError:
                     # Create a new room
@@ -169,17 +184,22 @@ class RandomRooms():
             i += 1
             print("Iteration: " + str(i))
             # When all the iterations are done
-            if i == int(iter):
+            if i == int(iterroom):
                 room = room_matrix.getRoom(x_pos, y_pos)
                 room.room_name = "Exit"
                 room.description = "The way out"
                 # Prints out an ascii representation of the matrix
                 room_matrix.get_room_grid()
+
                 # dumps the RoomMatrix to an external binary file.
                 room_matrix.dump_rooms_to_binary()
 
                 # dumps the characters to a binary file.
                 self.character_matrix.dump_chars_to_binary()
+
+                # dump the items to a file
+                self.item_matrix.dump_items_to_binary()
+
                 # Prints some stats
                 print("New Rooms = " + str(unique))
                 print("Revisited = " + str(found_again))

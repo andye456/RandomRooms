@@ -6,62 +6,57 @@ N shows that the race is thought of neutrally, although some suspicion will be e
 A means that the race is greeted with antipathy.
 H tokens a strong hatred for the race in question.
 """
-races = {}
-races[('Dwarf','Dwarf')]   = 'P'
-races[('Dwarf','Elf')]     = 'A'
-races[('Dwarf','Gnome')]   = 'G'
-races[('Dwarf','Half_Elf')]= 'N'
-races[('Dwarf','Halfling')]= 'G'
-races[('Dwarf','Half_Orc')]= 'H'
-races[('Dwarf','Human')]   = 'N'
-
-races[('Elf','Dwarf')]   = 'A'
-races[('Elf','Elf')]     = 'P'
-races[('Elf','Gnome')]   = 'T'
-races[('Elf','Half_Elf')]= 'G'
-races[('Elf','Halfling')]= 'T'
-races[('Elf','Half_Orc')]= 'A'
-races[('Elf','Human')]   = 'N'
-
-races[('Gnome','Dwarf')]   = 'G'
-races[('Gnome','Elf')]     = 'T'
-races[('Gnome','Gnome')]   = 'P'
-races[('Gnome','Half_Elf')]= 'T'
-races[('Gnome','Halfling')]= 'G'
-races[('Gnome','Half_Orc')]= 'H'
-races[('Gnome','Human')]   = 'N'
-
-races[('Half_Elf','Dwarf')]   = 'N'
-races[('Half_Elf','Elf')]     = 'P'
-races[('Half_Elf','Gnome')]   = 'T'
-races[('Half_Elf','Half_Elf')]= 'P'
-races[('Half_Elf','Halfling')]= 'N'
-races[('Half_Elf','Half_Orc')]= 'A'
-races[('Half_Elf','Human')]   = 'T'
-
-races[('Halfling','Dwarf')]   = 'G'
-races[('Halfling','Elf')]     = 'G'
-races[('Halfling','Gnome')]   = 'T'
-races[('Halfling','Half_Elf')]= 'N'
-races[('Halfling','Halfling')]= 'P'
-races[('Halfling','Half_Orc')]= 'N'
-races[('Halfling','Human')]   = 'N'
-
-races[('Half_Orc','Dwarf')]   = 'H'
-races[('Half_Orc','Elf')]     = 'A'
-races[('Half_Orc','Gnome')]   = 'H'
-races[('Half_Orc','Half_Elf')]= 'A'
-races[('Half_Orc','Halfling')]= 'N'
-races[('Half_Orc','Half_Orc')]= 'P'
-races[('Half_Orc','Human')]   = 'T'
-
-races[('Human','Dwarf')]   = 'N'
-races[('Human','Elf')]     = 'N'
-races[('Human','Gnome')]   = 'N'
-races[('Human','Half_Elf')]= 'T'
-races[('Human','Halfling')]= 'N'
-races[('Human','Half_Orc')]= 'N'
-races[('Human','Human')]   = 'P'
+races = {
+    ('Dwarf', 'Dwarf'): 'P',
+    ('Dwarf', 'Elf'): 'A',
+    ('Dwarf', 'Gnome'): 'G',
+    ('Dwarf', 'Half_Elf'): 'N',
+    ('Dwarf', 'Halfling'): 'G',
+    ('Dwarf', 'Half_Orc'): 'H',
+    ('Dwarf', 'Human'): 'N',
+    ('Elf', 'Dwarf'): 'A',
+    ('Elf', 'Elf'): 'P',
+    ('Elf', 'Gnome'): 'T',
+    ('Elf', 'Half_Elf'): 'G',
+    ('Elf', 'Halfling'): 'T',
+    ('Elf', 'Half_Orc'): 'A',
+    ('Elf', 'Human'): 'N',
+    ('Gnome', 'Dwarf'): 'G',
+    ('Gnome', 'Elf'): 'T',
+    ('Gnome', 'Gnome'): 'P',
+    ('Gnome', 'Half_Elf'): 'T',
+    ('Gnome', 'Halfling'): 'G',
+    ('Gnome', 'Half_Orc'): 'H',
+    ('Gnome', 'Human'): 'N',
+    ('Half_Elf', 'Dwarf'): 'N',
+    ('Half_Elf', 'Elf'): 'P',
+    ('Half_Elf', 'Gnome'): 'T',
+    ('Half_Elf', 'Half_Elf'): 'P',
+    ('Half_Elf', 'Halfling'): 'N',
+    ('Half_Elf', 'Half_Orc'): 'A',
+    ('Half_Elf', 'Human'): 'T',
+    ('Halfling', 'Dwarf'): 'G',
+    ('Halfling', 'Elf'): 'G',
+    ('Halfling', 'Gnome'): 'T',
+    ('Halfling', 'Half_Elf'): 'N',
+    ('Halfling', 'Halfling'): 'P',
+    ('Halfling', 'Half_Orc'): 'N',
+    ('Halfling', 'Human'): 'N',
+    ('Half_Orc', 'Dwarf'): 'H',
+    ('Half_Orc', 'Elf'): 'A',
+    ('Half_Orc', 'Gnome'): 'H',
+    ('Half_Orc', 'Half_Elf'): 'A',
+    ('Half_Orc', 'Halfling'): 'N',
+    ('Half_Orc', 'Half_Orc'): 'P',
+    ('Half_Orc', 'Human'): 'T',
+    ('Human', 'Dwarf'): 'N',
+    ('Human', 'Elf'): 'N',
+    ('Human', 'Gnome'): 'N',
+    ('Human', 'Half_Elf'): 'T',
+    ('Human', 'Halfling'): 'N',
+    ('Human', 'Half_Orc'): 'N',
+    ('Human', 'Human'): 'P'
+}
 
 
 def getFriendStatus(race1, race2):
