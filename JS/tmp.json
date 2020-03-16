@@ -1,90 +1,52 @@
 {
   "room_data": {
-    "room_name": "Leland",
-    "description": "sawfly",
+    "room_name": "Start",
+    "description": "salt",
     "door_weights": {
-      "N": 4,
-      "E": 4,
-      "S": 4
+      "N": 1,
+      "E": 0,
+      "S": 0,
+      "W": 0
     },
-    "from_door": 2,
+    "from_door": 1,
     "N": 1,
     "E": 1,
     "S": 1,
-    "W": 0,
-    "room_code_bin": "1 1 1 0",
-    "room_code_int": 14,
-    "N_weight": 4,
-    "E_weight": 4,
-    "S_weight": 4,
-    "visits": 5
+    "W": 1,
+    "room_code_bin": "1 1 1 1",
+    "room_code_int": 15,
+    "N_weight": 1,
+    "E_weight": 0,
+    "S_weight": 0,
+    "W_weight": 0
   },
   "char_data": {
-    "name": "Predecessor",
-    "age": 247,
-    "hit_points": 9,
+    "name": "Zoran",
+    "age": 25,
+    "hit_points": 7,
     "race": "Human",
-    "char_class": "Druid",
-    "inventory": [
-      {
-        "name": "Belt",
-        "buy": "3sp",
-        "sell": "1sp"
-      },
-      {
-        "name": "Sack",
-        "buy": "1sp",
-        "sell": "1sp"
-      },
-      {
-        "name": "Candle",
-        "buy": "1sp",
-        "sell": "1sp"
-      },
-      {
-        "name": "Backpack",
-        "buy": "2gp",
-        "sell": "1gp"
-      }
-    ],
+    "char_class": "Illusionist",
     "x_pos": 0,
-    "y_pos": -1,
+    "y_pos": 0,
     "weapon": {
-      "name": "Club",
-      "weight": 30,
+      "name": "Cane",
+      "weight": 5,
       "min_damage_small_opponent": 1,
-      "max_damage_small_opponent": 6,
+      "max_damage_small_opponent": 3,
       "min_damage_large_opponent": 1,
-      "max_damage_large_opponent": 3,
-      "buy": "1gp",
-      "sell": "5sp"
+      "max_damage_large_opponent": 2,
+      "buy": "5sp",
+      "sell": "3sp"
     },
     "abilities": {
       "charisma": 10,
       "constitution": 10,
-      "dexterity": 3,
-      "intelligence": 10,
+      "dexterity": 16,
+      "intelligence": 15,
       "strength": 8,
       "wisdom": 10
-    }
-  },
-  "friend_status": "P",
-  "item_data": [
-    {
-      "item_object": {
-        "name": "Snake",
-        "buy": "5gp",
-        "sell": "4gp"
-      },
-      "owner": "Predecessor"
     },
-    {
-      "item_object": {
-        "name": "Backpack",
-        "buy": "2gp",
-        "sell": "1gp"
-      },
-      "owner": "Predecessor"
-    }
-  ]
+    "experience": 1
+  },
+  "friend_status": "P"
 }

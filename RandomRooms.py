@@ -67,6 +67,17 @@ class RandomRooms():
         wrong_direction = 0
         direction = "N"
 
+        # This bit adds you as a Human, with random class and gives you a few basic items to start
+        # The bit below that adds other characters will not add a character to room at (0,0)
+        classes = ['Assassin', 'Druid', 'Illusionist', 'Monk', 'Paladin', 'Ranger']
+        char_race = "Human"
+        char_class = random.choice(classes)
+        weapon = Weapons.Cane
+        abilities = CharacterAbilities(char_race, char_class)
+        my_char = Character("Zoran", 25, random.randint(10, 15), char_race, char_class, 0, 0, weapon,
+                            abilities.getAbilities())
+        self.character_matrix.addCharacter((0,0), my_char)
+
         while True:
             # Get the list of exits, e.g. NSW (R is appended to show the current map)
             exits = room.show_exits() + "R"
@@ -107,14 +118,14 @@ class RandomRooms():
 
                 try:
                     character = None
-                    # if the room exists use it
+                    # if the room exists use it - if not a KeyError exception will be raised and a new room created.
                     room = room_matrix.getRoom(x_pos, y_pos)
                     # increment the number of visits to this room
                     room.visits += 1
                     # find the door that was entered from and increment it's weight
                     room.set_door_weight(entry_door)
                     print("************** ROOM FOUND **************")
-                    print("You are back in " + room.room_name + ", You can see " + room.description)
+                    print("Revisiting " + room.room_name)
                     found_again += 1
 
                     # Add a character if the room already exists and the number of visits is over a certain amount (experimental)
@@ -125,26 +136,26 @@ class RandomRooms():
                     #
                     # Not sure how to change/access the individual "instace" variables of the P objects that are created in the CharacterMatrix
                     #
-                    if found_again > 1:
-                        print("+_+_+_+__+_+_ Adding character")
+
+                    if found_again > 1 and x_pos != 0 and y_pos != 0:
+                        print("[CHAR] Adding character ", end="")
                         # Randomly selects a class and race from the available Enums
 
                         char_class = random.choice(list(self.CHAR_CLASS)).name
                         char_race = random.choice(list(self.CHAR_RACE)).name
-
+                        print("class = "+char_class+" race = "+char_race, end='')
                         # Dynamically creates a character type in a certain room
-                        # Get some random items
-                        items = Items.getRandomItems()
                         # define the characters abilities based on its race/class
                         ab = CharacterAbilities(char_race, char_class)
                         # Create the character
+                        char_name=random.choice(WORDS).capitalize()
+                        print(" name = "+char_name)
                         abilities = ab.getAbilities()
-                        character = Character(random.choice(WORDS).capitalize(),  # its name
+                        character = Character(char_name,  # its name
                                               random.randint(40, 300),  # age
                                               random.randint(3, 16),  # This sets the initial hit points for the monster
                                               char_race,
                                               char_class,
-                                              items,
                                               x_pos,
                                               y_pos,
                                               Weapons.Club,
@@ -157,11 +168,15 @@ class RandomRooms():
                         if character is not None:
                             c = character.name
                         else:
-                            c = ""
+                            c = "room"
+
+                        print("[ITEM] Adding item(s) for "+c+" ", end='')
+
                         for itm in Items.getRandomItems():
                             I.append(Item(itm,c))
                             self.item_matrix.addItem((x_pos, y_pos),I)
-
+                            print(itm['name']+" ",end='')
+                        print()
 
                 except KeyError:
                     # Create a new room
@@ -177,6 +192,8 @@ class RandomRooms():
                     room.set_door_weight(entry_door)
                     room_matrix.addRoom((x_pos, y_pos), room)
 
+                    # Add
+
             else:
                 print("Direction not valid")
                 wrong_direction += 1
@@ -185,6 +202,7 @@ class RandomRooms():
             print("Iteration: " + str(i))
             # When all the iterations are done
             if i == int(iterroom):
+
                 room = room_matrix.getRoom(x_pos, y_pos)
                 room.room_name = "Exit"
                 room.description = "The way out"

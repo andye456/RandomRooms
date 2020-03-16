@@ -35,17 +35,14 @@ var random_room_manual = function() {
 }
 
 handle_input = function(dir) {
-
+    // Reads the direction commands to navigate the maze
     if(['N','S','E','W','X'].includes(dir.toUpperCase())) {
         exit=dir.toUpperCase();
         exits = get_exits(x,y);
         $('#man').remove();
 
-
-
         console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
         console.log("[in room] "+$('#x'+x+'y'+y).attr('title'));
-
 
         if(exits.indexOf(exit) != -1) {
 
@@ -87,22 +84,29 @@ handle_input = function(dir) {
         d = JSON.stringify(data);
 
         // Looks up the room data from the serverside using the current position as the key
-        // to get the object from the datastore object - the bin file created by the dill utility
+        // to get the object from the datastore object - the bin file created by the python dill utility
         $.post("maze.html",d)
             .done(function(d2) {
             console.log(d2);
             ht = JSON.parse(d2);
             desc= "You are in a place called "+ht['room_data']['room_name']+"</br>";
-            if(typeof ht['char_data'] != 'undefined') {
-                // Get the inventory list
+            if(typeof ht['item_data'] != 'undefined') {
+                // Get the items list
                 items=[]
-                ht['char_data']['inventory'].forEach(function(d){
-                   items+=d.name+" ";
+                ht['item_data'].forEach(function(d){
+                   items+=d.item_object.name+" ";
                 });
+            }
+            if(typeof ht['char_data'] != 'undefined') {
+
                 if(x == 0 && y == 0) {
                     desc+= "&nbsp;Your name is "+ht['char_data']['name']+"</br>";
                     desc+= "&nbsp;a "+ht['char_data']['race']+"&nbsp"+ht['char_data']['char_class']+"</br>";
-                    desc+= "&nbsp;You are carrying: "+items+"</br>";
+                    if(typeof ht['item_data'] != 'undefined') {
+                        desc+= "&nbsp;You are carrying: "+items+"</br>";
+                    } else {
+                        desc+= "You are carrying nothing</br>"
+                    }
                     desc+= "&nbsp;Your current weapon is: "+ht['char_data']['weapon']['name']+"</br>";
                 } else {
                     friend_status={"P":"They view you as a friend",
@@ -117,6 +121,8 @@ handle_input = function(dir) {
                     desc+= "&nbsp;Their current weapon is: "+ht['char_data']['weapon']['name']+"</br>";
                     desc+= friend_status[ht.friend_status]+"<br>";
                 }
+            } else if(typeof ht['item_data'] != 'undefined') {
+                desc+="You can see: "+items;
             }
             $('#dialog').append(desc);
 
@@ -138,6 +144,7 @@ handle_input = function(dir) {
         r_name = $('#x'+x+'y'+y).attr("data-name");
         $('#roomname').text(r_name)
     } else {
+        // This deals with the commands other than movement
         command=dir.toUpperCase();
         if(command == "I")
             getInventory();

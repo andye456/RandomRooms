@@ -30,6 +30,7 @@ from characters.race.Dwarf import Dwarf
 
 from characters import FriendStatus
 
+# Change this to 0.0.0.0:8060 for AWS
 hostName = "localhost"
 hostPort = 8080
 
@@ -68,16 +69,6 @@ def setup():
     item_ref = dill.load(f)
     f.close()
 
-    # This bit adds you as a Human, with random class and gives you a few basic items to start
-    classes = ['Assassin', 'Druid', 'Illusionist', 'Monk', 'Paladin', 'Ranger']
-    char_race = "Human"
-    char_class = random.choice(classes)
-    items = [Items.Sack, Items.Candle]
-    weapon = Weapons.Cane
-    abilities = CharacterAbilities(char_race, char_class)
-    my_char = Character("Pweter", 25, random.randint(10, 15), char_race, char_class, items, 0, 0, weapon,
-                        abilities.getAbilities())
-    character_ref[(0, 0)] = my_char
     return room_ref, character_ref, item_ref
 
 
@@ -182,6 +173,7 @@ class MyServer(BaseHTTPRequestHandler):
                     # self.character_ref.
                 elif them.hit_points < 1:
                     char_data = '{"char_data":"win"}'
+                    self.character_ref[(0,0)].experience+=1
                     # ToDo:  Remove the character from the game - change this to have the character die eventually
                     #  when their life gets down to 0 then you can loot them
                     self.character_ref.pop((resp['room_x'], resp['room_y']))

@@ -248,13 +248,12 @@ getInventory = function() {
     .done(function(returnData) {
         console.log(returnData);
         dat = JSON.parse(returnData);
-        if(typeof dat['char_data'] != 'undefined') {
+        if(typeof dat['item_data'] != 'undefined') {
             $('#dialog').append("<table style='padding:5px'>");
-            $('#dialog').append("<tr><td colspan='2'>Your hit points: "+dat.char_data.hit_points+"</td></tr>");
             $('#dialog').append("<tr><th>Item</th><th>Value</th><td>");
-            dat['char_data']['inventory'].forEach(function(d){
-                des += d['name']+" ";
-                $('#dialog').append("<tr><td>"+d['name']+"</td><td>"+d['sell']+"</td></tr>");
+            dat['item_data'].forEach(function(d){
+                des += d.item_object.name+" ";
+                $('#dialog').append("<tr><td>"+d.item_object.name+"</td><td>"+d['sell']+"</td></tr>");
             });
             $('#dialog').append("</table>");
         }
@@ -271,8 +270,9 @@ strengths = function(x,y) {
         dat2 = JSON.parse(returnData);
         if(typeof dat2['char_data'] != 'undefined') {
             $('#dialog').append("<b>Name: "+dat2.char_data.name+"</b>");
-            $('#dialog').append("<table style='pasdding:5px'>");
+            $('#dialog').append("<table style='border:5px; padding: 5px'>");
             $('#dialog').append("<tr><td colspan='2'>Hit Points: "+dat2.char_data.hit_points+"</td></tr>");
+            $('#dialog').append("<tr><td colspan='2'>Experience: "+dat2.char_data.experience+"</td></tr>");
             $('#dialog').append("<tr><th style='padding:5px'>Characteristic</th><th>Power</th><td>");
             for( var key in dat2.char_data.abilities) {
                 if(dat2.char_data.abilities.hasOwnProperty(key)) {

@@ -36,7 +36,7 @@ class Room:
 
     # Takes name and description for the room
     def __init__(self, room_name, description):
-        print("You are in a place called ["+room_name+ "] You can see lots of ["+description+"]")
+        print("[ROOM] Generated "+room_name)
         self.room_name = room_name
         self.description = description
 
