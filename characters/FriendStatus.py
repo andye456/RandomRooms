@@ -61,3 +61,6 @@ races = {
 
 def getFriendStatus(race1, race2):
     return races[(race1,race2)]
+
+if __name__ == "__main__":
+    print(getFriendStatus("Dwarf","Half_Orc"))

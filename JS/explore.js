@@ -121,8 +121,8 @@ handle_input = function(dir) {
                     desc+= "&nbsp;Their current weapon is: "+ht['char_data']['weapon']['name']+"</br>";
                     desc+= friend_status[ht.friend_status]+"<br>";
                 }
-            } else if(typeof ht['item_data'] != 'undefined') {
-                desc+="You can see: "+items;
+            } else if(typeof ht.item_data != 'undefined' && ht.item_data[0].owner == "room") {
+                desc+="You can see: "+items+"<br/>";
             }
             $('#dialog').append(desc);
 
@@ -155,7 +155,9 @@ handle_input = function(dir) {
         if(command == "T")
             trade();
         if(command == "P")
-            strengths(0,0)
+            strengths(0,0);
+        if(command == "G")
+            gather(x,y);
     }
 
 

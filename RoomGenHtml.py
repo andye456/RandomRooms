@@ -14,8 +14,15 @@ class RoomGenHtml:
                 <style>
                     body {padding:20px;}
                     td {
+                        padding:5px;
+                        text-align:center;
                         height:15px; 
                         width:10px;
+                    }
+                    
+                    th {
+                        padding: 5px;
+                        text-align: center;
                     }
             
                     .direction {

@@ -248,14 +248,35 @@ getInventory = function() {
     .done(function(returnData) {
         console.log(returnData);
         dat = JSON.parse(returnData);
-        if(typeof dat['item_data'] != 'undefined') {
-            $('#dialog').append("<table style='padding:5px'>");
-            $('#dialog').append("<tr><th>Item</th><th>Value</th><td>");
-            dat['item_data'].forEach(function(d){
-                des += d.item_object.name+" ";
-                $('#dialog').append("<tr><td>"+d.item_object.name+"</td><td>"+d['sell']+"</td></tr>");
+        if(typeof dat.item_data != 'undefined' && Array.isArray(dat.item_data)) {
+            $('#dialog').append("<table style='padding:5px; border:5px'>");
+            $('#dialog').append("<tr><th colspan='3'>Inventory</th><td>");
+            $('#dialog').append("<tr><th>Item</th><th>Value each</th><th>Count</th><td>");
+
+            lookup = {};
+            var results = [];
+            var items = dat.item_data;
+            for(var item, i = 0; item = items[i++];) {
+                var n = item.item_object.name;
+                if (!(n in lookup)) {
+                    lookup[n] = 1;
+                    results.push({"name":n, "sell": item.item_object.sell, "count":lookup[n]});
+                } else {
+                    var index = items.findIndex(obj => obj.item_object.name==n);
+                    //results.splice(index,1);
+                    lookup[n]+=1
+                    results[index] = {"name":n, "sell": item.item_object.sell, "count":lookup[n]};
+
+                }
+            }
+
+            results.forEach(function(d){
+                $('#dialog').append("<tr style='padding:3px'><td style='padding:3px'>"+d.name+"</td><td>"+d.sell+"</td><td>"+d.count+"</td></tr>");
             });
+
             $('#dialog').append("</table>");
+        } else {
+            $('#dialog').append(dat.item_data+"<br/>")
         }
     });
 }
@@ -315,6 +336,22 @@ attack = function(x,y) {
         }
     });
 
+}
+
+gather = function(x,y) {
+    d4 = '{"command":"G", "room_x":'+x+', "room_y":'+y+'}';
+    $.post("maze.html",d4)
+    .done(function(returnData) {
+        console.log(returnData);
+        dat4 = JSON.parse(returnData);
+        if(typeof dat4.item_data != 'undefined') {
+            dat4.item_data.forEach(function(d) {
+                $('#dialog').append("You pick up:")
+                $('#dialog').append(d.item_object.name+"<br/>");
+
+            });
+        }
+    });
 }
 
 restart = function() {

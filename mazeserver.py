@@ -76,6 +76,9 @@ class MyServer(BaseHTTPRequestHandler):
     # initialise the mazes
     room_ref, character_ref, item_ref = setup()
 
+    item_ref[(0, 0)] = []
+    idx = 0
+
     def __init__(self, request, client_address, server):
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
         self.request_id = ''
@@ -132,16 +135,19 @@ class MyServer(BaseHTTPRequestHandler):
             except KeyError:
                 pass
             if cmd == "I":  # Show inventory
-                char_json = json.dumps(self.character_ref[(0, 0)].__dict__)
-                char_data = '{"char_data":' + char_json + '}'
-                self.wfile.write(char_data.encode("UTF-8"))
+                try:
+                    # The correct way to stringify an array of objects
+                    item_json = json.dumps([ob.__dict__ for ob in self.item_ref[(0, 0)]])
+                    item_data = '{"item_data":' + item_json + '}'
+                except KeyError:
+                    item_data = '{"item_data": "You are carrying nothing"}'
+                self.wfile.write(item_data.encode("UTF-8"))
             elif cmd == "P":  # Get strengths
                 char_json = json.dumps(self.character_ref[(0, 0)].__dict__)
                 char_data = '{"char_data":' + char_json + '}'
                 self.wfile.write(char_data.encode("UTF-8"))
             elif cmd == "O":  # Get the characters strengths
-                char_json = json.dumps(self.character_ref[(
-                    resp['room_x'], resp['room_y'])].__dict__)  # Gets the stats for the character that is in the room
+                char_json = json.dumps(self.character_ref[(resp['room_x'], resp['room_y'])].__dict__)  # Gets the stats for the character that is in the room
                 char_data = '{"char_data":' + char_json + '}'  # make it into a JSON object
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
             elif cmd == "A":  # attack
@@ -173,16 +179,36 @@ class MyServer(BaseHTTPRequestHandler):
                     # self.character_ref.
                 elif them.hit_points < 1:
                     char_data = '{"char_data":"win"}'
+                    # Increase your experience by one.
                     self.character_ref[(0,0)].experience+=1
                     # ToDo:  Remove the character from the game - change this to have the character die eventually
                     #  when their life gets down to 0 then you can loot them
                     self.character_ref.pop((resp['room_x'], resp['room_y']))
+                    # Change the ownership of any items to room
+                    for d in self.item_ref[(resp['room_x'], resp['room_y'])]:
+                        d.owner = "room"
                 else:
                     char_data = '{"char_data":", hit-points remaining.... You: '+str(you.hit_points)+' Them: '+str(them.hit_points)+'"}'
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
 
-            elif cmd == "T":
-                pass
+            elif cmd == "G": # Gather items
+                # Gets the stats for the character that is in the room
+                itm_list = self.item_ref[(resp['room_x'], resp['room_y'])]
+
+                # Check that the items are owned by the room and can be picked up
+                item_data = '{"item_data":['
+                for i in itm_list:
+                    if i.owner == "room":
+                        i.owner="Zoran" # my character
+                        self.item_ref[(0, 0)].append(i)
+
+                        item_data += json.dumps(i.__dict__)
+                        if self.idx < len(itm_list) - 1:
+                            item_data += ','
+                        self.idx += 1
+
+                item_data += ']}'
+                self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
             else:
                 # {"room_x": 0, "room_y": 0, "room_name": "Start"}
 
@@ -207,13 +233,13 @@ class MyServer(BaseHTTPRequestHandler):
 
                 try:
                     item_json="["
-                    idx=0
+                    ix=0
                     item_lst = self.item_ref[(resp['room_x'], resp['room_y'])]
                     for i in item_lst:
                         item_json+=json.dumps(i.__dict__ )
-                        if idx<len(item_lst)-1:
+                        if ix<len(item_lst)-1:
                             item_json+=','
-                        idx+=1
+                        ix+=1
                     item_json+=']'
                     room_data += ',"item_data":'+item_json
                 except KeyError:
