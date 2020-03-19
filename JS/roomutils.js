@@ -328,7 +328,7 @@ attack = function(x,y) {
         console.log(returnData);
         dat3 = JSON.parse(returnData);
         if(typeof dat3['char_data'] != 'undefined') {
-            $('#dialog').append("<p><b> You attack and "+dat3.char_data+"</b>");
+            $('#dialog').append("<p><b>"+dat3.char_data+"</b>");
             if(dat3.char_data == "lose") {
                 $('#dialog').append("<p><b> Game Over, return to start to restart.</b>");
                 restart();

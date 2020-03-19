@@ -1,50 +1,36 @@
-[
-  {
-    "item_object": {
-      "name": "Candle",
-      "buy": "1sp",
-      "sell": "1sp"
+{
+  "item_data": [
+    {
+      "item_object": {
+        "name": "Snake",
+        "buy": "5gp",
+        "sell": "4gp"
+      },
+      "owner": "Zoran"
     },
-    "owner": "Zoran"
-  },
-  {
-    "item_object": {
-      "name": "Sack",
-      "buy": "1sp",
-      "sell": "1sp"
+    {
+      "item_object": {
+        "name": "Sack",
+        "buy": "1sp",
+        "sell": "1sp"
+      },
+      "owner": "Zoran"
     },
-    "owner": "Zoran"
-  },
-  {
-    "item_object": {
-      "name": "Snake",
-      "buy": "5gp",
-      "sell": "4gp"
+    {
+      "item_object": {
+        "name": "Backpack",
+        "buy": "2gp",
+        "sell": "1gp"
+      },
+      "owner": "Zoran"
     },
-    "owner": "Zoran"
-  },
-  {
-    "item_object": {
-      "name": "Backpack",
-      "buy": "2gp",
-      "sell": "1gp"
-    },
-    "owner": "Zoran"
-  },
-  {
-    "item_object": {
-      "name": "Candle",
-      "buy": "1sp",
-      "sell": "1sp"
-    },
-    "owner": "Zoran"
-  },
-  {
-    "item_object": {
-      "name": "Snake",
-      "buy": "5gp",
-      "sell": "4gp"
-    },
-    "owner": "Zoran"
-  }
-]
+    {
+      "item_object": {
+        "name": "Belt",
+        "buy": "3sp",
+        "sell": "1sp"
+      },
+      "owner": "Zoran"
+    }
+  ]
+}

@@ -101,7 +101,7 @@ class CharacterAbilities:
             if char_class == "Assassin":
                 self.setAbilities(strength=12, intelligence=11, dexterity=random.randint(12, 18))
             if char_class == "Druid":
-                self.setAbilities(strength=8, dexterity=random.randint(3, 18))
+                self.setAbilities(strength=8, dexterity=random.randint(6, 18))
             if char_class == "Illusionist":
                 self.setAbilities(strength=8, intelligence=15, dexterity=16)
             if char_class == "Monk":

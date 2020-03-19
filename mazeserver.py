@@ -31,26 +31,11 @@ from characters.race.Dwarf import Dwarf
 from characters import FriendStatus
 
 # Change this to 0.0.0.0:8060 for AWS
+from utils.serverutils import attack
+
 hostName = "localhost"
 hostPort = 8080
 
-
-def adjust_hit_points(const):
-    if const < 6:
-        return -1
-    if 5 < const < 10:
-        return 1
-    if const > 9:
-        return 1
-
-
-def adjust_dmg(strength):
-    if strength < 6:
-        return -1
-    if 5 < strength < 10:
-        return 1
-    if strength > 9:
-        return 1
 
 
 def setup():
@@ -150,49 +135,12 @@ class MyServer(BaseHTTPRequestHandler):
                 char_json = json.dumps(self.character_ref[(resp['room_x'], resp['room_y'])].__dict__)  # Gets the stats for the character that is in the room
                 char_data = '{"char_data":' + char_json + '}'  # make it into a JSON object
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
-            elif cmd == "A":  # attack
-                # Get a reference to the monster character object
-                them = self.character_ref[(resp['room_x'], resp['room_y'])]
-                # get a reference to your character object
-                you = self.character_ref[(0, 0)]
-                # Get the damage figures from their current weapons
-                their_dmg = random.randint(them.weapon['min_damage_large_opponent'],
-                                           them.weapon['max_damage_large_opponent'])
-
-                your_dmg = random.randint(you.weapon['min_damage_small_opponent'],
-                                          you.weapon['max_damage_small_opponent'])
-
-                # Take their_damage and your damage away from your hit points
-                you.hit_points = you.hit_points + adjust_hit_points(you.abilities['constitution'])
-                them.hit_points = them.hit_points + adjust_hit_points(them.abilities['constitution'])
-
-                # Adjust the damage according to the strength of the character
-                their_total_dmg = their_dmg + adjust_dmg(them.abilities['strength'])
-                your_total_dmg = your_dmg + adjust_dmg(you.abilities['strength'])
-
-                you.hit_points -= their_total_dmg
-                them.hit_points -= your_total_dmg
-
-                if you.hit_points < 1:
-                    char_data = '{"char_data":"lose"}'
-                    self.character_ref.pop((0, 0))
-                    # self.character_ref.
-                elif them.hit_points < 1:
-                    char_data = '{"char_data":"win"}'
-                    # Increase your experience by one.
-                    self.character_ref[(0,0)].experience+=1
-                    # ToDo:  Remove the character from the game - change this to have the character die eventually
-                    #  when their life gets down to 0 then you can loot them
-                    self.character_ref.pop((resp['room_x'], resp['room_y']))
-                    # Change the ownership of any items to room
-                    for d in self.item_ref[(resp['room_x'], resp['room_y'])]:
-                        d.owner = "room"
-                else:
-                    char_data = '{"char_data":", hit-points remaining.... You: '+str(you.hit_points)+' Them: '+str(them.hit_points)+'"}'
+            ###### ATTACK ######
+            elif cmd == "A":
+                char_data = attack((resp['room_x'], resp['room_y']), self.character_ref, self.item_ref);
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
-
+            ###### Gather Items ######
             elif cmd == "G": # Gather items
-                # Gets the stats for the character that is in the room
                 itm_list = self.item_ref[(resp['room_x'], resp['room_y'])]
 
                 # Check that the items are owned by the room and can be picked up
