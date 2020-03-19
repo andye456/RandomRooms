@@ -118,7 +118,7 @@ class MyServer(BaseHTTPRequestHandler):
             try:
                 cmd = resp["command"]
             except KeyError:
-                pass
+                print("Command not recognised: "+cmd)
             if cmd == "I":  # Show inventory
                 try:
                     # The correct way to stringify an array of objects
