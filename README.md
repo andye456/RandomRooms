@@ -143,3 +143,4 @@ are made visible when necessary:
 Rooms with the following sets of exits (there will always be the exit you came from)
 * N, NW, NE, NEW
 Room types can be based on the number of times that room was visited during it's creation.
+![screen shot](https://github.com/andye456/RandomRooms/blob/master/random_rooms.png)
