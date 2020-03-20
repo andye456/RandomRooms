@@ -31,7 +31,7 @@ from characters.race.Dwarf import Dwarf
 from characters import FriendStatus
 
 # Change this to 0.0.0.0:8060 for AWS
-from utils.serverutils import attack
+from utils.serverutils import attack, adjust_hit_points
 
 hostName = "localhost"
 hostPort = 8080
@@ -53,6 +53,8 @@ def setup():
     f = open("items.bin", "rb")
     item_ref = dill.load(f)
     f.close()
+
+    character_ref[(0, 0)].hit_points += adjust_hit_points(character_ref[(0, 0)].abilities['constitution'])
 
     return room_ref, character_ref, item_ref
 
@@ -103,7 +105,7 @@ class MyServer(BaseHTTPRequestHandler):
             val = post_data.decode('utf-8').split("=")[1]
         except:
             pass
-        # Generates new room from a request from the web page
+        # Generates new room matrix from a request from the web page
         if val != "-1":
             rr = RandomRooms()
             rr.create_rooms(val)
@@ -117,9 +119,12 @@ class MyServer(BaseHTTPRequestHandler):
             cmd = ""
             try:
                 cmd = resp["command"]
+                print("Command entered: "+cmd)
             except KeyError:
                 print("Command not recognised: "+cmd)
-            if cmd == "I":  # Show inventory
+
+            ###### Show inventory ######
+            if cmd == "I":
                 try:
                     # The correct way to stringify an array of objects
                     item_json = json.dumps([ob.__dict__ for ob in self.item_ref[(0, 0)]])
@@ -127,18 +132,20 @@ class MyServer(BaseHTTPRequestHandler):
                 except KeyError:
                     item_data = '{"item_data": "You are carrying nothing"}'
                 self.wfile.write(item_data.encode("UTF-8"))
-            elif cmd == "P":  # Get strengths
-                char_json = json.dumps(self.character_ref[(0, 0)].__dict__)
-                char_data = '{"char_data":' + char_json + '}'
-                self.wfile.write(char_data.encode("UTF-8"))
-            elif cmd == "O":  # Get the characters strengths
+
+            ##### Get the abilities of either the player or opponent
+            elif cmd == "O":  # Get the characters or players strengths - this is also called when user enters "P" for their own abilities, with (0,0)
+                if resp['room_x'] != 0 and resp['room_y'] != 0:
+                    self.character_ref[(resp['room_x'], resp['room_y'])].hit_points + self.character_ref[(resp['room_x'], resp['room_y'])].abilities['constitution']
                 char_json = json.dumps(self.character_ref[(resp['room_x'], resp['room_y'])].__dict__)  # Gets the stats for the character that is in the room
                 char_data = '{"char_data":' + char_json + '}'  # make it into a JSON object
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
+
             ###### ATTACK ######
             elif cmd == "A":
                 char_data = attack((resp['room_x'], resp['room_y']), self.character_ref, self.item_ref);
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
+
             ###### Gather Items ######
             elif cmd == "G": # Gather items
                 itm_list = self.item_ref[(resp['room_x'], resp['room_y'])]
@@ -170,8 +177,10 @@ class MyServer(BaseHTTPRequestHandler):
                     # _char_ref=self.character_ref[(resp['room_x'],resp['room_y'])]
                     char_json = json.dumps(self.character_ref[(resp['room_x'], resp['room_y'])].__dict__)
                     # Get the friend status of the character
-                    fs = FriendStatus.getFriendStatus(self.character_ref[(0, 0)].race,
-                                                      self.character_ref[(resp['room_x'], resp['room_y'])].race)
+                    fs = FriendStatus.getFriendStatus(self.character_ref[(0, 0)].race, self.character_ref[(resp['room_x'], resp['room_y'])].race)
+                    # set the characters adjusted hit points according to their constitution
+                    #self.character_ref[(resp['room_x'], resp['room_y'])].hit_points += self.character_ref[(resp['room_x'], resp['room_y'])].abilities['constitution']
+
                     char_json += ',"friend_status": "' + fs + '"'
                     room_data += ',"char_data":' + char_json
                 except KeyError:

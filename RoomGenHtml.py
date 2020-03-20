@@ -16,8 +16,8 @@ class RoomGenHtml:
                     td {
                         padding:5px;
                         text-align:center;
-                        height:15px; 
-                        width:10px;
+                        height:25px; 
+                        width:25px;
                     }
                     
                     th {
@@ -104,7 +104,7 @@ class RoomGenHtml:
                     
                     <div class="row" style="height:700px"> <!-- row 2 -->
                         <div class="col border border-primary rounded overflow-auto" id='tablediv'> <!-- Row 2 Col 1 -->
-                            <table id='grid' style='border:0px black solid; border-collapse:separate;'>
+                            <table id='grid' style='border:0px black solid; border-collapse:collapse;'>
         """
         color=""
         # Open the serialised data file in read/binary mode

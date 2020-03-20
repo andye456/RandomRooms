@@ -15,6 +15,7 @@ class Character:
     experience = 0
 
     def __init__(self, name, age, hit_points, race, char_class, x_pos, y_pos, weapon, abilities):
+
         print("hit_points = "+str(hit_points))
         self.name = name
         self.age = age

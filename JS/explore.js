@@ -121,8 +121,10 @@ handle_input = function(dir) {
                     desc+= "&nbsp;Their current weapon is: "+ht['char_data']['weapon']['name']+"</br>";
                     desc+= friend_status[ht.friend_status]+"<br>";
                 }
-            } else if(typeof ht.item_data != 'undefined' && ht.item_data[0].owner == "room") {
-                desc+="You can see: "+items+"<br/>";
+            } else if(typeof ht.item_data != 'undefined' && ht.item_data.length > 0) {
+                if(ht.item_data[0].owner == "room") {
+                    desc+="You can see: "+items+"<br/>";
+                }
             }
             $('#dialog').append(desc);
 
