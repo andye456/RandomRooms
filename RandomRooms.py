@@ -7,6 +7,7 @@ import RoomUtils
 from CharacterMatrix import CharacterMatrix
 from ItemMatrix import ItemMatrix
 from Room import Room
+from RoomGenHtml import RoomGenHtml
 from RoomMatrix import RoomMatrix
 from characters import Weapons
 from characters.Character import Character
@@ -176,6 +177,11 @@ class RandomRooms():
                             I.append(Item(itm,c))
                             self.item_matrix.addItem((x_pos, y_pos),I)
                             print(itm['name']+" ",end='')
+                        p=Items.getARandomPotion()
+                        I.append(Item(p,c))
+                        self.item_matrix.addItem((x_pos, y_pos),I)
+                        print(p['name']+ " ", end='')
+
                         print()
 
                 except KeyError:
@@ -226,5 +232,7 @@ class RandomRooms():
 
 
 if __name__ == "__main__":
-    r = RandomRooms()
-    r.create_rooms(100)
+    rr = RandomRooms()
+    rr.create_rooms(100)
+    rf = RoomGenHtml()
+    rf.find_rooms_html()

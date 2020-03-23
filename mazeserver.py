@@ -60,16 +60,17 @@ def setup():
 
 
 class MyServer(BaseHTTPRequestHandler):
+    # Open the serialised data file in read/binary mode
     # initialise the mazes
     room_ref, character_ref, item_ref = setup()
 
     item_ref[(0, 0)] = []
     idx = 0
 
+    # This is called once per GET request so can't put init code in here.
     def __init__(self, request, client_address, server):
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
         self.request_id = ''
-        # Open the serialised data file in read/binary mode
 
     def _set_response(self):
         self.send_response(200)
@@ -111,8 +112,11 @@ class MyServer(BaseHTTPRequestHandler):
             rr.create_rooms(val)
             rf = RoomGenHtml()
             rf.find_rooms_html()
+            MyServer.room_ref, MyServer.character_ref, MyServer.item_ref = setup()
+            MyServer.item_ref[(0, 0)] = []
+            self.idx = 0
+
             # Calls  the GET to rerender the page
-            self.room_ref, self.character_ref, self.item_ref = setup()
             self.do_GET()
         else:
             resp = json.loads(post_data.decode('utf-8'))
@@ -127,7 +131,7 @@ class MyServer(BaseHTTPRequestHandler):
             if cmd == "I":
                 try:
                     # The correct way to stringify an array of objects
-                    item_json = json.dumps([ob.__dict__ for ob in self.item_ref[(0, 0)]])
+                    item_json = json.dumps([ob.__dict__ for ob in MyServer.item_ref[(0, 0)]])
                     item_data = '{"item_data":' + item_json + '}'
                 except KeyError:
                     item_data = '{"item_data": "You are carrying nothing"}'
@@ -136,27 +140,25 @@ class MyServer(BaseHTTPRequestHandler):
             ##### Get the abilities of either the player or opponent
             elif cmd == "O":  # Get the characters or players strengths - this is also called when user enters "P" for their own abilities, with (0,0)
                 if resp['room_x'] != 0 and resp['room_y'] != 0:
-                    self.character_ref[(resp['room_x'], resp['room_y'])].hit_points + self.character_ref[(resp['room_x'], resp['room_y'])].abilities['constitution']
-                char_json = json.dumps(self.character_ref[(resp['room_x'], resp['room_y'])].__dict__)  # Gets the stats for the character that is in the room
+                    MyServer.character_ref[(resp['room_x'], resp['room_y'])].hit_points + MyServer.character_ref[(resp['room_x'], resp['room_y'])].abilities['constitution']
+                char_json = json.dumps(MyServer.character_ref[(resp['room_x'], resp['room_y'])].__dict__)  # Gets the stats for the character that is in the room
                 char_data = '{"char_data":' + char_json + '}'  # make it into a JSON object
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
 
             ###### ATTACK ######
             elif cmd == "A":
-                char_data = attack((resp['room_x'], resp['room_y']), self.character_ref, self.item_ref);
+                char_data = attack((resp['room_x'], resp['room_y']), MyServer.character_ref, MyServer.item_ref);
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
 
             ###### Gather Items ######
-            elif cmd == "G": # Gather items
-                itm_list = self.item_ref[(resp['room_x'], resp['room_y'])]
-
+            elif cmd == "G" or (len(cmd) > 1 and cmd.split(" ")[0] == "G"):
+                itm_list = MyServer.item_ref[(resp['room_x'], resp['room_y'])]
                 # Check that the items are owned by the room and can be picked up
                 item_data = '{"item_data":['
                 for i in itm_list:
                     if i.owner == "room":
                         i.owner="Zoran" # my character
-                        self.item_ref[(0, 0)].append(i)
-
+                        MyServer.item_ref[(0, 0)].append(i)
                         item_data += json.dumps(i.__dict__)
                         if self.idx < len(itm_list) - 1:
                             item_data += ','
@@ -167,19 +169,19 @@ class MyServer(BaseHTTPRequestHandler):
             else:
                 # {"room_x": 0, "room_y": 0, "room_name": "Start"}
 
-                print("You are in " + self.room_ref[(resp['room_x'], resp['room_y'])].room_name)
+                print("You are in " + MyServer.room_ref[(resp['room_x'], resp['room_y'])].room_name)
                 # Convert the response into a JSON object
-                room_json = json.dumps(self.room_ref[(resp['room_x'], resp['room_y'])].__dict__)
+                room_json = json.dumps(MyServer.room_ref[(resp['room_x'], resp['room_y'])].__dict__)
 
                 room_data = '{"room_data":' + room_json
 
                 try:
-                    # _char_ref=self.character_ref[(resp['room_x'],resp['room_y'])]
-                    char_json = json.dumps(self.character_ref[(resp['room_x'], resp['room_y'])].__dict__)
+                    # _char_ref=MyServer.character_ref[(resp['room_x'],resp['room_y'])]
+                    char_json = json.dumps(MyServer.character_ref[(resp['room_x'], resp['room_y'])].__dict__)
                     # Get the friend status of the character
-                    fs = FriendStatus.getFriendStatus(self.character_ref[(0, 0)].race, self.character_ref[(resp['room_x'], resp['room_y'])].race)
+                    fs = FriendStatus.getFriendStatus(MyServer.character_ref[(0, 0)].race, MyServer.character_ref[(resp['room_x'], resp['room_y'])].race)
                     # set the characters adjusted hit points according to their constitution
-                    #self.character_ref[(resp['room_x'], resp['room_y'])].hit_points += self.character_ref[(resp['room_x'], resp['room_y'])].abilities['constitution']
+                    #MyServer.character_ref[(resp['room_x'], resp['room_y'])].hit_points += MyServer.character_ref[(resp['room_x'], resp['room_y'])].abilities['constitution']
 
                     char_json += ',"friend_status": "' + fs + '"'
                     room_data += ',"char_data":' + char_json
@@ -191,7 +193,7 @@ class MyServer(BaseHTTPRequestHandler):
                 try:
                     item_json="["
                     ix=0
-                    item_lst = self.item_ref[(resp['room_x'], resp['room_y'])]
+                    item_lst = MyServer.item_ref[(resp['room_x'], resp['room_y'])]
                     for i in item_lst:
                         item_json+=json.dumps(i.__dict__ )
                         if ix<len(item_lst)-1:
@@ -213,9 +215,9 @@ class MyServer(BaseHTTPRequestHandler):
 
 
 try:
-    server = socketserver.TCPServer((hostName, hostPort), MyServer)
+    svr = socketserver.TCPServer((hostName, hostPort), MyServer)
     print("Web Server running on port: 8080")
-    server.serve_forever()
+    svr.serve_forever()
 except KeyboardInterrupt:
     print(" ^C entered, stopping web server....")
-    server.socket.close()
+    svr.socket.close()

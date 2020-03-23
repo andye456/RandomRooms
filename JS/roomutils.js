@@ -347,7 +347,10 @@ gather = function(x,y) {
         if(typeof dat4.item_data != 'undefined') {
             dat4.item_data.forEach(function(d) {
                 $('#dialog').append("You pick up:")
-                $('#dialog').append(d.item_object.name+"<br/>");
+                if(typeof d.item_object != 'undefined')
+                    $('#dialog').append(d.item_object.name+"<br/>");
+                if(typeof d.potion_object != 'undefined')
+                    $('#dialog').append(d.potion_object.name+"<br/>");
 
             });
         }

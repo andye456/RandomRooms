@@ -94,7 +94,9 @@ handle_input = function(dir) {
                 // Get the items list
                 items=[]
                 ht['item_data'].forEach(function(d){
-                   items+=d.item_object.name+" ";
+                    // This is probably too defensive as item_object will not be 'undefined' if it gets to here.
+                    if(typeof d.item_object != 'undefined')
+                        items+=d.item_object.name+" ";
                 });
             }
             if(typeof ht['char_data'] != 'undefined') {
@@ -158,7 +160,7 @@ handle_input = function(dir) {
             trade();
         if(command == "P")
             strengths(0,0);
-        if(command == "G")
+        if(command.startsWith("G"))
             gather(x,y);
     }
 
