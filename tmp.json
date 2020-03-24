@@ -1,51 +1,32 @@
 {
   "room_data": {
-    "room_name": "phony",
-    "description": "Ferrer",
+    "room_name": "alcove",
+    "description": "keeshond",
     "door_weights": {
-      "N": 1,
-      "E": 2,
-      "S": 1,
-      "W": 0
+      "N": 2,
+      "E": 1,
+      "W": 1
     },
-    "from_door": 13,
+    "from_door": 1,
     "N": 1,
     "E": 1,
-    "S": 1,
+    "S": 0,
     "W": 1,
-    "room_code_bin": "1 1 1 1",
-    "room_code_int": 15,
-    "N_weight": 1,
-    "E_weight": 2,
-    "S_weight": 1,
-    "W_weight": 0,
+    "room_code_bin": "1 1 0 1",
+    "room_code_int": 13,
+    "N_weight": 2,
+    "E_weight": 1,
+    "W_weight": 1,
     "visits": 1
   },
   "char_data": {
-    "name": "Whisper",
-    "age": 144,
-    "skill": 202,
-    "race": "Half_Elf",
-    "char_class": "Assassin",
-    "inventory": [
-      {
-        "name": "Belt",
-        "buy": "3sp",
-        "sell": "1sp"
-      },
-      {
-        "name": "Candle",
-        "buy": "1sp",
-        "sell": "1sp"
-      },
-      {
-        "name": "Backpack",
-        "buy": "2gp",
-        "sell": "1gp"
-      }
-    ],
-    "x_pos": 1,
-    "y_pos": -4,
+    "name": "Gadget",
+    "age": 133,
+    "hit_points": 8,
+    "race": "Dwarf",
+    "char_class": "Paladin",
+    "x_pos": 2,
+    "y_pos": -1,
     "weapon": {
       "name": "Club",
       "weight": 30,
@@ -56,32 +37,77 @@
       "buy": "1gp",
       "sell": "5sp"
     },
-    "abilities": [
-      {
-        "id": "charisma",
-        "value": 10
-      },
-      {
-        "id": "constitution",
-        "value": 10
-      },
-      {
-        "id": "dexterity",
-        "value": 10
-      },
-      {
-        "id": "intelligence",
-        "value": 10
-      },
-      {
-        "id": "strength",
-        "value": 13
-      },
-      {
-        "id": "wisdom",
-        "value": 10
-      }
-    ]
+    "abilities": {
+      "charisma": 10,
+      "constitution": 10,
+      "dexterity": 17,
+      "intelligence": 9,
+      "strength": 12,
+      "wisdom": 10
+    },
+    "experience": 0
   },
-  "friend_status": "T"
+  "friend_status": "N",
+  "item_data": [
+    {
+      "item_object": {
+        "name": "Backpack",
+        "type": "item",
+        "buy": "2gp",
+        "sell": "1gp"
+      },
+      "owner": "Gadget"
+    },
+    {
+      "item_object": {
+        "name": "Sack",
+        "type": "item",
+        "buy": "1sp",
+        "sell": "1sp"
+      },
+      "owner": "Gadget"
+    },
+    {
+      "item_object": {
+        "name": "Snake",
+        "type": "item",
+        "buy": "5gp",
+        "sell": "4gp"
+      },
+      "owner": "Gadget"
+    },
+    {
+      "item_object": {
+        "name": "Candle",
+        "type": "item",
+        "buy": "1sp",
+        "sell": "1sp"
+      },
+      "owner": "Gadget"
+    },
+    {
+      "item_object": {
+        "name": "Belt",
+        "type": "item",
+        "buy": "3sp",
+        "sell": "1sp"
+      },
+      "owner": "Gadget"
+    },
+    {
+      "item_object": {
+        "name": "healing4",
+        "type": "potion",
+        "power": 4,
+        "experience": 10,
+        "uses": 8,
+        "who": [
+          {
+            "class": "all"
+          }
+        ]
+      },
+      "owner": "Gadget"
+    }
+  ]
 }

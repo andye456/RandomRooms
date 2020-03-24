@@ -357,6 +357,18 @@ gather = function(x,y) {
     });
 }
 
+// This is to consume potions
+drink = function(command) {
+    d5 = '{"command":"'+command+'"}';
+    $.post("maze.html",d5)
+    .done(function(returnData) {
+        console.log(returnData);
+        dat5 = JSON.parse(returnData);
+        if(typeof dat5.item_data != 'undefined') {
+            $('#dialog').append(dat5.item_data);
+        }
+    });
+}
 restart = function() {
     x = 0;
     y = 0;

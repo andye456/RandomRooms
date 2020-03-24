@@ -162,6 +162,8 @@ handle_input = function(dir) {
             strengths(0,0);
         if(command.startsWith("G"))
             gather(x,y);
+        if(command.startsWith("D"))
+            drink(command);
     }
 
 
