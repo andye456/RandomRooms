@@ -71,9 +71,9 @@ class RoomGenHtml:
                 <div class="container-fluid">
                     <div class="row"> <!-- row 1 -->
                         <div class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 1 -->
-                            <form method="POST" target="maze.html">
+                            <form method="POST" target="maze.html" id="reset">
                                 <table>
-                                <tr><td>Create iterations:</td><td><input type="text" name="iter" value="100"></td>
+                                <tr><td>Create iterations:</td><td><input type="text" name="iter" id="iter" value="100"></td>
                                 <tr><td>Click to generate:</td><td><input type="submit" value="start"></td></tr>
                                 </table>
                             </form>
@@ -172,6 +172,7 @@ class RoomGenHtml:
                         if room_ref[elem - x_tx, row - y_tx].room_name == "Exit":
                             color="border-color:Green"
                             text="E"
+                        v=(newrange/oldrange)*room_ref[elem - x_tx, row - y_tx].visits
                         v=(newrange/oldrange)*room_ref[elem - x_tx, row - y_tx].visits
 
                         xref=elem - x_tx

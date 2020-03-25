@@ -79,6 +79,7 @@ class MyServer(BaseHTTPRequestHandler):
 
     # Serve all pages
     def do_GET(self):
+        print("do_GET()")
         if self.path.endswith(".jpg"):
             f = open(self.path.strip("/"), 'rb')
             self.send_response(200)
@@ -210,6 +211,7 @@ class MyServer(BaseHTTPRequestHandler):
                 # {"room_x": 0, "room_y": 0, "room_name": "Start"}
 
                 print("You are in " + MyServer.room_ref[(resp['room_x'], resp['room_y'])].room_name)
+
                 # Convert the response into a JSON object
                 room_json = json.dumps(MyServer.room_ref[(resp['room_x'], resp['room_y'])].__dict__)
 

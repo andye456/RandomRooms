@@ -8281,7 +8281,6 @@ exile
 exist
 existent
 existential
-exit
 exodus
 exogamous
 exogamy
@@ -21805,7 +21804,6 @@ starlight
 starling
 Starr
 starry
-start
 startle
 startup
 starvation

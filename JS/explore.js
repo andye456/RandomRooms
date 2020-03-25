@@ -89,7 +89,10 @@ handle_input = function(dir) {
             .done(function(d2) {
             console.log(d2);
             ht = JSON.parse(d2);
-            desc= "You are in a place called "+ht['room_data']['room_name']+"</br>";
+            desc= "You are in a place called "+ht.room_data.room_name+"</br>";
+            if(ht.room_data.room_name == "Exit")
+                // This calls the form which will reset with what ever number is already in the form
+                document.getElementById('reset').submit();
             if(typeof ht['item_data'] != 'undefined') {
                 // Get the items list
                 items=[]

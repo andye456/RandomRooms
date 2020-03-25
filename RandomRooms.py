@@ -208,7 +208,7 @@ class RandomRooms():
             print("Iteration: " + str(i))
             # When all the iterations are done
             if i == int(iterroom):
-
+                print("Creating the Exit")
                 room = room_matrix.getRoom(x_pos, y_pos)
                 room.room_name = "Exit"
                 room.description = "The way out"

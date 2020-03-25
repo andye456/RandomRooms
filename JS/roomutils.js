@@ -369,9 +369,3 @@ drink = function(command) {
         }
     });
 }
-restart = function() {
-    x = 0;
-    y = 0;
-    console.log("restarting game");
-    $.post("maze.html", '{"command": "restart", "room_x": '+x+',"room_y": '+y+'}');
-}
