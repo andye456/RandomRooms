@@ -60,27 +60,40 @@ var move = function(exit,x,y){
 }
 
 /*
-Gets the exits for the given room based on the border widths
+Gets the exits for the given room based on the border widths in the html
 UPDATE: Also considers the exits that lead nowhere.
 */
-var get_exits = function(x, y) {
-
-    var exits="";
-    if($('#x'+x+'y'+y).css("borderTopWidth") == "1px" && $('#x'+x+'y'+(y-1)).attr('class') == "room") {
+// var get_exits_old = function(x, y) {
+//
+//     var exits="";
+//     if($('#x'+x+'y'+y).css("borderTopWidth") == "1px" && $('#x'+x+'y'+(y-1)).attr('class') == "room") {
+//         exits+="N";
+//     }
+//     if($('#x'+x+'y'+y).css("borderRightWidth") == "1px" && $('#x'+(x+1)+'y'+y).attr('class') == "room" ) {
+//         exits+="E";
+//     }
+//     if($('#x'+x+'y'+y).css("borderBottomWidth") == "1px" && $('#x'+x+'y'+(y+1)).attr('class') == "room") {
+//         exits+="S";
+//     }
+//     if($('#x'+x+'y'+y).css("borderLeftWidth") == "1px" && $('#x'+(x-1)+'y'+y).attr('class') == "room") {
+//         exits+="W";
+//     }
+//
+//
+//     return exits
+// }
+// Gets the exits based on the value of data-room-code-int in the HTML that is generated in RoomGenHtml
+let get_exits = function(x,y) {
+    let exits="";
+    if((parseInt($('#x'+x+'y'+y).attr('data-room-code-int')) & 8) >> 3 === 1)
         exits+="N";
-    }
-    if($('#x'+x+'y'+y).css("borderRightWidth") == "1px" && $('#x'+(x+1)+'y'+y).attr('class') == "room" ) {
+    if((parseInt($('#x'+x+'y'+y).attr('data-room-code-int')) & 4) >> 2 === 1)
         exits+="E";
-    }
-    if($('#x'+x+'y'+y).css("borderBottomWidth") == "1px" && $('#x'+x+'y'+(y+1)).attr('class') == "room") {
+    if((parseInt($('#x'+x+'y'+y).attr('data-room-code-int')) & 2) >> 1 === 1)
         exits+="S";
-    }
-    if($('#x'+x+'y'+y).css("borderLeftWidth") == "1px" && $('#x'+(x-1)+'y'+y).attr('class') == "room") {
+    if((parseInt($('#x'+x+'y'+y).attr('data-room-code-int')) & 1) >> 0 === 1)
         exits+="W";
-    }
-
-
-    return exits
+    return exits;
 }
 
 /*

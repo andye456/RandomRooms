@@ -34,7 +34,7 @@ from characters import FriendStatus
 from utils.serverutils import attack, adjust_hit_points
 
 hostName = "localhost"
-hostPort = 8080
+hostPort = 8090
 
 
 
@@ -80,7 +80,7 @@ class MyServer(BaseHTTPRequestHandler):
     # Serve all pages
     def do_GET(self):
         print("do_GET()")
-        if self.path.endswith(".jpg"):
+        if self.path.endswith(".gif"):
             f = open(self.path.strip("/"), 'rb')
             self.send_response(200)
             self.send_header('Content-type', 'image/png')
