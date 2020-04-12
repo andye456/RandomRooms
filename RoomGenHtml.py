@@ -144,42 +144,57 @@ class RoomGenHtml:
             html+="<tr>"
             for elem in range(len(grid[row])):
                 try:
-                    # If a room is found then make the borders of the td match the exits that the room has
+                    # Get the room code (no. of doors) - if the neighbour NESW is blank then subtract that val
                     if room_ref[elem - x_tx, row - y_tx] is not None:
                         val = room_ref[elem - x_tx, row - y_tx].room_code_int
+
+                        # make adjustment for neighbouring room being blank
+                        # Remove the door if the dor exists and it leads nowhere
+                        if (val & 8) >> 3 == 1 and room_ref.get((elem - x_tx, row - y_tx-1)) is None:
+                            val -= 8
+                        if (val & 4) >> 2 == 1 and room_ref.get((elem - x_tx+1, row - y_tx)) is None:
+                            val -= 4
+                        if (val & 2) >> 1 == 1 and room_ref.get((elem - x_tx, row - y_tx+1)) is None:
+                            val -= 2
+                        if (val & 1) >> 0 == 1 and room_ref.get((elem - x_tx-1, row - y_tx)) is None:
+                            val -= 1
+
                         if val == 15:
-                            room_style='background-image:url(./images/1x/nesw.jpg); background-size:contain;'
+                            room_style='background-image:url(./images/1x/nesw.png); background-size:contain;'
                         elif val == 14:
-                            room_style = 'background-image:url(./images/1x/nes.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/nes.png); background-size:contain;'
                         elif val == 13:
-                            room_style='background-image:url(./images/1x/new.jpg); background-size:contain;'
+                            room_style='background-image:url(./images/1x/new.png); background-size:contain;'
                         elif val == 12:
-                            room_style = 'background-image:url(./images/1x/ne.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/ne.png); background-size:contain;'
                         elif val == 11:
-                            room_style = 'background-image:url(./images/1x/nsw.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/nsw.png); background-size:contain;'
                         elif val == 10:
                             room_style = 'background-image:url(./images/1x/ns.png); background-size:contain;'
                         elif val == 9:
-                            room_style = 'background-image:url(./images/1x/nw.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/nw.png); background-size:contain;'
                         elif val == 8:
-                            room_style = 'background-image:url(./images/1x/n.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/n.png); background-size:contain;'
                         elif val == 7:
-                            room_style = 'background-image:url(./images/1x/esw.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/esw.png); background-size:contain;'
                         elif val == 6:
-                            room_style = 'background-image:url(./images/1x/es.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/es.png); background-size:contain;'
                         elif val == 5:
-                            room_style = 'background-image:url(./images/1x/ew.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/ew.png); background-size:contain;'
                         elif val == 4:
-                            room_style = 'background-image:url(./images/1x/e.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/e.png); background-size:contain;'
                         elif val == 3:
-                            room_style = 'background-image:url(./images/1x/sw.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/sw.png); background-size:contain;'
                         elif val == 2:
-                            room_style = 'background-image:url(./images/1x/s.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/s.png); background-size:contain;'
                         elif val == 1:
-                            room_style = 'background-image:url(./images/1x/w.jpg); background-size:contain;'
+                            room_style = 'background-image:url(./images/1x/w.png); background-size:contain;'
+
+
                         text=""
-
-
+                        # OLD CODE - used before images were used for the rooms
+                        # If a room is found then make the borders of the td match the exits that the room has
+                        # This makes the border of the room dashed if there is an exit
                         # if (val & 8) >> 3 == 1:
                         #     style_n='border-top:dashed 1px black'
                         # else:
@@ -188,7 +203,7 @@ class RoomGenHtml:
                         #     style_e='border-right:dashed 1px black'
                         # else:
                         #     style_e='border-right:2px black solid'
-                        # if (val & 2) >> 1:
+                        # if (val & 2) >> 1 == 1:
                         #     style_s = 'border-bottom:dashed 1px black'
                         # else:
                         #     style_s = 'border-bottom:2px black solid'
@@ -199,9 +214,9 @@ class RoomGenHtml:
 
                         color = "border-color:black"
 
-                        if room_ref[elem - x_tx, row - y_tx].room_name == "Start":
-                            color="border-color:red"
-                            text="S"
+                        # if room_ref[elem - x_tx, row - y_tx].room_name == "Start":
+                        #     color="border-color:red"
+                        #     text="S"
                         if room_ref[elem - x_tx, row - y_tx].room_name == "Exit":
                             color="border-color:Green"
                             text="E"
@@ -216,19 +231,20 @@ class RoomGenHtml:
                         #       "' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].room_name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";" \
                         #       +color+"; background-color:#FF"+ heat_color+"FF; font-size:12px; text-align: center'>"
 
-                        # This is for when using graphics as rooms instead of cell borders - cant get png or fig to work
+                        # This is for when using graphics as rooms instead of cell borders
 
                         html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' data-weight='0' data-name='" \
                               +str(room_ref[elem - x_tx, row - y_tx].room_name)+ \
-                              "' data-room-code-int='"+str(room_ref[elem - x_tx, row - y_tx].room_code_int)+ \
+                              "' data-room-code-int='"+str(val)+ \
                               "' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].room_name) \
                               +"'style='"+room_style+";" \
                               +color+"; background-color:#FF"+ heat_color+"FF; font-size:12px; text-align: center'>"
-                        
+
                         # Puts the number of visits during generation in the room
                         # html+=str(room_ref[elem - x_tx, row - y_tx].visits)
                         html+=text
                 except KeyError:
+                    # html += "<td class='blank' style='background-image:url(./images/1x/no_doors.png); background-size:contain;'>"
                     html += "<td class='blank' style='background-color:#ffffff'>"
                 print(".", end='')
         html += """

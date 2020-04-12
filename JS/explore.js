@@ -5,13 +5,13 @@ var main = function() {
     // attach the click event to the new content
     random_room_manual();
 
-}
+};
 
 
 
 var random_room_manual = function() {
-    rowcount = $('table tr').length
-    colcount = $('table tr:nth-child(1) td').length
+    rowcount = $('table tr').length;
+    colcount = $('table tr:nth-child(1) td').length;
 
     x=0;
     y=0;
@@ -20,7 +20,7 @@ var random_room_manual = function() {
     handle_input("X");
 
     // Get the user command line input
-    $('#inputline').keypress(function(event){
+    let keypress = $('#inputline').keypress(function(event){
 
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if(keycode == '13'){

@@ -83,6 +83,7 @@ UPDATE: Also considers the exits that lead nowhere.
 //     return exits
 // }
 // Gets the exits based on the value of data-room-code-int in the HTML that is generated in RoomGenHtml
+// TODO: This doesn't quite work as it doesn't detect the blank room - fix properly by not having exits to nowhere
 let get_exits = function(x,y) {
     let exits="";
     if((parseInt($('#x'+x+'y'+y).attr('data-room-code-int')) & 8) >> 3 === 1)

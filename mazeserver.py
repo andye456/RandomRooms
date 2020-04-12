@@ -79,8 +79,8 @@ class MyServer(BaseHTTPRequestHandler):
 
     # Serve all pages
     def do_GET(self):
-        print("do_GET()")
-        if self.path.endswith(".gif"):
+        # print("do_GET()..... "+self.path)
+        if self.path.endswith(".png"):
             f = open(self.path.strip("/"), 'rb')
             self.send_response(200)
             self.send_header('Content-type', 'image/png')
@@ -258,7 +258,7 @@ class MyServer(BaseHTTPRequestHandler):
 
 try:
     svr = socketserver.TCPServer((hostName, hostPort), MyServer)
-    print("Web Server running on port: 8080")
+    print("Web Server running on port:"+str(hostPort))
     svr.serve_forever()
 except KeyboardInterrupt:
     print(" ^C entered, stopping web server....")
