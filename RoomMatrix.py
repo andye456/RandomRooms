@@ -6,10 +6,9 @@ import RoomUtils
 class RoomMatrix:
     x_ref = 0
     y_ref = 0
-    room_ref = {}
 
     def __init__(self):
-        pass
+        self.room_ref = {}
 
     # This is used to get the room, using it's coordinates, if it exists when you user travels.
     def getRoom(self, x, y):

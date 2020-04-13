@@ -167,44 +167,49 @@ class MyServer(BaseHTTPRequestHandler):
 
                 item_data += ']}'
                 self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
-            elif len(cmd) > 1 and cmd.split(" ")[0] == "D":
+            elif cmd == "D" or (len(cmd) > 1 and cmd.split(" ")[0] == "D"):
+                try:
+                    potion = cmd.split(" ")[1]
 
-                potion = cmd.split(" ")[1]
+                    def handle_potion(potion_name, points):
+                        MyServer.character_ref[(0, 0)].hit_points += points
+                        r = "Hit Points increased by "+str(points)+"<br>"
+                        idx=0
+                        for items in MyServer.item_ref[(0, 0)]:
+                            if items.item_object['name'].upper() == potion_name.upper():
+                                r+=potion_name+" has "+str(MyServer.item_ref[(0, 0)][idx].item_object['uses']-1)+" more uses<br>"
+                                if MyServer.item_ref[(0, 0)][idx].item_object['uses'] > 0:
+                                    MyServer.item_ref[(0, 0)][idx].item_object['uses'] -= 1
+                                else:
+                                    r+="You have finished "+potion_name
+                                    MyServer.item_ref[(0, 0)][idx].remove()
+                            idx+=1
+                        return r
 
-                def handle_potion(potion_name, points):
-                    MyServer.character_ref[(0, 0)].hit_points += points
-                    r = "Hit Points increased by "+str(points)+"<br>"
-                    idx=0
-                    for items in MyServer.item_ref[(0, 0)]:
-                        if items.item_object['name'].upper() == potion_name.upper():
-                            r+=potion_name+" has "+str(MyServer.item_ref[(0, 0)][idx].item_object['uses']-1)+" more uses<br>"
-                            if MyServer.item_ref[(0, 0)][idx].item_object['uses'] > 0:
-                                MyServer.item_ref[(0, 0)][idx].item_object['uses'] -= 1
+                    for i in MyServer.item_ref[(0, 0)]:
+                        if i.item_object['name'].upper() == potion:
+                            if potion == "HEALING1" and MyServer.character_ref[(0,0)].experience > 0:
+                                ret_str=handle_potion(potion, 1)
+                            elif potion == "HEALING2" and MyServer.character_ref[(0,0)].experience > 1:
+                                MyServer.character_ref[(0, 0)].hit_points+=2
+                                ret_str=handle_potion(potion,2)
+                            elif potion == "HEALING3" and MyServer.character_ref[(0,0)].experience > 2:
+                                MyServer.character_ref[(0, 0)].hit_points+=3
+                                ret_str=handle_potion(potion,3)
+                            elif potion == "HEALING4" and MyServer.character_ref[(0,0)].experience > 3:
+                                MyServer.character_ref[(0, 0)].hit_points+=4
+                                ret_str=handle_potion(potion,4)
+                            elif potion == "HEALING5" and MyServer.character_ref[(0,0)].experience > 4:
+                                MyServer.character_ref[(0, 0)].hit_points+=5
+                                ret_str=handle_potion(potion,5)
                             else:
-                                r+="You have finished "+potion_name
-                        idx+=1
-                    return r
-
-                for i in MyServer.item_ref[(0, 0)]:
-                    if i.item_object['name'].upper() == potion:
-                        if potion == "HEALING1" and MyServer.character_ref[(0,0)].experience > 0:
-                            ret_str=handle_potion(potion, 1)
-                        elif potion == "HEALING2" and MyServer.character_ref[(0,0)].experience > 1:
-                            MyServer.character_ref[(0, 0)].hit_points+=2
-                            ret_str=handle_potion(2)
-                        elif potion == "HEALING3" and MyServer.character_ref[(0,0)].experience > 2:
-                            MyServer.character_ref[(0, 0)].hit_points+=3
-                            ret_str=handle_potion(3)
-                        elif potion == "HEALING4" and MyServer.character_ref[(0,0)].experience > 3:
-                            MyServer.character_ref[(0, 0)].hit_points+=4
-                            ret_str=handle_potion(4)
-                        elif potion == "HEALING5" and MyServer.character_ref[(0,0)].experience > 4:
-                            MyServer.character_ref[(0, 0)].hit_points+=5
-                            ret_str=handle_potion(5)
-                        else:
-                            ret_str="potion has no effect as you don't have enough experience to use it."
-                        item_data = '{"item_data": "'+ret_str+'"}'
-                self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
+                                ret_str="potion has no effect as you don't have enough experience to use it.<br>"
+                            item_data = '{"item_data": "'+ret_str+'"}'
+                    self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
+                except:
+                    ret_str="You need to specify a potion to use <br>"
+                    item_data = '{"item_data": "' + ret_str + '"}'
+                    self.wfile.write(item_data.encode("UTF-8"))
 
 
             else:

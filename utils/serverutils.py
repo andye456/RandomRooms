@@ -49,16 +49,20 @@ def attack(room_coords, char_ref, item_ref):
             player2 = char_ref[(0, 0)]
 
         # Get the chance of an attack being successful
+        # by selecting a random value in range 0..dexterity
         player1_attack_success = random.randint(1, player1.abilities['dexterity'])
         # player 1 attacks player 2 if the swing is successful
+        # if the players dexterity is not the rand selected val then success
+        # this means that the higher the dexterity then the less chance it has of being chosen at random therefore
+        # less chance of missing.
         if player1.abilities['dexterity'] != player1_attack_success:
             # Get the damage figures from their current weapons player2_dmg is the damage player 2 receives
             # Large character
-            if player2.char_class in ['Elf', 'Half_Elf', 'Half_Orc', 'Human']:
+            if player2.race in ['Elf', 'Half_Elf', 'Half_Orc', 'Human']:
                 player2_dmg = random.randint(player1.weapon['min_damage_large_opponent'],
                                              player1.weapon['max_damage_large_opponent'])
             # small character
-            elif player2.char_class in ['Dwarf', 'Gnome', 'Halfling']:
+            elif player2.race in ['Dwarf', 'Gnome', 'Halfling']:
                 player2_dmg = random.randint(player1.weapon['min_damage_small_opponent'],
                                              player1.weapon['max_damage_small_opponent'])
             else:  # shouldn't get here
@@ -87,7 +91,7 @@ def attack(room_coords, char_ref, item_ref):
 
             player2.hit_points -= player2_total_dmg
             if player2.hit_points < 1:
-                char_data = '{"char_data":"' + player1.name + ' wins"}'
+                char_data = '{"char_data":"' + txt + player1.name + ' wins"}'
                 if player2.name == char_ref[(0, 0)].name:
                     char_ref.pop((0, 0))
                 elif player2.name == char_ref[room_coords].name:
