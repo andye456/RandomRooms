@@ -90,9 +90,16 @@ handle_input = function(dir) {
             console.log(d2);
             ht = JSON.parse(d2);
             desc= "You are in a place called "+ht.room_data.room_name+"</br>";
-            if(ht.room_data.room_name == "Exit")
-                // This calls the form which will reset with what ever number is already in the form
-                document.getElementById('reset').submit();
+            if(ht.room_data.room_name === "Exit") {
+                // if the exit is reached then check the player has the required experience to exit the level
+                c = getCharData(0, 0);
+                if (c.char_data.experience > 4) {
+                    // This calls the form which will reset with what ever number is already in the form
+                    document.getElementById('reset').submit();
+                } else {
+                    desc += "You need 5 experience to exit this level<br>You only have"+ c.char_data.experience
+                }
+            }
             if(typeof ht['item_data'] != 'undefined') {
                 // Get the items list
                 items=[]
@@ -156,13 +163,13 @@ handle_input = function(dir) {
         if(command == "I")
             getInventory();
         if(command == "O")
-            strengths(x,y);
+            show_strengths(getCharData(x,y));
         if(command == "A")
             attack(x,y)
         if(command == "T")
             trade();
         if(command == "P")
-            strengths(0,0);
+            show_strengths(getCharData(0,0));
         if(command.startsWith("G"))
             gather(x,y);
         if(command.startsWith("D"))

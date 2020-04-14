@@ -8,6 +8,7 @@ class RoomMatrix:
     y_ref = 0
 
     def __init__(self):
+        # initialises the matrix to be empty
         self.room_ref = {}
 
     # This is used to get the room, using it's coordinates, if it exists when you user travels.

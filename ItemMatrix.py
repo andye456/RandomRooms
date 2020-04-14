@@ -3,8 +3,9 @@ import dill as dill
 class ItemMatrix:
     # x_ref = 0
     # y_ref = 0
-    item_ref = {}
-    item_collection = []
+    def __init__(self):
+        self.item_ref = {}
+        self.item_collection = []
 
     def addItem(self, ref, item_array):
         self.item_ref[ref] = item_array

@@ -4,7 +4,8 @@ import dill as dill
 class CharacterMatrix:
     # x_ref = 0
     # y_ref = 0
-    character_ref = {}
+    def __init__(self):
+        self.character_ref = {}
 
     def addCharacter(self, ref, character):
         self.character_ref[ref] = character

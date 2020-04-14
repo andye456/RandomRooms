@@ -66,7 +66,7 @@ class MyServer(BaseHTTPRequestHandler):
 
     item_ref[(0, 0)] = []
     idx = 0
-
+    level_factor = 0;
     # This is called once per GET request so can't put init code in here.
     def __init__(self, request, client_address, server):
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
@@ -108,17 +108,19 @@ class MyServer(BaseHTTPRequestHandler):
         except:
             pass
         # Generates new room matrix from a request from the web page
+        # increases the level_factor as you have just exited the current level.
         if val != "-1":
             rr = RandomRooms()
-            rr.create_rooms(val)
+            rr.create_rooms(val, MyServer.level_factor) # val iterations to run the room generator for.
             rf = RoomGenHtml()
             rf.find_rooms_html()
             MyServer.room_ref, MyServer.character_ref, MyServer.item_ref = setup()
             MyServer.item_ref[(0, 0)] = []
             self.idx = 0
-
+            MyServer.level_factor += 1
             # Calls  the GET to rerender the page
             self.do_GET()
+            print("You are on level "+str(MyServer.level_factor))
         else:
             resp = json.loads(post_data.decode('utf-8'))
             cmd = ""

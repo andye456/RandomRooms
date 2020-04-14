@@ -187,74 +187,6 @@ addDoors = function(from, exits) {
 
 }
 
-
-addDoors_old = function(from, exits) {
-    // Show the 3D room
-
-    // Initially sets no exits - a dead-end
-
-    var left_img='./images/left_NO.jpg';
-    var right_img='./images/right_NO.jpg';
-    var ahead_img='./images/ahead_NO.jpg';
-
-    if(from == "N"){
-        Array.from(exits).forEach(function(item, index) {
-            if(item == "E")
-                left_img='../images/left_OK.jpg';
-            if(item == "S")
-                ahead_img='../images/ahead_OK.jpg';
-            if(item == "W")
-                right_img='../images/right_OK.jpg';
-        });
-        from_north();
-    }
-
-    if(from == "E") {
-        Array.from(exits).forEach(function(item, index) {
-            if(item == "N")
-                right_img='../images/right_OK.jpg';
-            if(item == "S")
-                left_img='../images/left_OK.jpg';
-            if(item == "W")
-                ahead_img='../images/ahead_OK.jpg';
-
-        });
-        from_east();
-    }
-
-    if(from == "S") {
-        Array.from(exits).forEach(function(item, index) {
-            if(item == "N")
-                ahead_img='../images/ahead_OK.jpg';
-            if(item == "E")
-                right_img='../images/right_OK.jpg';
-            if(item == "W")
-                left_img='../images/left_OK.jpg';
-        });
-        from_south();
-    }
-
-    if(from == "W") {
-        Array.from(exits).forEach(function(item, index) {
-            if(item == "N")
-                left_img='../images/left_OK.jpg';
-            if(item == "E")
-                ahead_img='../images/ahead_OK.jpg';
-            if(item == "S")
-                right_img='../images/right_OK.jpg';
-        });
-        from_west();
-    }
-
-//    $('#right').append("<img src='"+right_img+"' style='width:100%'/>");
-//    $('#left').append("<img src='"+left_img+"' style='width:100%'/>");
-//    $('#up').append("<img src='"+ahead_img+"' style='width:100%'/>");
-    $('#right').css({'background':'url('+right_img+')','background-size':'contain','background-repeat': 'no-repeat', 'text-align': 'center'});
-    $('#left').css({'background':'url('+left_img+')','background-size':'contain','background-repeat': 'no-repeat', 'text-align': 'center'});
-    $('#up').css({'background':'url('+ahead_img+')','background-size':'contain','background-repeat': 'no-repeat', 'text-align': 'center'});
-
-}
-
 // Sends an inventory command to the server, parses and displays the result
 getInventory = function() {
     des = "";
@@ -295,28 +227,38 @@ getInventory = function() {
     });
 }
 
-
-strengths = function(x,y) {
-    d2 = '{"command": "O", "room_x": '+x+',"room_y": '+y+'}';
-
-    $.post("maze.html",d2)
+function getCharData(x, y) {
+    d2 = '{"command": "O", "room_x": ' + x + ',"room_y": ' + y + '}';
+    var dat2;
+    $.ajax({
+        url: "maze.html",
+        type:"POST",
+        data: d2,
+        async: false
+    })
     .done(function(returnData) {
-        console.log(returnData);
+        console.log("getCharData: "+returnData);
         dat2 = JSON.parse(returnData);
-        if(typeof dat2['char_data'] != 'undefined') {
-            $('#dialog').append("<b>Name: "+dat2.char_data.name+"</b>");
+    });
+    return dat2;
+};
+
+
+show_strengths = function(data) {
+            if(typeof data['char_data'] != 'undefined') {
+            $('#dialog').append("<b>Name: "+data.char_data.name+"</b>");
             $('#dialog').append("<table style='border:5px; padding: 5px'>");
-            $('#dialog').append("<tr><td colspan='2'>Hit Points: "+dat2.char_data.hit_points+"</td></tr>");
-            $('#dialog').append("<tr><td colspan='2'>Experience: "+dat2.char_data.experience+"</td></tr>");
+            $('#dialog').append("<tr><td colspan='2'>Hit Points: "+data.char_data.hit_points+"</td></tr>");
+            $('#dialog').append("<tr><td colspan='2'>Experience: "+data.char_data.experience+"</td></tr>");
             $('#dialog').append("<tr><th style='padding:5px'>Characteristic</th><th>Power</th><td>");
-            for( var key in dat2.char_data.abilities) {
-                if(dat2.char_data.abilities.hasOwnProperty(key)) {
-                    $('#dialog').append("<tr><td>"+key+"</td><td>"+dat2.char_data.abilities[key]+"</td></tr>");
+            for( var key in data.char_data.abilities) {
+                if(data.char_data.abilities.hasOwnProperty(key)) {
+                    $('#dialog').append("<tr><td>"+key+"</td><td>"+data.char_data.abilities[key]+"</td></tr>");
                 }
             }
             $('#dialog').append("</table>");
         }
-    });
+
 }
 
 trade = function() {

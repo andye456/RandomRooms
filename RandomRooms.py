@@ -39,9 +39,12 @@ class RandomRooms():
     character_matrix = CharacterMatrix()
     item_matrix = ItemMatrix()
 
-    def create_rooms(self, iterroom):
+    # create rooms iterroom is the number of iterations to run the generator for.
+    # level is the multiplier to use depending on the level the player is at.
+    def create_rooms(self, iterroom, level=0):
 
         print("Creating " + str(iterroom) + " rooms!")
+        print("level multiplier: "+str(level))
         # Read random words from a file
         WORDS = []
         f = open("words.txt", "r")
@@ -59,8 +62,6 @@ class RandomRooms():
         room_matrix = RoomMatrix()
         room_matrix.addRoom((0, 0), room)
 
-        # self.character_matrix = CharacterMatrix()
-
         # iterator
         i = 0
         unique = 0
@@ -70,14 +71,16 @@ class RandomRooms():
 
         # This bit adds you as a Human, with random class and gives you a few basic items to start
         # The bit below that adds other characters will not add a character to room at (0,0)
-        classes = ['Assassin', 'Druid', 'Illusionist', 'Monk', 'Paladin', 'Ranger']
-        char_race = "Human"
-        char_class = random.choice(classes)
-        weapon = Weapons.Cane
-        abilities = CharacterAbilities(char_race, char_class)
-        my_char = Character("Zoran", 25, random.randint(10, 15), char_race, char_class, 0, 0, weapon,
-                            abilities.getAbilities())
-        self.character_matrix.addCharacter((0,0), my_char)
+        if level == 0:
+            classes = ['Assassin', 'Druid', 'Illusionist', 'Monk', 'Paladin', 'Ranger']
+            char_race = "Human"
+            char_class = random.choice(classes)
+            weapon = Weapons.Cane
+            abilities = CharacterAbilities(char_race, char_class)
+            RandomRooms.my_char = Character("Zoran", 25, random.randint(10, 15), char_race, char_class, 0, 0, weapon,
+                                abilities.getAbilities())
+        # Add either the current character from previous level or the character created above.
+        self.character_matrix.addCharacter((0,0), RandomRooms.my_char)
 
         while True:
             # Get the list of exits, e.g. NSW (R is appended to show the current map)
@@ -135,7 +138,7 @@ class RandomRooms():
                     # To make this accessible from the HTML then add it to room_data in mazeserver.py,
                     # this will then pass JSON objects back to the javascript on the web page and can be accessed.
                     #
-                    # Not sure how to change/access the individual "instace" variables of the P objects that are created in the CharacterMatrix
+                    # Not sure how to change/access the individual "instance" variables of the P objects that are created in the CharacterMatrix
                     #
 
                     if found_again > 1 and x_pos != 0 and y_pos != 0:
