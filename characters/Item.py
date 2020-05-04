@@ -2,8 +2,6 @@
 # If it is created in a room  with no monster then it a loose and can be picked up
 
 class Item:
-    item_object = None
-    owner = ""
 
     def __init__(self, item_object, owner):
         self.item_object = item_object

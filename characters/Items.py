@@ -25,6 +25,10 @@ group_of_items=[Belt,Backpack,Candle,Sack,Snake]
 # For each potion add it to this list so one can be chosen at random
 group_of_potions=[healing1,healing2,healing3,healing4,healing5,boost,invisible]
 
+# group_of_items=[Belt.copy(),Backpack.copy(),Candle.copy(),Sack.copy(),Snake.copy()]
+# group_of_potions=[healing1.copy(),healing2.copy(),healing3.copy(),healing4.copy(),healing5.copy(),boost.copy(),invisible.copy()]
+
+
 def getRandomItems():
     list_of_random_items = []
     num_to_select = random.randint(1, len(group_of_items))

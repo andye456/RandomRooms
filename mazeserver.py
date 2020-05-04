@@ -161,7 +161,9 @@ class MyServer(BaseHTTPRequestHandler):
                 for i in itm_list:
                     if i.owner == "room":
                         i.owner="Zoran" # my character
+                        # Moves the item to your home location (0,0)
                         MyServer.item_ref[(0, 0)].append(i)
+                        itm_list.remove(i);
                         item_data += json.dumps(i.__dict__)
                         if self.idx < len(itm_list) - 1:
                             item_data += ','
@@ -174,17 +176,22 @@ class MyServer(BaseHTTPRequestHandler):
                     potion = cmd.split(" ")[1]
 
                     def handle_potion(potion_name, points):
-                        MyServer.character_ref[(0, 0)].hit_points += points
                         r = "Hit Points increased by "+str(points)+"<br>"
                         idx=0
+                        # Loop through the items in my room as these belong to me
                         for items in MyServer.item_ref[(0, 0)]:
+                            # if any of the items match the potion name I am requesting
                             if items.item_object['name'].upper() == potion_name.upper():
+                                # inform player how may uses the potion has
                                 r+=potion_name+" has "+str(MyServer.item_ref[(0, 0)][idx].item_object['uses']-1)+" more uses<br>"
                                 if MyServer.item_ref[(0, 0)][idx].item_object['uses'] > 0:
+                                    # boost my hit points by the required amount.
+                                    MyServer.character_ref[(0, 0)].hit_points += points
+                                    # reduce the number of uses the potion has
                                     MyServer.item_ref[(0, 0)][idx].item_object['uses'] -= 1
-                                else:
-                                    r+="You have finished "+potion_name
-                                    MyServer.item_ref[(0, 0)][idx].remove()
+                                    if MyServer.item_ref[(0, 0)][idx].item_object['uses'] <= 0:
+                                        r += "You have finished " + potion_name + "<br>"
+                                        del MyServer.item_ref[(0, 0)][idx]
                             idx+=1
                         return r
 
@@ -208,8 +215,9 @@ class MyServer(BaseHTTPRequestHandler):
                                 ret_str="potion has no effect as you don't have enough experience to use it.<br>"
                             item_data = '{"item_data": "'+ret_str+'"}'
                     self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
-                except:
-                    ret_str="You need to specify a potion to use <br>"
+                except Exception as e:
+                    print(e)
+                    ret_str="Drink what? <br>"
                     item_data = '{"item_data": "' + ret_str + '"}'
                     self.wfile.write(item_data.encode("UTF-8"))
 

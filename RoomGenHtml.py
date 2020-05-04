@@ -114,6 +114,10 @@ class RoomGenHtml:
         y = []
         # Load the saved data dictionary.
         room_ref=dill.load(f)
+        f.close()
+        f = open("items.bin", "rb")
+        item_ref=dill.load(f)
+        f.close()
 
         # Iterate through the rooms in the dictionary
         for i, j in room_ref:
@@ -214,9 +218,18 @@ class RoomGenHtml:
 
                         color = "border-color:black"
 
-                        # if room_ref[elem - x_tx, row - y_tx].room_name == "Start":
-                        #     color="border-color:red"
-                        #     text="S"
+
+                        if (elem - x_tx, row - y_tx) in item_ref.keys():
+                            for itm in item_ref[elem - x_tx, row - y_tx]:
+                                if 'power' in itm.item_object.keys():
+                                    # pass
+                                    text=str(itm.item_object['power'])
+                                else:
+                                    text="*"
+
+                        if room_ref[elem - x_tx, row - y_tx].room_name == "Start":
+                            color="border-color:red"
+                            text="S"
                         if room_ref[elem - x_tx, row - y_tx].room_name == "Exit":
                             color="border-color:Green"
                             text="E"
@@ -243,7 +256,7 @@ class RoomGenHtml:
                         # Puts the number of visits during generation in the room
                         # html+=str(room_ref[elem - x_tx, row - y_tx].visits)
                         html+=text
-                except KeyError:
+                except KeyError as ke:
                     # html += "<td class='blank' style='background-image:url(./images/1x/no_doors.png); background-size:contain;'>"
                     html += "<td class='blank' style='background-color:#ffffff'>"
                 print(".", end='')
@@ -260,7 +273,6 @@ class RoomGenHtml:
                 </div> <!-- END container -->
              </body>
         </html>"""
-        f.close()
         with open("maze.html","w") as h:
             h.write(html)
 

@@ -33,7 +33,7 @@ var random_room_manual = function() {
 
 
 }
-
+existing="";
 handle_input = function(dir) {
     // Reads the direction commands to navigate the maze
     if(['N','S','E','W','X'].includes(dir.toUpperCase())) {
@@ -97,7 +97,7 @@ handle_input = function(dir) {
                     // This calls the form which will reset with what ever number is already in the form
                     document.getElementById('reset').submit();
                 } else {
-                    desc += "You need 5 experience to exit this level<br>You only have"+ c.char_data.experience
+                    desc += "You need 5 experience to exit this level, you have "+ c.char_data.experience+"<br>"
                 }
             }
             if(typeof ht['item_data'] != 'undefined') {
@@ -145,16 +145,26 @@ handle_input = function(dir) {
 
         find_visited();
         // When a room has been visited, change its background color to grey
+        // Save the old room decorators if there are any
         $('#x'+x+'y'+y).css("background-color","#DDD");
-        if(from == "S")
-            man="^";
-        if(from == "N")
-            man="v";
-        if(from == "W")
-            man=">";
-        if(from == "E")
+        if(from == "S") {
+            man = "^";
+            $('#x' + x + 'y' + (y + 1)).text(existing);
+        }
+        if(from == "N") {
+            man = "v";
+            $('#x' + x + 'y' + (y - 1)).text(existing);
+        }
+        if(from == "W") {
+            man = ">";
+            $('#x' + (x - 1) + 'y' + y).text(existing);
+        }
+        if(from == "E") {
             man="<";
-        $('#x'+x+'y'+y).append($("<div id='man'>"+man+"</div>"));
+            $('#x' + (x + 1) + 'y' + y).text(existing);
+        }
+        existing=$('#x'+x+'y'+y).html();
+        $('#x'+x+'y'+y).html($("<div id='man'>"+man+"</div>"));
         r_name = $('#x'+x+'y'+y).attr("data-name");
         $('#roomname').text(r_name)
     } else {

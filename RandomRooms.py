@@ -176,12 +176,14 @@ class RandomRooms():
 
                         print("[ITEM] Adding item(s) for "+c+" ", end='')
 
+                        # Note the copy() of the item objects (dictionaries) that are added to the item array
+                        # This needs to be done or a reference is used and changes are the same for all instances.
                         for itm in Items.getRandomItems():
-                            I.append(Item(itm,c))
+                            I.append(Item(itm.copy(),c))
                             self.item_matrix.addItem((x_pos, y_pos),I)
                             print(itm['name']+" ",end='')
                         p=Items.getARandomPotion()
-                        I.append(Item(p,c))
+                        I.append(Item(p.copy(),c))
                         self.item_matrix.addItem((x_pos, y_pos),I)
                         print(p['name']+ " ", end='')
 
@@ -236,6 +238,6 @@ class RandomRooms():
 
 if __name__ == "__main__":
     rr = RandomRooms()
-    rr.create_rooms(100)
+    rr.create_rooms(50)
     rf = RoomGenHtml()
     rf.find_rooms_html()
