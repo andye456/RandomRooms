@@ -6,8 +6,8 @@ import dill
 
 class RoomGenHtml:
 
-    def find_rooms_html(self):
-        html="""
+    def generate_page(self):
+        html = """
         <html>
             <head>
                 <link rel="icon" href="data:,">
@@ -19,12 +19,12 @@ class RoomGenHtml:
                         height:25px; 
                         width:25px;
                     }
-                    
+
                     th {
                         padding: 5px;
                         text-align: center;
                     }
-            
+
                     .direction {
                         cursor: pointer;
                         color: rgb(195, 8, 8);
@@ -64,7 +64,7 @@ class RoomGenHtml:
                     $(document).ready(function () {       
                         main();            
                     });
-        
+
                 </script>
             </head>
             <body>
@@ -74,11 +74,12 @@ class RoomGenHtml:
                             <form method="POST" target="maze.html" id="reset">
                                 <table>
                                 <tr><td>Create iterations:</td><td><input type="text" name="iter" id="iter" value="100"></td>
-                                <tr><td>Click to generate:</td><td><input type="submit" value="start"></td></tr>
+                                <tr><td>Current Level:</td><td><input type="text" name="level" id="level" readonly></td></tr>
+                                <tr><td>Click to regenerate:</td><td><input type="submit" value="reset"></td></tr>
                                 </table>
                             </form>
                         </div>
-                
+
                         <div id="playerstatus" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 2 -->
                             <table style='width:100%'>
                             <tr><td>I</td><td>Your inventory</td></tr>
@@ -90,21 +91,37 @@ class RoomGenHtml:
                             <tr><td>X</td><td>Show room info;/td></tr>
                             </table>
                         </div>
-                
+
                         <div  id="userinput" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 3 -->
                             $>User Input
                             <input type="text" id="inputline" autofocus></text>
                         </div>
-                
+
                         <div id="characterstatus" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 4 -->
 
                         </div>
-                
+
                     </div>
-                    
+
                     <div class="row" style="height:700px"> <!-- row 2 -->
                         <div class="col border border-primary rounded overflow-auto" id='tablediv'> <!-- Row 2 Col 1 -->
-                            <table id='grid' style='border:0px black solid; border-collapse:collapse;'>
+                        </div>
+                        
+                        <div id="scrolldiv" class="col border border-primary rounded overflow-auto"> <!-- Row 2 Col 2 -->
+                            <div id="dialog" style="height:700px"></div>
+                        </div>
+                    </div> <!-- END row 2 -->
+                </div> <!-- END container -->
+             </body>
+        </html>"""
+        with open("maze.html","w") as h:
+            h.write(html)
+
+
+
+    def find_rooms_html(self):
+        table = """
+        <table id='grid' style='border:0px black solid; border-collapse:collapse;'>
         """
         color=""
         # Open the serialised data file in read/binary mode
@@ -145,7 +162,7 @@ class RoomGenHtml:
         print(new_max)
         # Now loop through the html grid and check if each square corresponds to a room that has been created.
         for row in range(len(grid)):
-            html+="<tr>"
+            table+="<tr>"
             for elem in range(len(grid[row])):
                 try:
                     # Get the room code (no. of doors) - if the neighbour NESW is blank then subtract that val
@@ -193,36 +210,13 @@ class RoomGenHtml:
                             room_style = 'background-image:url(./images/1x/s.png); background-size:contain;'
                         elif val == 1:
                             room_style = 'background-image:url(./images/1x/w.png); background-size:contain;'
-
-
                         text=""
-                        # OLD CODE - used before images were used for the rooms
-                        # If a room is found then make the borders of the td match the exits that the room has
-                        # This makes the border of the room dashed if there is an exit
-                        # if (val & 8) >> 3 == 1:
-                        #     style_n='border-top:dashed 1px black'
-                        # else:
-                        #     style_n='border-top:2px black solid'
-                        # if (val & 4) >> 2 == 1:
-                        #     style_e='border-right:dashed 1px black'
-                        # else:
-                        #     style_e='border-right:2px black solid'
-                        # if (val & 2) >> 1 == 1:
-                        #     style_s = 'border-bottom:dashed 1px black'
-                        # else:
-                        #     style_s = 'border-bottom:2px black solid'
-                        # if (val & 1) >> 0 == 1:
-                        #     style_w = 'border-left:dashed 1px black'
-                        # else:
-                        #     style_w = 'border-left:2px black solid'
 
                         color = "border-color:black"
-
 
                         if (elem - x_tx, row - y_tx) in item_ref.keys():
                             for itm in item_ref[elem - x_tx, row - y_tx]:
                                 if 'power' in itm.item_object.keys():
-                                    # pass
                                     text=str(itm.item_object['power'])
                                 else:
                                     text="*"
@@ -238,15 +232,9 @@ class RoomGenHtml:
                         xref=elem - x_tx
                         yref=row - y_tx
                         heat_color=format(255-int(v),'02x')
-                        # html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' data-weight='0' data-name='"+\
-                        #       str(room_ref[elem - x_tx, row - y_tx].room_name)+ \
-                        #       "' data-room-code-int='" + str(room_ref[elem - x_tx, row - y_tx].room_code_int) + \
-                        #       "' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].room_name)+"'style='"+style_n+";"+style_e+";"+style_s+";"+style_w+";" \
-                        #       +color+"; background-color:#FF"+ heat_color+"FF; font-size:12px; text-align: center'>"
 
-                        # This is for when using graphics as rooms instead of cell borders
-
-                        html+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' data-weight='0' data-name='" \
+                        # Puts the right room image in.
+                        table+="<td class='room' id='x"+str(xref)+"y"+str(yref)+"' data-weight='0' data-name='" \
                               +str(room_ref[elem - x_tx, row - y_tx].room_name)+ \
                               "' data-room-code-int='"+str(val)+ \
                               "' title='"+str(room_ref[elem - x_tx, row - y_tx].visits)+" "+str(room_ref[elem - x_tx, row - y_tx].room_name) \
@@ -255,27 +243,19 @@ class RoomGenHtml:
 
                         # Puts the number of visits during generation in the room
                         # html+=str(room_ref[elem - x_tx, row - y_tx].visits)
-                        html+=text
+                        table+=text
                 except KeyError as ke:
-                    # html += "<td class='blank' style='background-image:url(./images/1x/no_doors.png); background-size:contain;'>"
-                    html += "<td class='blank' style='background-color:#ffffff'>"
+                    table += "<td class='blank' style='background-color:#ffffff'>"
                 print(".", end='')
-        html += """
+        table += """
                                     </td>
                                 </tr>
                             </table>
-                        </div>
-                        
-                        <div id="scrolldiv" class="col border border-primary rounded overflow-auto"> <!-- Row 2 Col 2 -->
-                            <div id="dialog" style="height:700px"></div>
-                        </div>
-                    </div> <!-- END row 2 -->
-                </div> <!-- END container -->
-             </body>
-        </html>"""
-        with open("maze.html","w") as h:
-            h.write(html)
+        """
+        with open("matrix.html","w") as h:
+            h.write(table)
 
 if __name__ == "__main__":
     rf = RoomGenHtml()
     rf.find_rooms_html()
+    rf.generate_page()

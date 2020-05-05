@@ -71,7 +71,8 @@ class RandomRooms():
 
         # This bit adds you as a Human, with random class and gives you a few basic items to start
         # The bit below that adds other characters will not add a character to room at (0,0)
-        if level == 0:
+        # Also will only recreate you if you are starting from scratch
+        if int(level) == 0:
             classes = ['Assassin', 'Druid', 'Illusionist', 'Monk', 'Paladin', 'Ranger']
             char_race = "Human"
             char_class = random.choice(classes)
@@ -238,6 +239,7 @@ class RandomRooms():
 
 if __name__ == "__main__":
     rr = RandomRooms()
-    rr.create_rooms(50)
+    rr.create_rooms(100,0)
     rf = RoomGenHtml()
     rf.find_rooms_html()
+    rf.generate_page()

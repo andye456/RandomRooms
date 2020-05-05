@@ -26,13 +26,14 @@ Gets the door that you have just come in from - this will be the opposite from "
 */
 var get_from_door = function(exit) {
     if(exit == "N")
-        return "S"
+        return "S";
     if(exit == "E")
-        return "W"
+        return "W";
     if(exit == "S")
-        return "N"
+        return "N";
     if(exit == "W")
-        return "E"
+        return "E";
+    return "N";
 }
 
 /*

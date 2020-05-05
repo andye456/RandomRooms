@@ -104,12 +104,16 @@ class MyServer(BaseHTTPRequestHandler):
         try:
             # if val is a number then generate this number of rooms
             # if it is a letter then handle this as a command
-            val = post_data.decode('utf-8').split("=")[1]
+            query_str = post_data.decode('utf-8').split("&")
+            val = query_str[0].split("=")[1]
+            MyServer.level_factor=query_str[1].split("=")[1]
         except:
             pass
         # Generates new room matrix from a request from the web page
-        # increases the level_factor as you have just exited the current level.
+        # this is only called from the reset button on the form.
+        # When the exit is reached the maze is regenerated but in an ajax call  - handled further down.
         if val != "-1":
+            RandomRooms.my_char = MyServer.character_ref[0,0]
             rr = RandomRooms()
             rr.create_rooms(val, MyServer.level_factor) # val iterations to run the room generator for.
             rf = RoomGenHtml()
@@ -117,7 +121,6 @@ class MyServer(BaseHTTPRequestHandler):
             MyServer.room_ref, MyServer.character_ref, MyServer.item_ref = setup()
             MyServer.item_ref[(0, 0)] = []
             self.idx = 0
-            MyServer.level_factor += 1
             # Calls  the GET to rerender the page
             self.do_GET()
             print("You are on level "+str(MyServer.level_factor))
@@ -220,6 +223,19 @@ class MyServer(BaseHTTPRequestHandler):
                     ret_str="Drink what? <br>"
                     item_data = '{"item_data": "' + ret_str + '"}'
                     self.wfile.write(item_data.encode("UTF-8"))
+            elif cmd == "regenerate":
+                RandomRooms.my_char = MyServer.character_ref[0, 0]
+                val = resp["iterations"]
+                rr = RandomRooms()
+                rr.create_rooms(val, MyServer.level_factor)  # val iterations to run the room generator for.
+                rf = RoomGenHtml()
+                rf.find_rooms_html()
+                MyServer.room_ref, MyServer.character_ref, MyServer.item_ref = setup()
+                MyServer.item_ref[(0, 0)] = []
+                self.idx = 0
+                # Calls  the GET to rerender the page
+                self.do_GET()
+                print("You are on level " + str(MyServer.level_factor))
 
 
             else:
