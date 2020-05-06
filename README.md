@@ -24,7 +24,7 @@ To achieve the above the following algorithm was created.
       add a north door as a required door to current room (add 1000)
     if room to south has a north door:
       add a south door as a required door to current room (add 0010)
-    The random number if the new rooms desired
+    The random number is the desired new doors
     OR this with the required rooms
     e.g.
     west door required 0001
