@@ -69,20 +69,7 @@ class RandomRooms():
         wrong_direction = 0
         direction = "N"
 
-        # This bit adds you as a Human, with random class and gives you a few basic items to start
-        # The bit below that adds other characters will not add a character to room at (0,0)
-        # Also will only recreate you if you are starting from scratch
-        if int(level) == 0:
-            classes = ['Assassin', 'Druid', 'Illusionist', 'Monk', 'Paladin', 'Ranger']
-            char_race = "Human"
-            char_class = random.choice(classes)
-            weapon = Weapons.Cane
-            abilities = CharacterAbilities(char_race, char_class)
-            RandomRooms.my_char = Character("Zoran", 25, random.randint(10, 15), char_race, char_class, 0, 0, weapon,
-                                abilities.getAbilities())
-        # Add either the current character from previous level or the character created above.
-        self.character_matrix.addCharacter((0,0), RandomRooms.my_char)
-
+        # Generates a maze without the player in - the player is added in mazeserver so that it can be persisted between levels
         while True:
             # Get the list of exits, e.g. NSW (R is appended to show the current map)
             exits = room.show_exits() + "R"
@@ -167,7 +154,7 @@ class RandomRooms():
                                               abilities)
                         # Add the character to the character matrix
                         self.character_matrix.addCharacter((x_pos, y_pos), character)
-                    if found_again > 0:
+                    if found_again > 0  and x_pos != 0 and y_pos != 0:
                         I=[]
                         # If the character exists in this room then associate this item with the character
                         if character is not None:
@@ -187,6 +174,7 @@ class RandomRooms():
                         I.append(Item(p.copy(),c))
                         self.item_matrix.addItem((x_pos, y_pos),I)
                         print(p['name']+ " ", end='')
+
 
                         print()
 

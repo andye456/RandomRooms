@@ -91,11 +91,12 @@ def attack(room_coords, char_ref, item_ref):
 
             player2.hit_points -= player2_total_dmg
             if player2.hit_points < 1:
-                char_data = '{"char_data":"' + txt + player1.name + ' wins"}'
+                char_data = '{"char_data":{"msg":"' + txt + player1.name + ' wins", "hit_points":"'+str(char_ref[(0, 0)].hit_points)+'","experience":"'+str(char_ref[(0, 0)].experience)+'"}}'
                 if player2.name == char_ref[(0, 0)].name:
                     char_ref.pop((0, 0))
                 elif player2.name == char_ref[room_coords].name:
                     char_ref[(0, 0)].experience += 1
+                    char_data = '{"char_data":{"msg":"' + txt + player1.name + ' wins", "hit_points":"' + str(char_ref[(0, 0)].hit_points) + '","experience":"' + str(char_ref[(0, 0)].experience) + '"}}'
                     # Change the ownership of any items to room so they can be picked up
                     for d in item_ref[room_coords]:
                         d.owner = "room"
@@ -108,7 +109,7 @@ def attack(room_coords, char_ref, item_ref):
                 else:
                     txt += 'hit-points remaining.... You: ' + str(player2.hit_points) + ' Them: ' + str(player1.hit_points) + '<br>'
                     char_ref[room_coords].hit_points = player1.hit_points
-                char_data = '{"char_data":"' + txt + '"}'
+                char_data = '{"char_data":{"msg":"' + txt + '", "hit_points":"'+str(char_ref[(0, 0)].hit_points)+'"}}'
 
 
         else:
@@ -116,7 +117,7 @@ def attack(room_coords, char_ref, item_ref):
                 txt += "You swing but miss!<br/>"
             else:
                 txt += "They swing but miss!<br/>"
-            char_data = '{"char_data":"' + txt + '"}'
+            char_data = '{"char_data":{"msg":"' + txt + '":"'+str(char_ref[(0, 0)].hit_points)+'"}}'
 
         turn += 1
         your_turn = not your_turn

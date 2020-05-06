@@ -9,6 +9,10 @@ var main = function () {
 
 
 var random_room_manual = function () {
+    // Start by showing the player their character
+    show_strengths(getCharData(0, 0));
+
+
     rowcount = $('table tr').length;
     colcount = $('table tr:nth-child(1) td').length;
 
@@ -20,6 +24,10 @@ var random_room_manual = function () {
         // Call with a non-direction to indicate we're at the start
         handle_input("X");
     });
+
+    $('#userinput').click(function(){
+        $('#inputline').focus();
+    })
 
     // Get the user command line input
     let keypress = $('#inputline').keypress(function (event) {
@@ -36,7 +44,9 @@ var random_room_manual = function () {
 }
 existing = "";
 level = 0;
+currentexp=0;
 handle_input = function (dir) {
+
     // Render the maze using ajax in the div
 
     // Reads the direction commands to navigate the maze
@@ -99,12 +109,12 @@ handle_input = function (dir) {
                 if (ht.room_data.room_name === "Exit") {
                     // if the exit is reached then check the player has the required experience to exit the level
                     c = getCharData(0, 0);
-                    if (c.char_data.experience > -1) {
+                    if (c.char_data.experience >= 5) {
                         level++;
                         $('#level').val(level);
                         iterations = $('#iter').val();
                         // Generate a new room matrix file by calling the back end.
-                        data = {"command":"regenerate", "iterations":iterations};
+                        data = {"command":"regenerate", "iterations":iterations, "level": level};
                         d = JSON.stringify(data);
                         $.post("maze.html", d)
                             .done(function (d2) {
@@ -164,6 +174,7 @@ handle_input = function (dir) {
                         desc += "&nbsp;..who is a " + ht['char_data']['race'] + "&nbsp" + ht['char_data']['char_class'] + "</br>";
                         desc += "&nbsp;They are carrying: " + items + "</br>";
                         desc += "&nbsp;Their current weapon is: " + ht['char_data']['weapon']['name'] + "</br>";
+                        desc += "&nbsp;Their hit points are: " + ht['char_data']['hit_points'] + "</br>";
                         desc += friend_status[ht.friend_status] + "<br>";
                     }
                 } else if (typeof ht.item_data != 'undefined' && ht.item_data.length > 0) {
@@ -200,6 +211,7 @@ handle_input = function (dir) {
         $('#x' + x + 'y' + y).html($("<div id='man'>" + man + "</div>"));
         r_name = $('#x' + x + 'y' + y).attr("data-name");
         $('#roomname').text(r_name)
+
     } else {
         // This deals with the commands other than movement
         command = dir.toUpperCase();

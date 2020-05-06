@@ -41,30 +41,44 @@ hostPort = 8090
 def setup():
     print("opening rooms.bin to read matrix")
     f = open("rooms.bin", "rb")
-    room_ref = dill.load(f)
+    r_ref = dill.load(f)
     f.close()
 
     print("opening characters.bin to read characters")
     f = open("characters.bin", "rb")
-    character_ref = dill.load(f)
+    c_ref = dill.load(f)
     f.close()
 
     print("opening items.bin to read items")
     f = open("items.bin", "rb")
-    item_ref = dill.load(f)
+    i_ref = dill.load(f)
     f.close()
 
-    character_ref[(0, 0)].hit_points += adjust_hit_points(character_ref[(0, 0)].abilities['constitution'])
+    # Add the player and other game data
+    classes = ['Assassin', 'Druid', 'Illusionist', 'Monk', 'Paladin', 'Ranger']
+    char_race = "Human"
+    char_class = random.choice(classes)
+    weapon = Weapons.Cane
+    abilities = CharacterAbilities(char_race, char_class)
+    c_ref[(0, 0)] = Character("Zoran", 25, random.randint(10, 15), char_race, char_class, 0, 0, weapon,
+                                           abilities.getAbilities())
+    i_ref[(0, 0)] = [];
 
-    return room_ref, character_ref, item_ref
+    return r_ref, c_ref, i_ref
 
+# Adds the players game data on top of the data that has been randomly generated.
+def add_game_data():
+    pass
 
 class MyServer(BaseHTTPRequestHandler):
     # Open the serialised data file in read/binary mode
     # initialise the mazes
+    # NOTE If these are set here it means that they are Class attributes and must be accessed using the class name MyServer.
+    # If they are accessed with self then this is fine, but changing self will not change these Class attributes.
     room_ref, character_ref, item_ref = setup()
-
-    item_ref[(0, 0)] = []
+    run = False
+    rr = RandomRooms()
+    rf = RoomGenHtml()
     idx = 0
     level_factor = 0;
     # This is called once per GET request so can't put init code in here.
@@ -79,7 +93,6 @@ class MyServer(BaseHTTPRequestHandler):
 
     # Serve all pages
     def do_GET(self):
-        # print("do_GET()..... "+self.path)
         if self.path.endswith(".png"):
             f = open(self.path.strip("/"), 'rb')
             self.send_response(200)
@@ -113,12 +126,11 @@ class MyServer(BaseHTTPRequestHandler):
         # this is only called from the reset button on the form.
         # When the exit is reached the maze is regenerated but in an ajax call  - handled further down.
         if val != "-1":
-            RandomRooms.my_char = MyServer.character_ref[0,0]
-            rr = RandomRooms()
-            rr.create_rooms(val, MyServer.level_factor) # val iterations to run the room generator for.
-            rf = RoomGenHtml()
-            rf.find_rooms_html()
+            self.rr.create_rooms(val, MyServer.level_factor) # val iterations to run the room generator for.
+            self.rf.generate_page()
+            self.rf.find_rooms_html()
             MyServer.room_ref, MyServer.character_ref, MyServer.item_ref = setup()
+            self.level_factor = 0
             MyServer.item_ref[(0, 0)] = []
             self.idx = 0
             # Calls  the GET to rerender the page
@@ -166,7 +178,7 @@ class MyServer(BaseHTTPRequestHandler):
                         i.owner="Zoran" # my character
                         # Moves the item to your home location (0,0)
                         MyServer.item_ref[(0, 0)].append(i)
-                        itm_list.remove(i);
+                        itm_list.remove(i)
                         item_data += json.dumps(i.__dict__)
                         if self.idx < len(itm_list) - 1:
                             item_data += ','
@@ -216,32 +228,43 @@ class MyServer(BaseHTTPRequestHandler):
                                 ret_str=handle_potion(potion,5)
                             else:
                                 ret_str="potion has no effect as you don't have enough experience to use it.<br>"
-                            item_data = '{"item_data": "'+ret_str+'"}'
+                            item_data = '{"item_data": "'+ret_str+'","hit_points":"'+str(MyServer.character_ref[(0, 0)].hit_points)+'"}'
                     self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
                 except Exception as e:
                     print(e)
                     ret_str="Drink what? <br>"
-                    item_data = '{"item_data": "' + ret_str + '"}'
+                    item_data = '{"item_data": "' + ret_str + '","hit_points":"'+str(MyServer.character_ref[(0, 0)].hit_points)+'"}'
                     self.wfile.write(item_data.encode("UTF-8"))
             elif cmd == "regenerate":
-                RandomRooms.my_char = MyServer.character_ref[0, 0]
+                # Save existing data
+                player = MyServer.character_ref[(0,0)]
+                player_items = MyServer.item_ref[(0,0)]
+
+                # Remove the old dict
+                MyServer.room_ref.clear()
+                self.level_factor = resp['level']
                 val = resp["iterations"]
-                rr = RandomRooms()
-                rr.create_rooms(val, MyServer.level_factor)  # val iterations to run the room generator for.
-                rf = RoomGenHtml()
-                rf.find_rooms_html()
-                MyServer.room_ref, MyServer.character_ref, MyServer.item_ref = setup()
-                MyServer.item_ref[(0, 0)] = []
+                self.rr.create_rooms(val, self.level_factor)  # val iterations to run the room generator for.
+                self.rf.find_rooms_html()
+                MyServer.room_ref,MyServer.character_ref,MyServer.item_ref = setup()
+
+                MyServer.item_ref[(0,0)] = player_items
                 self.idx = 0
+                MyServer.character_ref[(0,0)] = player
                 # Calls  the GET to rerender the page
-                self.do_GET()
-                print("You are on level " + str(MyServer.level_factor))
+                # self.do_GET()
+                print("You are on level " + str(self.level_factor))
+                print("Room generated at (0,-1) is: "+MyServer.room_ref[(0,-1)].room_name)
+                # print("[Creating] MyServer.room_ref.id() = "+MyServer.room_ref.id())
 
-
+            # Deal with the new room reference
+            # If the response from the web page is {"room_x": -2, "room_y": 4}
+            ####### MOVEMENT #######
             else:
                 # {"room_x": 0, "room_y": 0, "room_name": "Start"}
 
                 print("You are in " + MyServer.room_ref[(resp['room_x'], resp['room_y'])].room_name)
+                # print("[Visiting] MyServer.room_ref.id() = "+MyServer.room_ref.id())
 
                 # Convert the response into a JSON object
                 room_json = json.dumps(MyServer.room_ref[(resp['room_x'], resp['room_y'])].__dict__)

@@ -14,7 +14,6 @@ class RoomGenHtml:
                 <style>
                     body {padding:20px;}
                     td {
-                        padding:5px;
                         text-align:center;
                         height:25px; 
                         width:25px;
@@ -74,6 +73,9 @@ class RoomGenHtml:
                             <form method="POST" target="maze.html" id="reset">
                                 <table>
                                 <tr><td>Create iterations:</td><td><input type="text" name="iter" id="iter" value="100"></td>
+                                <tr><td>Target Experience:</td><td><input type="text" name="targetexp" id="targetexp" value="5" readonly></td></tr>
+                                <tr><td>Current Experience:</td><td><input type="text" name="currentexp" id="currentexp" readonly></td></tr>
+                                <tr><td>Current Hit Points:</td><td><input type="text" name="currenthit" id="currenthit" readonly></td></tr>                                
                                 <tr><td>Current Level:</td><td><input type="text" name="level" id="level" readonly></td></tr>
                                 <tr><td>Click to regenerate:</td><td><input type="submit" value="reset"></td></tr>
                                 </table>
@@ -82,13 +84,13 @@ class RoomGenHtml:
 
                         <div id="playerstatus" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 2 -->
                             <table style='width:100%'>
-                            <tr><td>I</td><td>Your inventory</td></tr>
-                            <tr><td>O</td><td>Opponent's hit points and characteristics</td></tr>
-                            <tr><td>P</td><td>Player's hit points and characteristics</td></tr>
-                            <tr><td>A</td><td>Attack opponent</td></tr>
-                            <tr><td>D</td><td>Drink potion</td></tr>
-                            <tr><td>G</td><td>gather &lt;item&gt;/td></tr>
-                            <tr><td>X</td><td>Show room info;/td></tr>
+                            <tr><td>i</td><td>Your inventory</td></tr>
+                            <tr><td>o</td><td>Opponent's hit points and characteristics</td></tr>
+                            <tr><td>p</td><td>Player's hit points and characteristics</td></tr>
+                            <tr><td>a</td><td>Attack opponent</td></tr>
+                            <tr><td>d</td><td>Drink potion</td></tr>
+                            <tr><td>g</td><td>gather &lt;item&gt;</td></tr>
+                            <tr><td>x</td><td>Show room info</td></tr>
                             </table>
                         </div>
 
@@ -98,7 +100,15 @@ class RoomGenHtml:
                         </div>
 
                         <div id="characterstatus" class="col-3 col-md-offset-2 border border-primary rounded"> <!-- Row 1 Col 4 -->
-
+                            <h6>Objectives</h6>
+                            <p>Simple - get to the highest level!<br>
+                            Navigate the maze using n,s,e,w typed in to the User Input box<br>
+                            The numbers in the rooms are the strength of the healing potions<br>
+                            You must be at that level to use that strength potion.<br>
+                            You need to be at a certain level to exit the maze, this is shown on left.<br>
+                            Battle monsters to steal their items & trade with allies.<br>
+                            If you get stuck or defeated hit "reset" - back to beginning!
+                            
                         </div>
 
                     </div>
@@ -227,7 +237,10 @@ class RoomGenHtml:
                         if room_ref[elem - x_tx, row - y_tx].room_name == "Exit":
                             color="border-color:Green"
                             text="E"
-                        v=(newrange/oldrange)*room_ref[elem - x_tx, row - y_tx].visits
+                        if oldrange > 0:
+                            v=(newrange/oldrange)*room_ref[elem - x_tx, row - y_tx].visits
+                        else:
+                            v=0
 
                         xref=elem - x_tx
                         yref=row - y_tx

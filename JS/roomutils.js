@@ -216,7 +216,6 @@ getInventory = function() {
 
                 }
             }
-
             results.forEach(function(d){
                 $('#dialog').append("<tr style='padding:3px'><td style='padding:3px'>"+d.name+"</td><td>"+d.sell+"</td><td>"+d.count+"</td></tr>");
             });
@@ -258,6 +257,11 @@ show_strengths = function(data) {
                 }
             }
             $('#dialog').append("</table>");
+            if(data.char_data.name == "Zoran") {
+                $('#currenthit').val(data['char_data']['hit_points']);
+                $('#currentexp').val(data['char_data']['experience'])
+            }
+
         }
 
 }
@@ -285,14 +289,15 @@ attack = function(x,y) {
         console.log(returnData);
         dat3 = JSON.parse(returnData);
         if(typeof dat3['char_data'] != 'undefined') {
-            $('#dialog').append("<p><b>"+dat3.char_data+"</b>");
+            $('#dialog').append("<p><b>"+dat3.char_data.msg+"</b>");
+            $('#currenthit').val(dat3.char_data.hit_points);
+            $('#currentexp').val(dat3.char_data.experience);
             if(dat3.char_data == "lose") {
                 $('#dialog').append("<p><b> Game Over, return to start to restart.</b>");
                 restart();
             }
         }
     });
-
 }
 
 gather = function(x,y) {
@@ -323,6 +328,7 @@ drink = function(command) {
         dat5 = JSON.parse(returnData);
         if(typeof dat5.item_data != 'undefined') {
             $('#dialog').append(dat5.item_data);
+            $('#currenthit').val(dat5.hit_points);
         }
     });
 }

@@ -1,5 +1,5 @@
 #room {
-    position:relative;
+    position: relative;
     border: 3px black solid;
     display: inline-block;
 
@@ -16,46 +16,41 @@
     width: 177px;
     height: 177px;
     border-bottom: 3px solid black;
-    -webkit-transform:
-        translateY(-90px)
-        translateX(34px)
-        rotate(45deg);
+    -webkit-transform: translateY(-90px) translateX(34px) rotate(45deg);
     position: absolute;
     /* top: -20px; */
 }
+
 .line2 {
     width: 177px;
     height: 177px;
     border-bottom: 3px solid black;
-    -webkit-transform:
-        translateY(-60px)
-        translateX(-72px)
-        rotate(-45deg);
+    -webkit-transform: translateY(-60px) translateX(-72px) rotate(-45deg);
     position: absolute;
     top: -33px;
     left: -13px;
 }
 
 #south_door, #north_door {
-    width:125px;
-    height:125px;
-    left:400;
+    width: 125px;
+    height: 125px;
+    left: 400px;
 }
 
 #west_door, #east_door {
     border: 2px;
-    width:125px;
-    height:125px;
-    top:300;
+    width: 125px;
+    height: 125px;
+    top: 300px;
     position: absolute
 }
 
 #east_door {
-    left: 3;
+    left: 3px;
 }
 
 #west_door {
-    background: url(/images/west.jpg)  no-repeat;
+    background: url(/images/west.jpg) no-repeat;
 }
 
 #north_door {
@@ -71,27 +66,28 @@
 }
 
 #leg {
-    width:60px;
-    margin-top:-10px;
-    margin-left:5px;
-    background:white;
+    width: 60px;
+    margin-top: -10px;
+    margin-left: 5px;
+    background: white;
     font-size: 12px;
 }
 
 
 #userinput {
-  background-color: black;
-  background-image: radial-gradient(
-    rgba(0, 150, 0, 0.75), black 120%
-  );
-  height: 20vh;
-  margin: 0;
-  overflow: hidden;
-  padding: 2rem;
-  color: white;
-  font: 1.3rem Inconsolata, monospace;
-  text-shadow: 0 0 5px #C8C8C8;
-  &::after {
+    background-color: black;
+    background-image: radial-gradient(
+            rgba(0, 150, 0, 0.75), black 120%
+    );
+    height: 20vh;
+    margin: 0;
+    overflow: hidden;
+    padding: 2rem;
+    color: white;
+    font: 1.3rem Inconsolata, monospace;
+    text-shadow: 0 0 5px #C8C8C8;
+
+::after {
     content: "";
     position: absolute;
     top: 0;
@@ -99,34 +95,66 @@
     width: 100vw;
     height: 10vh;
     background: repeating-linear-gradient(
-      0deg,
-      rgba(black, 0.15),
-      rgba(black, 0.15) 1px,
-      transparent 1px,
-      transparent 2px
+            0deg,
+            rgba(255, 255, 255, 0.15),
+            rgba(255, 255, 255, 0.15) 1px,
+            transparent 1px,
+            transparent 2px
     );
     pointer-events: none;
-  }
+}
+
 }
 ::selection {
-  background: #0080FF;
-  text-shadow: none;
+    background: #0080FF;
+    text-shadow: none;
 }
+
 pre {
-  margin: 0;
+    margin: 0;
 }
 
 #inputline {
-  background-color: black;
-  background-image: radial-gradient(
-    rgba(0, 150, 0, 0.75), black 120%
-  );
+    background-color: black;
+    background-image: radial-gradient(
+            rgba(0, 150, 0, 0.75), black 120%
+    );
     background: transparent;
     border: none;
     margin: 0;
-  color: white;
+    color: white;
 
 }
-textarea:focus, input:focus{
+
+textarea:focus, input:focus {
     outline: none;
+}
+
+#characterstatus p {
+    font-size: 11px;
+}
+
+#userinput {
+    font-size: 13px;
+
+}
+
+#dialog{
+    font-size: 13px;
+
+}
+#dialog td {
+    font-size: 13px;
+      padding: 0px;
+      height: 13px;
+  }
+#playerstatus td {
+    font-size: 13px;
+    text-align: left;
+}
+
+#reset td {
+    font-size: 13px;
+    text-align: left;
+    width: 100%
 }
