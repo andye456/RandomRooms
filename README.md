@@ -11,6 +11,34 @@ When you leave a room through an exit a new room is generated as follows:
 * Any adjacent rooms must have their entrances respected. So if you went North from the current room you would enter a new room, if this room has a room to the west that has an East door then the room must be created with a West door.
 * Any adjacent rooms must have their non-exits respected. So in the above scenario the room to the west does not have a door, but the random door generator created an East door, then this door must be removed so a false door is not created.
 
+To achieve the above the following algorithm was created.
+
+    NOTE: NESW   e.g. N=1000, E=0100, S=0010, W=0001
+    move to new room location (x,y)
+    create a random number between 0 and 15 (0000b - 1111b)
+    if room to west (x-1,y) has an east door:
+      add a west door as a required door to current room (add 0001)
+    if room to east (x+1,y) has a west door:
+      add an east door as a required door to current room (add 0100)
+    if room to north (x, y-1) has a south door:
+      add a north door as a required door to current room (add 1000)
+    if room to south has a north door:
+      add a south door as a required door to current room (add 0010)
+    The random number if the new rooms desired
+    OR this with the required rooms
+    e.g.
+    west door required 0001
+    south door required 0010
+    random number = 10 = (1010)
+    0001
+    0010
+    1010
+    ---- OR
+    1011
+    so the new room would have door N,S & W 
+    
+    
+
 ## Design
 Random Rooms is written in Python for portability and fast prototyping.
 
