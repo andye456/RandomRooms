@@ -1,5 +1,5 @@
 # RandomRooms
-![Screnshot of Random ROoms]RR.png
+![Screenshot of Random Rooms](https://github.com/andye456/RandomRooms/blob/TextBased_ADD_Rules/RR.png)
 ## Concept
 ### Procedural generation of environment
 Random rooms is just that, at set of rooms generated randomly by procedures.
