@@ -15,17 +15,17 @@ To achieve the above the following algorithm was created.
 
     NOTE: NESW   e.g. N=1000, E=0100, S=0010, W=0001
     move to new room location (x,y)
-    create a random number between 0 and 15 (0000b - 1111b)
+    required_doors = random number between 0 and 15 (0000b - 1111b)
+    ### Doors that are needed
     if room to west (x-1,y) has an east door:
-      add a west door as a required door to current room (add 0001)
+      required door = 0001
     if room to east (x+1,y) has a west door:
-      add an east door as a required door to current room (add 0100)
+      required door =  0100
     if room to north (x, y-1) has a south door:
-      add a north door as a required door to current room (add 1000)
+      required door = 1000
     if room to south has a north door:
-      add a south door as a required door to current room (add 0010)
-    The random number is the desired new doors
-    OR this with the required rooms
+      required door = 0010
+
     e.g.
     west door required 0001
     south door required 0010
@@ -35,7 +35,14 @@ To achieve the above the following algorithm was created.
     1010
     ---- OR
     1011
-    so the new room would have door N,S & W 
+    so the new room would potentially have door N,S & W 
+    
+    If the doors that are not there are to be deleted then you must get the above result and & it with the bitmask
+    1011
+    0011
+    ---- AND
+    0011
+    So doors required in new room are S,W
     
     
 
