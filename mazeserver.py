@@ -1,5 +1,7 @@
 import json
 import random
+import sys
+import traceback
 from urllib import parse
 
 import dill
@@ -226,7 +228,7 @@ class MyServer(BaseHTTPRequestHandler):
 
                     for i in MyServer.item_ref[(0, 0)]:
                         if i.item_object['name'].upper() == potion:
-                            inc = MyServer.level_factor + 1
+                            inc = int(MyServer.level_factor) + 1
                             if potion == "HEALING1" and MyServer.character_ref[(0,0)].experience >= 1 * inc:
                                 ret_str=handle_potion(potion, 1)
                             elif potion == "HEALING2" and MyServer.character_ref[(0,0)].experience >= 2 * inc:
@@ -243,7 +245,10 @@ class MyServer(BaseHTTPRequestHandler):
                     self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
                 except Exception as e:
                     print(e)
-                    ret_str="Drink what? <br>"
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+
+                    ret_str="what? <br>"
                     item_data = '{"item_data": "' + ret_str + '","hit_points":"'+str(MyServer.character_ref[(0, 0)].hit_points)+'"}'
                     self.wfile.write(item_data.encode("UTF-8"))
             ##### REGENERATE #####
