@@ -116,7 +116,7 @@ def attack(room_coords, char_ref, item_ref, your_turn=True):
                 txt += "You swing but miss!<br/>"
             else:
                 txt += "They swing but miss!<br/>"
-            char_data = '{"char_data":{"msg":"' + txt + '":"'+str(char_ref[(0, 0)].hit_points)+'"}}'
+            char_data = '{"char_data":{"msg":"' + txt + '", "hit_points":"'+str(char_ref[(0, 0)].hit_points)+'"}}'
 
         turn += 1
         your_turn = not your_turn

@@ -64,8 +64,7 @@ def setup():
     char_class = random.choice(classes)
     weapon = Weapons.Cane
     abilities = CharacterAbilities(char_race, char_class)
-    c_ref[(0, 0)] = Character("Zoran", 25, random.randint(10, 15), char_race, char_class, 0, 0, weapon,
-                                           abilities.getAbilities())
+    c_ref[(0, 0)] = Character("Zoran", 25, random.randint(10, 15), char_race, char_class, 0, 0, weapon, abilities.getAbilities())
     i_ref[(0, 0)] = [];
 
     return r_ref, c_ref, i_ref
@@ -84,7 +83,7 @@ class MyServer(BaseHTTPRequestHandler):
     rr = RandomRooms()
     rf = RoomGenHtml()
     idx = 0
-    level_factor = 0;
+    level_factor = 0
     # This is called once per GET request so can't put init code in here.
     def __init__(self, request, client_address, server):
         BaseHTTPRequestHandler.__init__(self, request, client_address, server)
@@ -141,7 +140,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.rf.generate_page()
             self.rf.find_rooms_html()
             MyServer.room_ref, MyServer.character_ref, MyServer.item_ref = setup()
-            MyServer.level_factor = 0
+            # MyServer.level_factor = 0
             MyServer.item_ref[(0, 0)] = []
             self.idx = 0
             # Calls  the GET to rerender the page
@@ -168,11 +167,14 @@ class MyServer(BaseHTTPRequestHandler):
 
             ##### Get the abilities of either the player or opponent
             elif cmd == "O":  # Get the characters or players strengths - this is also called when user enters "P" for their own abilities, with (0,0)
-                if resp['room_x'] != 0 and resp['room_y'] != 0:
-                    MyServer.character_ref[(resp['room_x'], resp['room_y'])].hit_points + MyServer.character_ref[(resp['room_x'], resp['room_y'])].abilities['constitution']
-                char_json = json.dumps(MyServer.character_ref[(resp['room_x'], resp['room_y'])].__dict__)  # Gets the stats for the character that is in the room
-                char_data = '{"char_data":' + char_json + '}'  # make it into a JSON object
-                self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
+                try:
+                    if resp['room_x'] != 0 and resp['room_y'] != 0:
+                        MyServer.character_ref[(resp['room_x'], resp['room_y'])].hit_points + MyServer.character_ref[(resp['room_x'], resp['room_y'])].abilities['constitution']
+                    char_json = json.dumps(MyServer.character_ref[(resp['room_x'], resp['room_y'])].__dict__)  # Gets the stats for the character that is in the room
+                    char_data = '{"char_data":' + char_json + '}'  # make it into a JSON object
+                    self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
+                except KeyError as e:
+                    print("The character no longer exists")
 
             ###### ATTACK ######
             elif cmd == "A":
@@ -224,18 +226,19 @@ class MyServer(BaseHTTPRequestHandler):
 
                     for i in MyServer.item_ref[(0, 0)]:
                         if i.item_object['name'].upper() == potion:
-                            if potion == "HEALING1" and MyServer.character_ref[(0,0)].experience >= 1 * MyServer.level_factor:
+                            inc = MyServer.level_factor + 1
+                            if potion == "HEALING1" and MyServer.character_ref[(0,0)].experience >= 1 * inc:
                                 ret_str=handle_potion(potion, 1)
-                            elif potion == "HEALING2" and MyServer.character_ref[(0,0)].experience >= 2:
+                            elif potion == "HEALING2" and MyServer.character_ref[(0,0)].experience >= 2 * inc:
                                 ret_str=handle_potion(potion,2)
-                            elif potion == "HEALING3" and MyServer.character_ref[(0,0)].experience >= 3:
+                            elif potion == "HEALING3" and MyServer.character_ref[(0,0)].experience >= 3 * inc:
                                 ret_str=handle_potion(potion,3)
-                            elif potion == "HEALING4" and MyServer.character_ref[(0,0)].experience >= 4:
+                            elif potion == "HEALING4" and MyServer.character_ref[(0,0)].experience >= 4 * inc:
                                 ret_str=handle_potion(potion,4)
-                            elif potion == "HEALING5" and MyServer.character_ref[(0,0)].experience >= 5:
+                            elif potion == "HEALING5" and MyServer.character_ref[(0,0)].experience >= 5 * inc:
                                 ret_str=handle_potion(potion,5)
                             else:
-                                ret_str="potion has no effect as you don't have enough experience to use it.<br>You need "
+                                ret_str="potion has no effect as you don't have enough experience to use it.<br>You need "+str(inc)+" times level 0 exp"
                             item_data = '{"item_data": "'+ret_str+'","hit_points":"'+str(MyServer.character_ref[(0, 0)].hit_points)+'"}'
                     self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
                 except Exception as e:
@@ -251,9 +254,9 @@ class MyServer(BaseHTTPRequestHandler):
 
                 # Remove the old dict
                 MyServer.room_ref.clear()
-                level_factor = resp['level']
+                MyServer.level_factor = resp['level']
                 val = resp["iterations"]
-                self.rr.create_rooms(val, level_factor)  # val iterations to run the room generator for.
+                self.rr.create_rooms(val, MyServer.level_factor)  # val iterations to run the room generator for.
                 self.rf.find_rooms_html()
                 MyServer.room_ref,MyServer.character_ref,MyServer.item_ref = setup()
 
@@ -264,7 +267,7 @@ class MyServer(BaseHTTPRequestHandler):
                 MyServer.character_ref[(0, 0)].experience=0;
                 # Calls  the GET to rerender the page
                 # self.do_GET()
-                print("You are on level " + str(level_factor))
+                print("You are on level " + str(MyServer.level_factor))
                 print("Room generated at (0,-1) is: "+MyServer.room_ref[(0,-1)].room_name)
 
             # Deal with the new room reference

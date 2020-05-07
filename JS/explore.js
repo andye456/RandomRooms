@@ -43,7 +43,7 @@ var random_room_manual = function () {
     });
 }
 existing = "";
-level = 0;
+level = 1;
 currentexp = 0;
 handle_input = function (dir) {
 
