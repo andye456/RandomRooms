@@ -92,16 +92,12 @@ class RandomRooms():
             if direction.upper() in exits:
                 # Increment/decrement the x or y direction depending on the direction travelled.
                 if direction.upper() == "N":
-                    from_door = 8  # from_door is not used anymore.
                     y_pos -= 1
                 if direction.upper() == "E":
-                    from_door = 4
                     x_pos += 1
                 if direction.upper() == "S":
-                    from_door = 2
                     y_pos += 1
                 if direction.upper() == "W":
-                    from_door = 1
                     x_pos -= 1
                 if direction.upper() == "R":
                     room_matrix.get_room_grid()
@@ -145,7 +141,7 @@ class RandomRooms():
                         abilities = ab.getAbilities()
                         character = Character(char_name,  # its name
                                               random.randint(40, 300),  # age
-                                              random.randint(3, 16),  # This sets the initial hit points for the monster
+                                              random.randint(3, 16) * (int(level)+1),  # This sets the initial hit points for the monster
                                               char_race,
                                               char_class,
                                               x_pos,

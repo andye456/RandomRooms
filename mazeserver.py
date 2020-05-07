@@ -1,5 +1,6 @@
 import json
 import random
+from urllib import parse
 
 import dill
 from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler
@@ -30,9 +31,9 @@ from characters.race.Dwarf import Dwarf
 
 from characters import FriendStatus
 
-# Change this to 0.0.0.0:8060 for AWS
 from utils.serverutils import attack, adjust_hit_points
 
+# Change this to 0.0.0.0:8060 for AWS
 hostName = "localhost"
 hostPort = 8090
 
@@ -56,7 +57,10 @@ def setup():
 
     # Add the player and other game data
     classes = ['Assassin', 'Druid', 'Illusionist', 'Monk', 'Paladin', 'Ranger']
-    char_race = "Human"
+    races = ['Dwarf','Elf','Gnome','Half_Elf','Half_Orc','Halfling','Human']
+    # classes = ['Assassin']
+    # races = ['Half_Orc']
+    char_race = random.choice(races)
     char_class = random.choice(classes)
     weapon = Weapons.Cane
     abilities = CharacterAbilities(char_race, char_class)
@@ -117,9 +121,16 @@ class MyServer(BaseHTTPRequestHandler):
         try:
             # if val is a number then generate this number of rooms
             # if it is a letter then handle this as a command
-            query_str = post_data.decode('utf-8').split("&")
-            val = query_str[0].split("=")[1]
-            MyServer.level_factor=query_str[1].split("=")[1]
+            # query_str = post_data.decode('utf-8').split("&")
+            # val = query_str[0].split("=")[1]
+            # MyServer.level_factor=query_str[4].split("=")[1]
+
+            q = parse.parse_qs(post_data.decode('utf-8'))
+            query_str = {k: v[0] for k, v in q.items()}
+            if "iter" in query_str.keys():
+                val = query_str['iter']
+                MyServer.level_factor = query_str['level']
+
         except:
             pass
         # Generates new room matrix from a request from the web page
@@ -130,7 +141,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.rf.generate_page()
             self.rf.find_rooms_html()
             MyServer.room_ref, MyServer.character_ref, MyServer.item_ref = setup()
-            self.level_factor = 0
+            MyServer.level_factor = 0
             MyServer.item_ref[(0, 0)] = []
             self.idx = 0
             # Calls  the GET to rerender the page
@@ -165,7 +176,7 @@ class MyServer(BaseHTTPRequestHandler):
 
             ###### ATTACK ######
             elif cmd == "A":
-                char_data = attack((resp['room_x'], resp['room_y']), MyServer.character_ref, MyServer.item_ref);
+                char_data = attack((resp['room_x'], resp['room_y']), MyServer.character_ref, MyServer.item_ref, resp['you_first']);
                 self.wfile.write(char_data.encode("UTF-8"))  # return it to the front end.
 
             ###### Gather Items ######
@@ -186,6 +197,7 @@ class MyServer(BaseHTTPRequestHandler):
 
                 item_data += ']}'
                 self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
+            ##### Drink potions ####
             elif cmd == "D" or (len(cmd) > 1 and cmd.split(" ")[0] == "D"):
                 try:
                     potion = cmd.split(" ")[1]
@@ -212,22 +224,18 @@ class MyServer(BaseHTTPRequestHandler):
 
                     for i in MyServer.item_ref[(0, 0)]:
                         if i.item_object['name'].upper() == potion:
-                            if potion == "HEALING1" and MyServer.character_ref[(0,0)].experience > 0:
+                            if potion == "HEALING1" and MyServer.character_ref[(0,0)].experience >= 1 * MyServer.level_factor:
                                 ret_str=handle_potion(potion, 1)
-                            elif potion == "HEALING2" and MyServer.character_ref[(0,0)].experience > 1:
-                                MyServer.character_ref[(0, 0)].hit_points+=2
+                            elif potion == "HEALING2" and MyServer.character_ref[(0,0)].experience >= 2:
                                 ret_str=handle_potion(potion,2)
-                            elif potion == "HEALING3" and MyServer.character_ref[(0,0)].experience > 2:
-                                MyServer.character_ref[(0, 0)].hit_points+=3
+                            elif potion == "HEALING3" and MyServer.character_ref[(0,0)].experience >= 3:
                                 ret_str=handle_potion(potion,3)
-                            elif potion == "HEALING4" and MyServer.character_ref[(0,0)].experience > 3:
-                                MyServer.character_ref[(0, 0)].hit_points+=4
+                            elif potion == "HEALING4" and MyServer.character_ref[(0,0)].experience >= 4:
                                 ret_str=handle_potion(potion,4)
-                            elif potion == "HEALING5" and MyServer.character_ref[(0,0)].experience > 4:
-                                MyServer.character_ref[(0, 0)].hit_points+=5
+                            elif potion == "HEALING5" and MyServer.character_ref[(0,0)].experience >= 5:
                                 ret_str=handle_potion(potion,5)
                             else:
-                                ret_str="potion has no effect as you don't have enough experience to use it.<br>"
+                                ret_str="potion has no effect as you don't have enough experience to use it.<br>You need "
                             item_data = '{"item_data": "'+ret_str+'","hit_points":"'+str(MyServer.character_ref[(0, 0)].hit_points)+'"}'
                     self.wfile.write(item_data.encode("UTF-8"))  # return it to the front end.
                 except Exception as e:
@@ -235,6 +243,7 @@ class MyServer(BaseHTTPRequestHandler):
                     ret_str="Drink what? <br>"
                     item_data = '{"item_data": "' + ret_str + '","hit_points":"'+str(MyServer.character_ref[(0, 0)].hit_points)+'"}'
                     self.wfile.write(item_data.encode("UTF-8"))
+            ##### REGENERATE #####
             elif cmd == "regenerate":
                 # Save existing data
                 player = MyServer.character_ref[(0,0)]
@@ -242,20 +251,21 @@ class MyServer(BaseHTTPRequestHandler):
 
                 # Remove the old dict
                 MyServer.room_ref.clear()
-                self.level_factor = resp['level']
+                level_factor = resp['level']
                 val = resp["iterations"]
-                self.rr.create_rooms(val, self.level_factor)  # val iterations to run the room generator for.
+                self.rr.create_rooms(val, level_factor)  # val iterations to run the room generator for.
                 self.rf.find_rooms_html()
                 MyServer.room_ref,MyServer.character_ref,MyServer.item_ref = setup()
 
                 MyServer.item_ref[(0,0)] = player_items
                 self.idx = 0
                 MyServer.character_ref[(0,0)] = player
+                # Set the experience back to zero.
+                MyServer.character_ref[(0, 0)].experience=0;
                 # Calls  the GET to rerender the page
                 # self.do_GET()
-                print("You are on level " + str(self.level_factor))
+                print("You are on level " + str(level_factor))
                 print("Room generated at (0,-1) is: "+MyServer.room_ref[(0,-1)].room_name)
-                # print("[Creating] MyServer.room_ref.id() = "+MyServer.room_ref.id())
 
             # Deal with the new room reference
             # If the response from the web page is {"room_x": -2, "room_y": 4}
@@ -281,6 +291,11 @@ class MyServer(BaseHTTPRequestHandler):
 
                     char_json += ',"friend_status": "' + fs + '"'
                     room_data += ',"char_data":' + char_json
+
+                    # If friend status is hatred then they will attack unprovoked
+                    # if fs == "H":
+                    #     char_json += attack((resp['room_x'], resp['room_y']), MyServer.character_ref, MyServer.item_ref, your_turn=False);
+
                 except KeyError:
                     _char_ref = {}
                 except AttributeError:

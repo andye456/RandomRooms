@@ -28,10 +28,9 @@ def adjust_dmg(strength):
  5) if the opponents hit points reach zero then they are dead and removed from the matrix and they drop all the 
     items they were carrying, you can then gather them up.
 '''
-def attack(room_coords, char_ref, item_ref):
+def attack(room_coords, char_ref, item_ref, your_turn=True):
     turns = 2
     turn = 0
-    your_turn = True
     txt = ""
 
     while turn < turns:

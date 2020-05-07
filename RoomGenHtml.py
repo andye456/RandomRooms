@@ -73,7 +73,7 @@ class RoomGenHtml:
                             <form method="POST" target="maze.html" id="reset">
                                 <table>
                                 <tr><td>Create iterations:</td><td><input type="text" name="iter" id="iter" value="100"></td>
-                                <tr><td>Target Experience:</td><td><input type="text" name="targetexp" id="targetexp" value="5" readonly></td></tr>
+                                <tr><td>Target Experience:</td><td><input type="text" name="targetexp" id="targetexp" readonly></td></tr>
                                 <tr><td>Current Experience:</td><td><input type="text" name="currentexp" id="currentexp" readonly></td></tr>
                                 <tr><td>Current Hit Points:</td><td><input type="text" name="currenthit" id="currenthit" readonly></td></tr>                                
                                 <tr><td>Current Level:</td><td><input type="text" name="level" id="level" readonly></td></tr>
@@ -105,7 +105,7 @@ class RoomGenHtml:
                             Navigate the maze using n,s,e,w typed in to the User Input box<br>
                             The numbers in the rooms are the strength of the healing potions<br>
                             You must be at that level to use that strength potion.<br>
-                            You need to be at a certain level to exit the maze, this is shown on left.<br>
+                            You need a certain amount of experience to exit the maze, this target is shown on left.<br>
                             Battle monsters to steal their items & trade with allies.<br>
                             If you get stuck or defeated hit "reset" - back to beginning!
                             

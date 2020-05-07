@@ -259,7 +259,7 @@ show_strengths = function(data) {
             $('#dialog').append("</table>");
             if(data.char_data.name == "Zoran") {
                 $('#currenthit').val(data['char_data']['hit_points']);
-                $('#currentexp').val(data['char_data']['experience'])
+                $('#currentexp').val(data['char_data']['experience']);
             }
 
         }
@@ -282,8 +282,8 @@ trade = function() {
     });
 }
 
-attack = function(x,y) {
-    d3 = '{"command": "A", "room_x": '+x+',"room_y": '+y+'}';
+attack = function(x,y, you_first) {
+    d3 = '{"command": "A", "room_x": '+x+',"room_y": '+y+',"you_first":'+you_first+'}';
     $.post("maze.html",d3)
     .done(function(returnData) {
         console.log(returnData);

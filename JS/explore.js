@@ -25,7 +25,7 @@ var random_room_manual = function () {
         handle_input("X");
     });
 
-    $('#userinput').click(function(){
+    $('#userinput').click(function () {
         $('#inputline').focus();
     })
 
@@ -44,10 +44,16 @@ var random_room_manual = function () {
 }
 existing = "";
 level = 0;
-currentexp=0;
+currentexp = 0;
 handle_input = function (dir) {
 
-    // Render the maze using ajax in the div
+    let exp_data = getCharData(0, 0)
+    $('#currenthit').val(exp_data['char_data']['hit_points']);
+    $('#currentexp').val(exp_data['char_data']['experience']);
+
+
+    // work out the targte exp
+    $('#targetexp').val((level + 1) * 5)
 
     // Reads the direction commands to navigate the maze
     if (['N', 'S', 'E', 'W', 'X'].includes(dir.toUpperCase())) {
@@ -109,12 +115,14 @@ handle_input = function (dir) {
                 if (ht.room_data.room_name === "Exit") {
                     // if the exit is reached then check the player has the required experience to exit the level
                     c = getCharData(0, 0);
-                    if (c.char_data.experience >= 5) {
+                    if (c.char_data.experience >= $('#targetexp').val()) {
+                        // ToDo: Need to write this experience back to the character otherwise it'll be read wrong.
+                        currentexp = 0; // reset current experience for the new level.
                         level++;
                         $('#level').val(level);
                         iterations = $('#iter').val();
                         // Generate a new room matrix file by calling the back end.
-                        data = {"command":"regenerate", "iterations":iterations, "level": level};
+                        data = {"command": "regenerate", "iterations": iterations, "level": level};
                         d = JSON.stringify(data);
                         $.post("maze.html", d)
                             .done(function (d2) {
@@ -129,16 +137,16 @@ handle_input = function (dir) {
                             data = {room_x: x, room_y: y};
                             d = JSON.stringify(data);
                             $.post("maze.html", d)
-                                        .done(function (d2) {
-                                            console.log(d2);
-                                            ht = JSON.parse(d2);
-                                            desc = "You are in a place called " + ht.room_data.room_name + "</br>";
-                                        });
+                                .done(function (d2) {
+                                    console.log(d2);
+                                    ht = JSON.parse(d2);
+                                    desc = "You are in a place called " + ht.room_data.room_name + "</br>";
+                                });
                             handle_input("X");
                         });
 
                     } else {
-                        desc += "You need 5 experience to exit this level, you have " + c.char_data.experience + "<br>"
+                        desc += "You need " + $('#targetexp').val() + " experience to exit this level, you have " + c.char_data.experience + "<br>"
                     }
                 }
                 if (typeof ht['item_data'] != 'undefined') {
@@ -176,6 +184,9 @@ handle_input = function (dir) {
                         desc += "&nbsp;Their current weapon is: " + ht['char_data']['weapon']['name'] + "</br>";
                         desc += "&nbsp;Their hit points are: " + ht['char_data']['hit_points'] + "</br>";
                         desc += friend_status[ht.friend_status] + "<br>";
+                        if(ht.friend_status == "H") {
+                            attack(x,y,false);
+                        }
                     }
                 } else if (typeof ht.item_data != 'undefined' && ht.item_data.length > 0) {
                     if (ht.item_data[0].owner == "room") {
@@ -220,7 +231,7 @@ handle_input = function (dir) {
         if (command == "O")
             show_strengths(getCharData(x, y));
         if (command == "A")
-            attack(x, y)
+            attack(x, y, true)
         if (command == "T")
             trade();
         if (command == "P")

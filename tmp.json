@@ -1,38 +1,54 @@
 {
+  "room_data": {
+    "room_name": "varistor",
+    "description": "Merck",
+    "door_weights": {
+      "N": 2,
+      "S": 1,
+      "W": 1
+    },
+    "from_door": 1,
+    "N": 1,
+    "E": 0,
+    "S": 1,
+    "W": 1,
+    "room_code_bin": "1 0 1 1",
+    "room_code_int": 11,
+    "N_weight": 2,
+    "S_weight": 1,
+    "W_weight": 1,
+    "visits": 1
+  },
+  "char_data": {
+    "name": "Invade",
+    "age": 145,
+    "hit_points": 3,
+    "race": "Gnome",
+    "char_class": "Paladin",
+    "x_pos": 1,
+    "y_pos": -1,
+    "weapon": {
+      "name": "Club",
+      "weight": 30,
+      "min_damage_small_opponent": 1,
+      "max_damage_small_opponent": 6,
+      "min_damage_large_opponent": 1,
+      "max_damage_large_opponent": 3,
+      "buy": "1gp",
+      "sell": "5sp"
+    },
+    "abilities": {
+      "charisma": 10,
+      "constitution": 10,
+      "dexterity": 10,
+      "intelligence": 9,
+      "strength": 12,
+      "wisdom": 10
+    },
+    "experience": 0
+  },
+  "friend_status": "H",
   "item_data": [
-    {
-      "item_object": {
-        "name": "Belt",
-        "type": "item",
-        "buy": "3sp",
-        "sell": "1sp"
-      },
-      "owner": "Zoran"
-    },
-    {
-      "item_object": {
-        "name": "Candle",
-        "type": "item",
-        "buy": "1sp",
-        "sell": "1sp"
-      },
-      "owner": "Zoran"
-    },
-    {
-      "item_object": {
-        "name": "healing1",
-        "type": "potion",
-        "power": 1,
-        "experience": 1,
-        "uses": 0,
-        "who": [
-          {
-            "class": "all"
-          }
-        ]
-      },
-      "owner": "Zoran"
-    },
     {
       "item_object": {
         "name": "Backpack",
@@ -40,7 +56,7 @@
         "buy": "2gp",
         "sell": "1gp"
       },
-      "owner": "Zoran"
+      "owner": "room"
     },
     {
       "item_object": {
@@ -49,52 +65,7 @@
         "buy": "1sp",
         "sell": "1sp"
       },
-      "owner": "Zoran"
-    },
-    {
-      "item_object": {
-        "name": "Belt",
-        "type": "item",
-        "buy": "3sp",
-        "sell": "1sp"
-      },
-      "owner": "Zoran"
-    },
-    {
-      "item_object": {
-        "name": "invisible",
-        "type": "potion",
-        "power": 1,
-        "experience": 10,
-        "uses": 1,
-        "who": [
-          {
-            "class": "illusionist"
-          },
-          {
-            "class": "monk"
-          }
-        ]
-      },
-      "owner": "Zoran"
-    },
-    {
-      "item_object": {
-        "name": "Candle",
-        "type": "item",
-        "buy": "1sp",
-        "sell": "1sp"
-      },
-      "owner": "Zoran"
-    },
-    {
-      "item_object": {
-        "name": "Snake",
-        "type": "item",
-        "buy": "5gp",
-        "sell": "4gp"
-      },
-      "owner": "Zoran"
+      "owner": "room"
     },
     {
       "item_object": {
@@ -103,25 +74,16 @@
         "buy": "1sp",
         "sell": "1sp"
       },
-      "owner": "Zoran"
+      "owner": "room"
     },
     {
       "item_object": {
-        "name": "Backpack",
+        "name": "Snake",
         "type": "item",
-        "buy": "2gp",
-        "sell": "1gp"
+        "buy": "5gp",
+        "sell": "4gp"
       },
-      "owner": "Zoran"
-    },
-    {
-      "item_object": {
-        "name": "Belt",
-        "type": "item",
-        "buy": "3sp",
-        "sell": "1sp"
-      },
-      "owner": "Zoran"
+      "owner": "room"
     },
     {
       "item_object": {
@@ -136,31 +98,7 @@
           }
         ]
       },
-      "owner": "Zoran"
-    },
-    {
-      "item_object": {
-        "name": "Snake",
-        "type": "item",
-        "buy": "5gp",
-        "sell": "4gp"
-      },
-      "owner": "Zoran"
-    },
-    {
-      "item_object": {
-        "name": "healing3",
-        "type": "potion",
-        "power": 3,
-        "experience": 5,
-        "uses": 7,
-        "who": [
-          {
-            "class": "all"
-          }
-        ]
-      },
-      "owner": "Zoran"
+      "owner": "room"
     }
   ]
 }

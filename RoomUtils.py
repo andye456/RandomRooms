@@ -94,7 +94,7 @@ def find_neighbours(room_ref, x, y):
             from_doors += 8
             available += 8
     except:
-        # If the room does not exist to this direction then add a '1' to the bitmask as it can have an exit that way
+        # If the room does not exist to this direction then add a '1' to the bitmask as it can possibly have an exit that way
         available += 8
 
     try:
