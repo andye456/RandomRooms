@@ -138,7 +138,7 @@ class MyServer(BaseHTTPRequestHandler):
         # this is only called from the reset button on the form.
         # When the exit is reached the maze is regenerated but in an ajax call  - handled further down.
         if val != "-1":
-            self.rr.create_rooms(val, MyServer.level_factor) # val iterations to run the room generator for.
+            self.rr.create_rooms(val, 0) # val iterations to run the room generator for.
             self.rf.generate_page()
             self.rf.find_rooms_html()
             MyServer.room_ref, MyServer.character_ref, MyServer.item_ref = setup()
